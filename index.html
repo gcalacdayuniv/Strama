@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Plotter: GE, Grand Strategy & Porter's 5 Forces</title>
+    <style>
+        :root {
+            /* GE Theme */
+            --ge-inv-bg: #ffe0b2;
+            --ge-main-bg: #ffb74d;
+            --ge-div-bg: #f57c00;
+            --ge-inv-color: #212121;
+            --ge-main-color: #212121;
+            --ge-div-color: #fff;
+            
+            /* GS Theme */
+            --gs-bg: #e2ecc9; 
+            --gs-line-color: #212121;
+            --gs-text-color: #212121;
+
+            /* Common */
+            --grid-gap-color: #fff;
+            --axis-color: #d84315;
+            --grid-border: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background-color: #1976d2;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .hamburger {
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .navbar h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .side-nav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: -250px;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        }
+        .side-nav a {
+            padding: 10px 15px 10px 30px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #818181;
+            display: block;
+            transition: 0.2s;
+        }
+        .side-nav a:hover, .side-nav a.active {
+            color: #f1f1f1;
+            background-color: #333;
+        }
+        
+        .view-container {
+            display: none;
+            padding: 20px;
+        }
+        .view-container.active {
+            display: block;
+        }
+
+        .main-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        
+        .sidebar {
+            flex: 1 1 500px;
+            min-width: 300px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-panel {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .form-panel h3 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        select, input[type="text"], input[type="number"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            display: block;
+            margin: 0 auto;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
+        input[type="color"]::-moz-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
+
+        table.theme-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        table.theme-table td {
+            padding: 8px 0;
+            vertical-align: middle;
+        }
+        table.theme-table td:first-child { font-weight: bold; width: 60%; }
+        table.theme-table td:last-child { text-align: right; width: 40%; }
+        table.theme-table select { width: 100%; }
+        
+        .sbu-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+        table.sbu-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 600px;
+        }
+        table.sbu-table th, table.sbu-table td {
+            border: 1px solid #ddd;
+            padding: 4px 2px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        table.sbu-table th { background-color: #f5f5f5; font-weight: bold; padding: 8px 4px; }
+        table.sbu-table input[type="text"], 
+        table.sbu-table input[type="number"], 
+        table.sbu-table select {
+            width: 100%; padding: 6px; box-sizing: border-box;
+            border: 1px solid transparent; border-radius: 4px; background-color: #fafafa;
+        }
+        table.sbu-table input:focus, table.sbu-table select:focus {
+            border: 1px solid #1976d2; outline: none; background-color: #fff;
+        }
+        
+        button {
+            padding: 8px 12px; border: none; border-radius: 4px;
+            cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s;
+        }
+        .btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; }
+        .btn-add:hover { background: #115293; }
+        .btn-clear { background: #e0e0e0; color: #333; }
+        .btn-clear:hover { background: #bdbdbd; }
+        .btn-download { background: #2e7d32; color: white; width: 100%; padding: 10px 15px; font-size: 14px; }
+        .btn-download:hover { background: #1b5e20; }
+        .btn-toggle { background: #ff9800; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;}
+        .btn-toggle:hover { background: #e68a00; }
+        
+        .btn-delete { 
+            background-color: #fff; color: #000; border: 1px solid #000;
+            width: 80%; padding: 6px 0; display: inline-block;
+        }
+        .btn-delete:hover { background-color: #000; color: #fff; }
+        
+        .main-controls { display: flex; gap: 10px; margin-top: 15px; }
+
+        .chart-panel {
+            flex: 1 1 700px; max-width: 100%; position: relative; background: #fff;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            aspect-ratio: 700 / 680; container-type: inline-size; overflow: hidden;
+        }
+
+        /* GE Specific */
+        .axis-title {
+            position: absolute; color: var(--axis-color); font-weight: bold; font-size: 2.57cqi;
+        }
+        .axis-title.y-axis {
+            left: 5.714%; top: 45.588%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;
+        }
+        .axis-title.x-axis {
+            left: 25.714%; top: 91.176%; width: 65.428%; text-align: center;
+        }
+        .y-marks {
+            position: absolute; left: 14.285%; top: 11.764%; width: 10%; height: 67.352%;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+            padding-right: 2%; font-size: 2cqi; font-weight: 500;
+        }
+        .x-marks {
+            position: absolute; left: 25.714%; top: 80.882%; width: 65.428%; height: 4.411%;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 2cqi; font-weight: 500;
+        }
+        .grid-container {
+            position: absolute; gap: 2px; background: var(--grid-gap-color); border: var(--grid-border);
+        }
+        .ge-grid {
+            left: 25.714%; top: 11.764%; width: 65.428%; height: 67.352%;
+            display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;
+        }
+        .cell {
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2.28cqi; position: relative;
+        }
+        .cell span { z-index: 1; pointer-events: none; }
+        .invest { background-color: var(--ge-inv-bg); color: var(--ge-inv-color); }
+        .maintain { background-color: var(--ge-main-bg); color: var(--ge-main-color); }
+        .divest { background-color: var(--ge-div-bg); color: var(--ge-div-color); }
+        
+        /* Shared Bubble Logic */
+        .plot-area {
+            position: absolute; pointer-events: none; z-index: 5;
+        }
+        .ge-plot-area { left: 25.714%; top: 11.764%; width: 65.428%; height: 67.352%; }
+        
+        .bubble {
+            position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+            border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); pointer-events: auto;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .bubble-label {
+            position: absolute; font-weight: bold; font-size: 1.7cqi; white-space: nowrap; color: #111;
+            padding: 0.4cqi 0.8cqi; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none;
+        }
+        .label-top { bottom: 100%; left: 50%; transform: translate(-50%, -8px); }
+        .label-bottom { top: 100%; left: 50%; transform: translate(-50%, 8px); }
+        .label-left { right: 100%; top: 50%; transform: translate(-8px, -50%); }
+        .label-right { left: 100%; top: 50%; transform: translate(8px, -50%); }
+        .ge-axes { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;}
+
+        /* GSM Specific Styles */
+        .gs-container {
+            background-color: var(--gs-bg);
+            color: var(--gs-text-color);
+            position: absolute; top: 2%; left: 2%; right: 2%; bottom: 2%;
+            border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column;
+        }
+        .gs-axis-label {
+            position: absolute; font-size: 2.2cqi; color: var(--gs-text-color);
+            background-color: var(--gs-bg); padding: 6px; z-index: 3; text-align: center; line-height: 1.2;
+        }
+        .gs-axis-top { top: 6%; left: 54.2222%; transform: translate(-50%, -50%); }
+        .gs-axis-bottom { bottom: 6%; left: 54.2222%; transform: translate(-50%, 50%); }
+        .gs-axis-left { left: 6%; top: 45.7777%; transform: translate(-50%, -50%); }
+        .gs-axis-right { right: 6%; top: 45.7777%; transform: translate(50%, -50%); }
+        
+        .gs-cross-vert { 
+            position: absolute; left: 54.2222%; top: 6%; bottom: 6%; 
+            width: 2px; background: var(--gs-line-color); z-index: 2; transform: translateX(-50%);
+        }
+        .gs-cross-horiz { 
+            position: absolute; left: 6%; right: 6%; top: 45.7777%; 
+            height: 2px; background: var(--gs-line-color); z-index: 2; transform: translateY(-50%);
+        }
+        .gs-quadrants-container {
+            position: absolute; left: 12%; right: 12%; top: 12%; bottom: 12%; display: grid;
+            grid-template-columns: 5fr 4fr; grid-template-rows: 4fr 5fr; z-index: 1;
+        }
+        .gs-quadrant { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+        .gs-quad-title { font-style: italic; font-size: 2.5cqi; margin-bottom: 1cqi; }
+        .gs-strat-list { font-size: 1.8cqi; line-height: 1.4; text-align: left; display: none; }
+        .gs-plot-area { position: absolute; left: 12%; right: 12%; top: 12%; bottom: 12%; pointer-events: none; z-index: 5; }
+        .show-reference .gs-strat-list { display: block; }
+        .show-reference .gs-plot-area { display: none; }
+        .show-reference .gs-quad-title { margin-bottom: 2cqi; }
+
+        /* Porter's 5 Forces Specific Styles */
+        .porters-chart-container {
+            position: absolute;
+            top: 2%; left: 2%; right: 2%; bottom: 2%;
+            background: #ffffff;
+            border-radius: 12px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+        }
+        .porters-force {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 1cqi;
+            transition: all 0.3s ease;
+        }
+        
+        /* Central Node */
+        .porters-force.rivalry {
+            top: 34%; left: 34%; width: 32%; height: 32%;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 4px solid #fff;
+        }
+        
+        /* Outer Nodes tightly positioned with clip-paths and precise gaps */
+        /* They extend inwards slightly to underlap the center */
+        .porters-force.substitutes {
+            top: 0; left: 34%; width: 32%; height: 41%;
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+            padding-bottom: 10%;
+            z-index: 5;
+        }
+        .porters-force.entrants {
+            bottom: 0; left: 34%; width: 32%; height: 41%;
+            clip-path: polygon(50% 0, 100% 25%, 100% 100%, 0 100%, 0 25%);
+            padding-top: 10%;
+            z-index: 5;
+        }
+        .porters-force.suppliers {
+            top: 34%; left: 0; width: 41%; height: 32%;
+            clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%);
+            padding-right: 10%;
+            z-index: 5;
+        }
+        .porters-force.consumers {
+            top: 34%; right: 0; width: 41%; height: 32%;
+            clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%);
+            padding-left: 10%;
+            z-index: 5;
+        }
+        
+        .porters-icon {
+            width: 15%; height: 15%;
+            margin-bottom: 1cqi;
+        }
+        .porters-force.rivalry .porters-icon {
+            width: 22%; height: 22%; margin-bottom: 1.5cqi;
+        }
+        .porters-title {
+            font-size: 2.1cqi;
+            font-weight: bold;
+            line-height: 1.25;
+            margin-bottom: 1cqi;
+            max-width: 90%;
+        }
+        .porters-rating {
+            font-size: 1.6cqi;
+            font-weight: bold;
+            padding: 0.4cqi 1cqi;
+            border-radius: 2cqi;
+            background: rgba(255, 255, 255, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+    <h2 id="navbar-title">GE McKinsey Matrix</h2>
+</div>
+
+<div class="side-nav" id="side-nav">
+    <a href="#" id="nav-ge" class="active" onclick="switchView('ge')">GE McKinsey Matrix</a>
+    <a href="#" id="nav-gs" onclick="switchView('gs')">Grand Strategy Matrix</a>
+    <a href="#" id="nav-porters" onclick="switchView('porters')">Porter's 5 Forces</a>
+</div>
+
+<!-- VIEW: GE MCKINSEY MATRIX -->
+<div class="view-container active" id="view-ge">
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <div class="form-panel">
+                <h3>Matrix Theme Settings</h3>
+                <table class="theme-table">
+                    <tr>
+                        <td>Theme Preset</td>
+                        <td>
+                            <select id="ge-theme" onchange="applyGEPresetTheme()">
+                                <option value="orange" selected>Orange (Default)</option>
+                                <option value="bw">Minimalist (Black/White)</option>
+                                <option value="custom">Custom Colors</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Axes Text Color</td>
+                        <td><input type="color" id="ge-color-axis" value="#d84315" onchange="updateGECustomColors()"></td>
+                    </tr>
+                    <tr>
+                        <td>Invest Background</td>
+                        <td><input type="color" id="ge-bg-invest" value="#ffe0b2" onchange="updateGECustomColors()"></td>
+                    </tr>
+                    <tr>
+                        <td>Maintain Background</td>
+                        <td><input type="color" id="ge-bg-maintain" value="#ffb74d" onchange="updateGECustomColors()"></td>
+                    </tr>
+                    <tr>
+                        <td>Divest Background</td>
+                        <td><input type="color" id="ge-bg-divest" value="#f57c00" onchange="updateGECustomColors()"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="form-panel">
+                <h3>Strategic Business Units (SBUs)</h3>
+                <div class="sbu-table-container">
+                    <table class="sbu-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 18%;">Name</th>
+                                <th style="width: 8%;">Industry</th>
+                                <th style="width: 8%;">Strength</th>
+                                <th style="width: 8%;">Size</th>
+                                <th style="width: 8%;">Bubble</th>
+                                <th style="width: 9%;">Opacity</th>
+                                <th style="width: 10%;">Label</th>
+                                <th style="width: 8%;">L Color</th>
+                                <th style="width: 9%;">L Opacity</th>
+                                <th style="width: 6%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ge-tbody"></tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn-add" onclick="addGESBULine()">+ Add New SBU Line</button>
+                <div class="main-controls">
+                    <button type="button" class="btn-clear" onclick="clearGESBUs()" style="flex:1;">Clear All Data</button>
+                    <button type="button" class="btn-download" onclick="downloadImage('ge-chart')" style="flex:2;">Download Image</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-panel" id="ge-chart">
+            <div class="axis-title y-axis">Industry Attractiveness</div>
+            <div class="axis-title x-axis">Competitive Strength of Business Unit</div>
+            <div class="ge-axes">
+                <div class="vert-line" style="left: 14.285%; top: 8.823%; width: 2px; height: 79.117%; background: #212121; position: absolute;"></div>
+                <div class="vert-arrow" style="left: calc(14.285% - 4px); top: calc(8.823% - 10px); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #212121; position: absolute;"></div>
+                <div class="horiz-line" style="left: 14.285%; top: 87.941%; width: 78.571%; height: 2px; background: #212121; position: absolute;"></div>
+                <div class="horiz-arrow" style="left: calc(92.857%); top: calc(87.941% - 4px); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 10px solid #212121; position: absolute;"></div>
+            </div>
+            <div class="y-marks"><span>High</span><span>Medium</span><span>Low</span></div>
+            <div class="x-marks"><span>High</span><span>Medium</span><span>Low</span></div>
+            <div class="grid-container ge-grid">
+                <div class="cell invest"><span>Invest</span></div>
+                <div class="cell invest"><span>Invest</span></div>
+                <div class="cell maintain"><span>Maintain</span></div>
+                <div class="cell invest"><span>Invest</span></div>
+                <div class="cell maintain"><span>Maintain</span></div>
+                <div class="cell divest"><span>Divest</span></div>
+                <div class="cell maintain"><span>Maintain</span></div>
+                <div class="cell divest"><span>Divest</span></div>
+                <div class="cell divest"><span>Divest</span></div>
+            </div>
+            <div class="plot-area ge-plot-area" id="ge-plot-area"></div>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW: GRAND STRATEGY MATRIX -->
+<div class="view-container" id="view-gs">
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <div class="form-panel">
+                <h3>Matrix Theme Settings</h3>
+                <table class="theme-table">
+                    <tr>
+                        <td>Background Color</td>
+                        <td><input type="color" id="gs-bg-color" value="#e2ecc9" onchange="updateGSCustomColors()"></td>
+                    </tr>
+                    <tr>
+                        <td>Text Color</td>
+                        <td><input type="color" id="gs-text-color" value="#212121" onchange="updateGSCustomColors()"></td>
+                    </tr>
+                    <tr>
+                        <td>Line Color</td>
+                        <td><input type="color" id="gs-line-color" value="#212121" onchange="updateGSCustomColors()"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="form-panel">
+                <h3>Entities / Divisions</h3>
+                <button type="button" class="btn-toggle" onclick="toggleGSReference()">Toggle Reference View / Plot View</button>
+                <div class="sbu-table-container">
+                    <table class="sbu-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 18%;">Name</th>
+                                <th style="width: 8%;">X-Axis<br>(0 to 9)</th>
+                                <th style="width: 8%;">Y-Axis<br>(0 to 9)</th>
+                                <th style="width: 8%;">Size</th>
+                                <th style="width: 8%;">Bubble</th>
+                                <th style="width: 9%;">Opacity</th>
+                                <th style="width: 10%;">Label</th>
+                                <th style="width: 8%;">L Color</th>
+                                <th style="width: 9%;">L Opacity</th>
+                                <th style="width: 6%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="gs-tbody"></tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn-add" onclick="addGSSBULine()">+ Add New Entity</button>
+                <div class="main-controls">
+                    <button type="button" class="btn-clear" onclick="clearGSSBUs()" style="flex:1;">Clear All Data</button>
+                    <button type="button" class="btn-download" onclick="downloadImage('gs-chart')" style="flex:2;">Download Image</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-panel" id="gs-chart">
+            <div class="gs-container" id="gs-container">
+                <div class="gs-axis-label gs-axis-top">RAPID MARKET GROWTH</div>
+                <div class="gs-axis-label gs-axis-bottom">SLOW MARKET GROWTH</div>
+                <div class="gs-axis-label gs-axis-left">WEAK<br>COMPETITIVE<br>POSITION</div>
+                <div class="gs-axis-label gs-axis-right">STRONG<br>COMPETITIVE<br>POSITION</div>
+                
+                <div class="gs-cross-vert"></div>
+                <div class="gs-cross-horiz"></div>
+
+                <div class="gs-quadrants-container">
+                    <div class="gs-quadrant">
+                        <div class="gs-quad-title">Quadrant II</div>
+                        <div class="gs-strat-list">
+                            1. Market development<br>2. Market penetration<br>3. Product development<br>
+                            4. Horizontal integration<br>5. Divestiture<br>6. Liquidation
+                        </div>
+                    </div>
+                    <div class="gs-quadrant">
+                        <div class="gs-quad-title">Quadrant I</div>
+                        <div class="gs-strat-list">
+                            1. Market development<br>2. Market penetration<br>3. Product development<br>
+                            4. Forward integration<br>5. Backward integration<br>6. Horizontal integration<br>7. Related diversification
+                        </div>
+                    </div>
+                    <div class="gs-quadrant">
+                        <div class="gs-quad-title">Quadrant III</div>
+                        <div class="gs-strat-list">
+                            1. Retrenchment<br>2. Related diversification<br>3. Unrelated diversification<br>
+                            4. Divestiture<br>5. Liquidation
+                        </div>
+                    </div>
+                    <div class="gs-quadrant">
+                        <div class="gs-quad-title">Quadrant IV</div>
+                        <div class="gs-strat-list">
+                            1. Related diversification<br>2. Unrelated diversification<br>3. Joint ventures
+                        </div>
+                    </div>
+                </div>
+                <div class="gs-plot-area" id="gs-plot-area"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW: PORTER's 5 FORCES -->
+<div class="view-container" id="view-porters">
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <div class="form-panel">
+                <h3>Porter's 5 Forces Settings</h3>
+                <div class="sbu-table-container">
+                    <table class="sbu-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Force</th>
+                                <th style="width: 25%;">Rating</th>
+                                <th style="width: 25%;">Background Color</th>
+                                <th style="width: 25%;">Text Color</th>
+                            </tr>
+                        </thead>
+                        <tbody id="porters-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="main-controls">
+                    <button type="button" class="btn-clear" onclick="resetPorters()" style="flex:1;">Reset Defaults</button>
+                    <button type="button" class="btn-download" onclick="downloadImage('porters-chart')" style="flex:2;">Download Image</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-panel" id="porters-chart">
+            <div class="porters-chart-container" id="porters-container">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ================= MENU LOGIC ================= */
+    let menuOpen = false;
+    function toggleMenu() {
+        const sideNav = document.getElementById("side-nav");
+        menuOpen = !menuOpen;
+        sideNav.style.left = menuOpen ? "0px" : "-250px";
+    }
+
+    function switchView(view) {
+        document.getElementById("view-ge").classList.remove("active");
+        document.getElementById("view-gs").classList.remove("active");
+        document.getElementById("view-porters").classList.remove("active");
+        
+        document.getElementById("nav-ge").classList.remove("active");
+        document.getElementById("nav-gs").classList.remove("active");
+        document.getElementById("nav-porters").classList.remove("active");
+
+        if (view === 'ge') {
+            document.getElementById("view-ge").classList.add("active");
+            document.getElementById("nav-ge").classList.add("active");
+            document.getElementById("navbar-title").innerText = "GE McKinsey Matrix";
+            renderGEChart();
+        } else if (view === 'gs') {
+            document.getElementById("view-gs").classList.add("active");
+            document.getElementById("nav-gs").classList.add("active");
+            document.getElementById("navbar-title").innerText = "Grand Strategy Matrix";
+            renderGSChart();
+        } else if (view === 'porters') {
+            document.getElementById("view-porters").classList.add("active");
+            document.getElementById("nav-porters").classList.add("active");
+            document.getElementById("navbar-title").innerText = "Porter's 5 Forces";
+            renderPortersChart();
+        }
+        toggleMenu();
+    }
+
+    /* ================= UTILS ================= */
+    function hexToRgba(hex, alphaPercent) {
+        if (!hex) return `rgba(255, 255, 255, ${alphaPercent / 100})`;
+        hex = hex.replace(/^#/, '');
+        if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const a = Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2);
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    function downloadImage(chartId) {
+        const chartElement = document.getElementById(chartId);
+        let fileName = 'Matrix.png';
+        if(chartId === 'ge-chart') fileName = 'GE_McKinsey_Matrix.png';
+        if(chartId === 'gs-chart') fileName = 'Grand_Strategy_Matrix.png';
+        if(chartId === 'porters-chart') fileName = 'Porters_Five_Forces.png';
+        
+        html2canvas(chartElement, {
+            scale: 2, 
+            backgroundColor: "#ffffff",
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    /* ================= GE MCKINSEY LOGIC ================= */
+    let geSbus = [];
+
+    function applyGEPresetTheme() {
+        const theme = document.getElementById('ge-theme').value;
+        const root = document.documentElement;
+        
+        if (theme === 'orange') {
+            document.getElementById('ge-bg-invest').value = '#ffe0b2';
+            document.getElementById('ge-bg-maintain').value = '#ffb74d';
+            document.getElementById('ge-bg-divest').value = '#f57c00';
+            document.getElementById('ge-color-axis').value = '#d84315';
+            
+            root.style.setProperty('--grid-gap-color', '#fff');
+            root.style.setProperty('--grid-border', 'none');
+            root.style.setProperty('--ge-inv-color', '#212121');
+            root.style.setProperty('--ge-main-color', '#212121');
+            root.style.setProperty('--ge-div-color', '#fff');
+        } else if (theme === 'bw') {
+            document.getElementById('ge-bg-invest').value = '#ffffff';
+            document.getElementById('ge-bg-maintain').value = '#ffffff';
+            document.getElementById('ge-bg-divest').value = '#ffffff';
+            document.getElementById('ge-color-axis').value = '#000000';
+
+            root.style.setProperty('--grid-gap-color', '#000');
+            root.style.setProperty('--grid-border', '2px solid #000');
+            root.style.setProperty('--ge-inv-color', '#000');
+            root.style.setProperty('--ge-main-color', '#000');
+            root.style.setProperty('--ge-div-color', '#000');
+        }
+        updateGECustomColors();
+    }
+
+    function updateGECustomColors() {
+        const root = document.documentElement;
+        if(document.getElementById('ge-theme').value === 'custom') {
+            root.style.setProperty('--grid-gap-color', '#fff');
+            root.style.setProperty('--grid-border', 'none');
+            root.style.setProperty('--ge-inv-color', '#212121');
+            root.style.setProperty('--ge-main-color', '#212121');
+            root.style.setProperty('--ge-div-color', '#fff');
+        }
+        root.style.setProperty('--ge-inv-bg', document.getElementById('ge-bg-invest').value);
+        root.style.setProperty('--ge-main-bg', document.getElementById('ge-bg-maintain').value);
+        root.style.setProperty('--ge-div-bg', document.getElementById('ge-bg-divest').value);
+        root.style.setProperty('--axis-color', document.getElementById('ge-color-axis').value);
+    }
+
+    function saveGECookies() { document.cookie = `geMatrixData=${encodeURIComponent(JSON.stringify(geSbus))}; max-age=31536000; path=/`; }
+    function loadGECookies() {
+        const name = "geMatrixData=";
+        const ca = decodeURIComponent(document.cookie).split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name) === 0) {
+                try { geSbus = JSON.parse(c.substring(name.length, c.length)); } catch(e) {}
+            }
+        }
+    }
+    function updateGESBU(index, field, value) { geSbus[index][field] = value; saveGECookies(); renderGEChart(); }
+    function addGESBULine() {
+        geSbus.push({
+            name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2",
+            bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90
+        });
+        saveGECookies(); buildGETable(); renderGEChart();
+    }
+    function deleteGESBU(index) { geSbus.splice(index, 1); saveGECookies(); buildGETable(); renderGEChart(); }
+    function clearGESBUs() { geSbus.length = 0; saveGECookies(); buildGETable(); renderGEChart(); }
+    
+    function buildGETable() {
+        const tbody = document.getElementById('ge-tbody');
+        tbody.innerHTML = '';
+        if (geSbus.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10">No SBUs added. Click "Add New SBU Line" below.</td></tr>';
+            return;
+        }
+        geSbus.forEach((sbu, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" value="${sbu.name}" oninput="updateGESBU(${index}, 'name', this.value)"></td>
+                <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.attr}" oninput="updateGESBU(${index}, 'attr', parseFloat(this.value) || 1)"></td>
+                <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" oninput="updateGESBU(${index}, 'comp', parseFloat(this.value) || 1)"></td>
+                <td><input type="number" min="10" max="100" value="${sbu.size}" oninput="updateGESBU(${index}, 'size', parseFloat(this.value) || 10)"></td>
+                <td><input type="color" value="${sbu.color}" oninput="updateGESBU(${index}, 'color', this.value)"></td>
+                <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" oninput="updateGESBU(${index}, 'bubbleOpacity', parseFloat(this.value) || 0)"></td>
+                <td>
+                    <select onchange="updateGESBU(${index}, 'pos', this.value)">
+                        <option value="top" ${sbu.pos === 'top' ? 'selected' : ''}>Top</option>
+                        <option value="bottom" ${sbu.pos === 'bottom' ? 'selected' : ''}>Bot</option>
+                        <option value="left" ${sbu.pos === 'left' ? 'selected' : ''}>Left</option>
+                        <option value="right" ${sbu.pos === 'right' ? 'selected' : ''}>Right</option>
+                    </select>
+                </td>
+                <td><input type="color" value="${sbu.labelBgColor || "#ffffff"}" oninput="updateGESBU(${index}, 'labelBgColor', this.value)"></td>
+                <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" oninput="updateGESBU(${index}, 'labelBgOpacity', parseFloat(this.value) || 0)"></td>
+                <td><button type="button" class="btn-delete" onclick="deleteGESBU(${index})">X</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderGEChart() {
+        const plotArea = document.getElementById('ge-plot-area');
+        plotArea.innerHTML = '';
+        geSbus.forEach((sbu) => {
+            const el = document.createElement('div');
+            el.className = 'bubble';
+            el.style.width = (sbu.size / 700 * 100) + '%';
+            el.style.aspectRatio = '1 / 1';
+            el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
+
+            const compVal = Math.max(1.0, Math.min(5.0, sbu.comp));
+            const attrVal = Math.max(1.0, Math.min(5.0, sbu.attr));
+            el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%';
+            el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
+
+            const label = document.createElement('div');
+            label.className = 'bubble-label label-' + sbu.pos;
+            label.textContent = sbu.name;
+            label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+            
+            el.appendChild(label);
+            plotArea.appendChild(el);
+        });
+    }
+
+    /* ================= GRAND STRATEGY LOGIC ================= */
+    let gsSbus = [];
+    let isGSReferenceMode = false;
+
+    function toggleGSReference() {
+        const container = document.getElementById('gs-container');
+        isGSReferenceMode = !isGSReferenceMode;
+        if(isGSReferenceMode) { container.classList.add('show-reference'); } 
+        else { container.classList.remove('show-reference'); }
+    }
+    function updateGSCustomColors() {
+        const root = document.documentElement;
+        root.style.setProperty('--gs-bg', document.getElementById('gs-bg-color').value);
+        root.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
+        root.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
+    }
+    function saveGSCookies() { document.cookie = `gsMatrixData2=${encodeURIComponent(JSON.stringify(gsSbus))}; max-age=31536000; path=/`; }
+    function loadGSCookies() {
+        const name = "gsMatrixData2=";
+        const ca = decodeURIComponent(document.cookie).split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name) === 0) {
+                try { gsSbus = JSON.parse(c.substring(name.length, c.length)); } catch(e) {}
+            }
+        }
+    }
+    function updateGSSBU(index, field, value) { gsSbus[index][field] = value; saveGSCookies(); renderGSChart(); }
+    function addGSSBULine() {
+        gsSbus.push({
+            name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047",
+            bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90
+        });
+        saveGSCookies(); buildGSTable(); renderGSChart();
+    }
+    function deleteGSSBU(index) { gsSbus.splice(index, 1); saveGSCookies(); buildGSTable(); renderGSChart(); }
+    function clearGSSBUs() { gsSbus.length = 0; saveGSCookies(); buildGSTable(); renderGSChart(); }
+
+    function buildGSTable() {
+        const tbody = document.getElementById('gs-tbody');
+        tbody.innerHTML = '';
+        if (gsSbus.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10">No Entities added. Click "Add New Entity" below.</td></tr>';
+            return;
+        }
+        gsSbus.forEach((sbu, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" value="${sbu.name}" oninput="updateGSSBU(${index}, 'name', this.value)"></td>
+                <td><input type="number" min="0" max="9" step="0.01" value="${sbu.xVal}" oninput="updateGSSBU(${index}, 'xVal', parseFloat(this.value) || 0)"></td>
+                <td><input type="number" min="0" max="9" step="0.01" value="${sbu.yVal}" oninput="updateGSSBU(${index}, 'yVal', parseFloat(this.value) || 0)"></td>
+                <td><input type="number" min="10" max="100" value="${sbu.size}" oninput="updateGSSBU(${index}, 'size', parseFloat(this.value) || 10)"></td>
+                <td><input type="color" value="${sbu.color}" oninput="updateGSSBU(${index}, 'color', this.value)"></td>
+                <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" oninput="updateGSSBU(${index}, 'bubbleOpacity', parseFloat(this.value) || 0)"></td>
+                <td>
+                    <select onchange="updateGSSBU(${index}, 'pos', this.value)">
+                        <option value="top" ${sbu.pos === 'top' ? 'selected' : ''}>Top</option>
+                        <option value="bottom" ${sbu.pos === 'bottom' ? 'selected' : ''}>Bot</option>
+                        <option value="left" ${sbu.pos === 'left' ? 'selected' : ''}>Left</option>
+                        <option value="right" ${sbu.pos === 'right' ? 'selected' : ''}>Right</option>
+                    </select>
+                </td>
+                <td><input type="color" value="${sbu.labelBgColor || "#ffffff"}" oninput="updateGSSBU(${index}, 'labelBgColor', this.value)"></td>
+                <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" oninput="updateGSSBU(${index}, 'labelBgOpacity', parseFloat(this.value) || 0)"></td>
+                <td><button type="button" class="btn-delete" onclick="deleteGSSBU(${index})">X</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderGSChart() {
+        const plotArea = document.getElementById('gs-plot-area');
+        plotArea.innerHTML = '';
+        gsSbus.forEach((sbu) => {
+            const el = document.createElement('div');
+            el.className = 'bubble';
+            el.style.width = (sbu.size / 700 * 100) + '%';
+            el.style.aspectRatio = '1 / 1';
+            el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
+            
+            const xVal = Math.max(0, Math.min(9, sbu.xVal));
+            const yVal = Math.max(0, Math.min(9, sbu.yVal));
+            
+            el.style.left = ((xVal / 9) * 100) + '%';
+            el.style.top = (100 - ((yVal / 9) * 100)) + '%';
+
+            const label = document.createElement('div');
+            label.className = 'bubble-label label-' + sbu.pos;
+            label.textContent = sbu.name;
+            label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+            
+            el.appendChild(label);
+            plotArea.appendChild(el);
+        });
+    }
+
+    /* ================= PORTER'S 5 FORCES LOGIC ================= */
+    const defaultPortersData = [
+        { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#4bc89e', color: '#ffffff',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 0 1 4-4h13.8M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 0 1-4 4H3.2"/></svg>' },
+        { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#2CC6D2', color: '#ffffff',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>' },
+        { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#fbb321', color: '#ffffff',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>' },
+        { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#0caae9', color: '#ffffff',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>' },
+        { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#fa7902', color: '#ffffff',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"></path><path d="M13 19l6-6"></path><path d="M16 16l4 4"></path><path d="M19 21l2-2"></path><path d="M9.5 6.5L21 18v3h-3L6.5 9.5"></path><path d="M5 11l6-6"></path><path d="M8 8L4 4"></path><path d="M5 3L3 5"></path></svg>' }
+    ];
+
+    let portersData = JSON.parse(JSON.stringify(defaultPortersData));
+
+    function savePortersCookies() { document.cookie = `portersData3=${encodeURIComponent(JSON.stringify(portersData))}; max-age=31536000; path=/`; }
+    function loadPortersCookies() {
+        const name = "portersData3=";
+        const ca = decodeURIComponent(document.cookie).split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name) === 0) {
+                try {
+                    let parsed = JSON.parse(c.substring(name.length, c.length));
+                    if(parsed && parsed.length === 5) {
+                        portersData = defaultPortersData.map((def, idx) => ({
+                            ...def,
+                            rating: parsed[idx].rating || def.rating,
+                            bg: parsed[idx].bg || def.bg,
+                            color: parsed[idx].color || def.color
+                        }));
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    function resetPorters() {
+        portersData = JSON.parse(JSON.stringify(defaultPortersData));
+        savePortersCookies();
+        buildPortersTable();
+        renderPortersChart();
+    }
+
+    function updatePorters(index, field, value) {
+        portersData[index][field] = value;
+        savePortersCookies();
+        renderPortersChart();
+    }
+
+    function buildPortersTable() {
+        const tbody = document.getElementById('porters-tbody');
+        tbody.innerHTML = '';
+        portersData.forEach((force, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align: left; padding-left: 10px;">${force.title.replace('<br>', ' ')}</td>
+                <td>
+                    <select onchange="updatePorters(${index}, 'rating', this.value)">
+                        <option value="Low" ${force.rating === 'Low' ? 'selected' : ''}>Low</option>
+                        <option value="Moderate" ${force.rating === 'Moderate' ? 'selected' : ''}>Moderate</option>
+                        <option value="High" ${force.rating === 'High' ? 'selected' : ''}>High</option>
+                    </select>
+                </td>
+                <td><input type="color" value="${force.bg}" oninput="updatePorters(${index}, 'bg', this.value)"></td>
+                <td><input type="color" value="${force.color}" oninput="updatePorters(${index}, 'color', this.value)"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderPortersChart() {
+        const container = document.getElementById('porters-container');
+        container.innerHTML = '';
+        
+        portersData.forEach((force) => {
+            const div = document.createElement('div');
+            div.className = `porters-force ${force.id}`;
+            div.style.backgroundColor = force.bg;
+            div.style.color = force.color;
+            
+            div.innerHTML = `
+                <div class="porters-icon">${force.icon}</div>
+                <div class="porters-title">${force.title}</div>
+                <div class="porters-rating">${force.rating}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    /* ================= INITIALIZATION ================= */
+    window.onload = () => {
+        loadGECookies();
+        loadGSCookies();
+        loadPortersCookies();
+        
+        applyGEPresetTheme();
+        updateGSCustomColors();
+        
+        buildGETable();
+        buildGSTable();
+        buildPortersTable();
+        
+        renderGEChart();
+        renderGSChart();
+        renderPortersChart();
+    };
+</script>
+
+</body>
+</html>
