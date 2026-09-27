@@ -87,7 +87,196 @@ document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU
 document.getElementById('ge-clear').onclick = () => { geData = []; buildGETable(); renderGEChart(); };
 document.getElementById('ge-tbody').addEventListener('input', e => { if(e.target.classList.contains('ge-input')){ geData[e.target.dataset.idx][e.target.dataset.field] = e.target.type==='number'?parseFloat(e.target.value):e.target.value; renderGEChart(); } });
 document.getElementById('ge-tbody').addEventListener('click', e => { if(e.target.classList.contains('btn-delete')){ geData.splice(e.target.dataset.idx, 1); buildGETable(); renderGEChart(); } });
+document.getElementById('ge-theme').addEventListener('change', e => {
+    const root = document.documentElement;
+    if (e.target.value === 'orange') {
+        root.style.setProperty('--ge-inv-bg', '#ffe0b2'); root.style.setProperty('--ge-main-bg', '#ffb74d'); root.style.setProperty('--ge-div-bg', '#f57c00');
+        document.getElementById('ge-bg-invest').value = '#ffe0b2'; document.getElementById('ge-bg-maintain').value = '#ffb74d'; document.getElementById('ge-bg-divest').value = '#f57c00';
+    } else if (e.target.value === 'bw') {
+        root.style.setProperty('--ge-inv-bg', '#ffffff'); root.style.setProperty('--ge-main-bg', '#e0e0e0'); root.style.setProperty('--ge-div-bg', '#9e9e9e');
+        document.getElementById('ge-bg-invest').value = '#ffffff'; document.getElementById('ge-bg-maintain').value = '#e0e0e0'; document.getElementById('ge-bg-divest').value = '#9e9e9e';
+    }
+});
+['ge-color-axis', 'ge-bg-invest', 'ge-bg-maintain', 'ge-bg-divest'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        if(id === 'ge-color-axis') document.documentElement.style.setProperty('--axis-color', e.target.value);
+        if(id === 'ge-bg-invest') document.documentElement.style.setProperty('--ge-inv-bg', e.target.value);
+        if(id === 'ge-bg-maintain') document.documentElement.style.setProperty('--ge-main-bg', e.target.value);
+        if(id === 'ge-bg-divest') document.documentElement.style.setProperty('--ge-div-bg', e.target.value);
+        document.getElementById('ge-theme').value = 'custom';
+    });
+});
 
-/* GS, SM, and Porters exact logic replicated via Event Delegation... */
-// Keep it concise: identical event listener replication for GS, SM, Porters as GE above
-// ...
+/* --- GS MATRIX LOGIC --- */
+function buildGSTable() {
+    const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
+    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="10">No Entities added.</td></tr>'; return; }
+    gsData.forEach((sbu, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${sbu.name || ''}" data-idx="${i}" data-field="name" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.x || 4.5}" data-idx="${i}" data-field="x" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.y || 4.5}" data-idx="${i}" data-field="y" class="gs-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.size || 30}" data-idx="${i}" data-field="size" class="gs-input"></td>
+            <td><input type="color" value="${sbu.color || '#1976d2'}" data-idx="${i}" data-field="color" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity || 100}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="gs-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
+            <td><input type="color" value="${sbu.labelBgColor || '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity || 90}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
+            <td><button class="btn-delete" data-idx="${i}">X</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderGSChart() {
+    const plot = document.getElementById('gs-plot-area'); plot.innerHTML = '';
+    gsData.forEach(sbu => {
+        const el = document.createElement('div'); el.className = 'bubble'; 
+        el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1/1';
+        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity || 100);
+        const xVal = Math.max(0, Math.min(9, sbu.x || 4.5)); 
+        const yVal = Math.max(0, Math.min(9, sbu.y || 4.5));
+        el.style.left = ((xVal / 9) * 100) + '%'; 
+        el.style.top = (100 - ((yVal / 9) * 100)) + '%';
+        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
+        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || '#ffffff', sbu.labelBgOpacity || 90);
+        el.appendChild(label); plot.appendChild(el);
+    });
+    
+    document.documentElement.style.setProperty('--gs-bg', document.getElementById('gs-bg-color').value);
+    document.documentElement.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
+    document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
+}
+document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", x: 4.5, y: 4.5, size: 30, color: "#4caf50", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGSTable(); renderGSChart(); };
+document.getElementById('gs-clear').onclick = () => { gsData = []; buildGSTable(); renderGSChart(); };
+document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
+document.getElementById('gs-tbody').addEventListener('input', e => { if(e.target.classList.contains('gs-input')){ gsData[e.target.dataset.idx][e.target.dataset.field] = e.target.type==='number'?parseFloat(e.target.value):e.target.value; renderGSChart(); } });
+document.getElementById('gs-tbody').addEventListener('click', e => { if(e.target.classList.contains('btn-delete')){ gsData.splice(e.target.dataset.idx, 1); buildGSTable(); renderGSChart(); } });
+['gs-bg-color', 'gs-text-color', 'gs-line-color'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderGSChart);
+});
+
+/* --- STRATEGY MAP LOGIC --- */
+function buildSMTable() {
+    const tbody = document.getElementById('sm-tbody'); tbody.innerHTML = '';
+    if (!smData.objectives || !smData.objectives.length) { tbody.innerHTML = '<tr><td colspan="3">No objectives added.</td></tr>'; return; }
+    smData.objectives.forEach((obj, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><select data-idx="${i}" data-field="perspective" class="sm-input">
+                <option value="fin" ${obj.perspective==='fin'?'selected':''}>Financial</option>
+                <option value="cus" ${obj.perspective==='cus'?'selected':''}>Customer</option>
+                <option value="int" ${obj.perspective==='int'?'selected':''}>Internal Business</option>
+                <option value="lrn" ${obj.perspective==='lrn'?'selected':''}>Learning & Growth</option>
+            </select></td>
+            <td><input type="text" value="${obj.text || ''}" data-idx="${i}" data-field="text" class="sm-input"></td>
+            <td><button class="btn-delete" data-idx="${i}">X</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderSMChart() {
+    document.getElementById('sm-fin-content').innerHTML = '';
+    document.getElementById('sm-cus-content').innerHTML = '';
+    document.getElementById('sm-int-content').innerHTML = '';
+    document.getElementById('sm-lrn-content').innerHTML = '';
+    
+    if(smData.objectives) {
+        smData.objectives.forEach(obj => {
+            const el = document.createElement('div'); el.className = 'sm-box'; el.textContent = obj.text;
+            const container = document.getElementById('sm-' + obj.perspective + '-content');
+            if(container) container.appendChild(el);
+        });
+    }
+}
+function updateSMUI() {
+    if(!smData.colors) smData.colors = { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" };
+    
+    document.getElementById('sm-mission-input').value = smData.mission || '';
+    document.getElementById('sm-vision-input').value = smData.vision || '';
+    document.getElementById('sm-mission-display').querySelector('span').textContent = smData.mission || '';
+    document.getElementById('sm-vision-display').querySelector('span').textContent = smData.vision || '';
+    
+    document.getElementById('sm-mv-bg').value = smData.colors.mvBg;
+    document.getElementById('sm-mv-color').value = smData.colors.mvColor;
+    document.getElementById('sm-fin-bg').value = smData.colors.finBg;
+    document.getElementById('sm-fin-color').value = smData.colors.finColor;
+    document.getElementById('sm-cus-bg').value = smData.colors.cusBg;
+    document.getElementById('sm-cus-color').value = smData.colors.cusColor;
+    document.getElementById('sm-int-bg').value = smData.colors.intBg;
+    document.getElementById('sm-int-color').value = smData.colors.intColor;
+    document.getElementById('sm-lrn-bg').value = smData.colors.lrnBg;
+    document.getElementById('sm-lrn-color').value = smData.colors.lrnColor;
+    
+    const root = document.documentElement;
+    root.style.setProperty('--sm-mv-bg', smData.colors.mvBg); root.style.setProperty('--sm-mv-color', smData.colors.mvColor);
+    root.style.setProperty('--sm-fin-bg', smData.colors.finBg); root.style.setProperty('--sm-fin-color', smData.colors.finColor);
+    root.style.setProperty('--sm-cus-bg', smData.colors.cusBg); root.style.setProperty('--sm-cus-color', smData.colors.cusColor);
+    root.style.setProperty('--sm-int-bg', smData.colors.intBg); root.style.setProperty('--sm-int-color', smData.colors.intColor);
+    root.style.setProperty('--sm-lrn-bg', smData.colors.lrnBg); root.style.setProperty('--sm-lrn-color', smData.colors.lrnColor);
+    
+    root.style.setProperty('--sm-fin-light', hexToRgba(smData.colors.finBg, 10));
+    root.style.setProperty('--sm-cus-light', hexToRgba(smData.colors.cusBg, 10));
+    root.style.setProperty('--sm-int-light', hexToRgba(smData.colors.intBg, 10));
+    root.style.setProperty('--sm-lrn-light', hexToRgba(smData.colors.lrnBg, 10));
+}
+document.getElementById('sm-add').onclick = () => { if(!smData.objectives) smData.objectives = []; smData.objectives.push({ perspective: "fin", text: "New Objective" }); buildSMTable(); renderSMChart(); };
+document.getElementById('sm-clear').onclick = () => { smData.objectives = []; buildSMTable(); renderSMChart(); };
+document.getElementById('sm-tbody').addEventListener('input', e => { if(e.target.classList.contains('sm-input')){ smData.objectives[e.target.dataset.idx][e.target.dataset.field] = e.target.value; renderSMChart(); } });
+document.getElementById('sm-tbody').addEventListener('click', e => { if(e.target.classList.contains('btn-delete')){ smData.objectives.splice(e.target.dataset.idx, 1); buildSMTable(); renderSMChart(); } });
+['sm-mission-input', 'sm-vision-input'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        const field = id.includes('mission') ? 'mission' : 'vision';
+        smData[field] = e.target.value;
+        document.getElementById(`sm-${field}-display`).querySelector('span').textContent = e.target.value;
+    });
+});
+['sm-mv-bg', 'sm-mv-color', 'sm-fin-bg', 'sm-fin-color', 'sm-cus-bg', 'sm-cus-color', 'sm-int-bg', 'sm-int-color', 'sm-lrn-bg', 'sm-lrn-color'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        const key = id.replace('sm-', '').replace('-bg', 'Bg').replace('-color', 'Color');
+        smData.colors[key] = e.target.value;
+        updateSMUI();
+    });
+});
+
+/* --- PORTER'S 5 FORCES LOGIC --- */
+function buildPortersTable() {
+    const tbody = document.getElementById('porters-tbody'); tbody.innerHTML = '';
+    portersData.forEach((force, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:bold; font-size:12px;">${force.id.toUpperCase()}</td>
+            <td><select data-idx="${i}" data-field="rating" class="porters-input">
+                <option value="Low" ${force.rating==='Low'?'selected':''}>Low</option>
+                <option value="Moderate" ${force.rating==='Moderate'?'selected':''}>Moderate</option>
+                <option value="High" ${force.rating==='High'?'selected':''}>High</option>
+            </select></td>
+            <td><input type="color" value="${force.bg}" data-idx="${i}" data-field="bg" class="porters-input"></td>
+            <td><input type="color" value="${force.color}" data-idx="${i}" data-field="color" class="porters-input"></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderPortersChart() {
+    const container = document.getElementById('porters-container'); container.innerHTML = '';
+    portersData.forEach(force => {
+        const el = document.createElement('div'); el.className = `porters-force ${force.id}`;
+        el.style.backgroundColor = force.bg; el.style.color = force.color;
+        el.innerHTML = `<div class="porters-icon">${force.icon}</div><div class="porters-title">${force.title}</div><div class="porters-rating">${force.rating}</div>`;
+        container.appendChild(el);
+    });
+}
+document.getElementById('porters-reset').onclick = () => { portersData = JSON.parse(JSON.stringify(defaultPorters)); buildPortersTable(); renderPortersChart(); };
+document.getElementById('porters-tbody').addEventListener('input', e => {
+    if(e.target.classList.contains('porters-input')){
+        portersData[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+        renderPortersChart();
+    }
+});
+
+/* --- DOWNLOAD LOGIC --- */
+const dlConfig = { quality: 0.95, backgroundColor: '#ffffff' };
+document.getElementById('ge-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('ge-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'GE_Matrix.jpeg'; link.href = dataUrl; link.click(); });
+document.getElementById('gs-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('gs-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'GS_Matrix.jpeg'; link.href = dataUrl; link.click(); });
+document.getElementById('sm-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('sm-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'Strategy_Map.jpeg'; link.href = dataUrl; link.click(); });
+document.getElementById('porters-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('porters-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'Porters_Five_Forces.jpeg'; link.href = dataUrl; link.click(); });
