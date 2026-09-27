@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strama Plotter: Modular</title>
-    <link rel="icon" href="data:,"> <!-- Silences the favicon 404 error -->
+    <link rel="icon" href="data:,">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <style>
@@ -32,7 +32,7 @@
         .form-panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; font-weight: bold; }
         
-        select, input[type="text"], input[type="number"], textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit; }
+        select, input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="password"], textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit; }
         
         input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; padding: 0; display: block; margin: 0 auto; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
@@ -151,8 +151,19 @@
     <div class="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login</h2>
         <form id="auth-form" class="space-y-4">
-            <!-- Autocomplete tags added to prevent browser DOM warnings -->
-            <input type="email" id="auth-email" autocomplete="username" placeholder="Email" required class="w-full p-2 border rounded">
+            
+            <!-- Login Field (Hidden during Registration) -->
+            <div id="login-fields">
+                <input type="text" id="auth-identifier" autocomplete="username" placeholder="Username, Email, or Phone" required class="w-full p-2 border rounded">
+            </div>
+
+            <!-- Registration Fields (Hidden during Login) -->
+            <div id="register-fields" class="hidden space-y-4">
+                <input type="text" id="auth-reg-username" autocomplete="username" placeholder="Username" class="w-full p-2 border rounded">
+                <input type="email" id="auth-reg-email" autocomplete="email" placeholder="Email Address" class="w-full p-2 border rounded">
+                <input type="tel" id="auth-reg-phone" autocomplete="tel" placeholder="Phone Number" class="w-full p-2 border rounded">
+            </div>
+            
             <input type="password" id="auth-password" autocomplete="current-password" placeholder="Password" required class="w-full p-2 border rounded">
             <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">Submit</button>
         </form>
