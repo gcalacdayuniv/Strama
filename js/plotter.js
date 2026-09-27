@@ -326,16 +326,47 @@ document.getElementById('porters-tbody').addEventListener('input', e => {
 });
 
 /* ================= DOWNLOAD LOGIC ================= */
-const dlConfig = { quality: 0.95, backgroundColor: '#ffffff' };
+const downloadAsDesktop = (elementId, filename) => {
+    const element = document.getElementById(elementId);
+    const optimalWidth = 1515;
+    const currentWidth = element.offsetWidth || 1;
+    const currentHeight = element.offsetHeight || 1;
+    
+    // Calculate proportional height to maintain aspect ratio without distortion
+    const optimalHeight = (currentHeight / currentWidth) * optimalWidth;
+
+    const dlConfig = { 
+        quality: 0.95, 
+        backgroundColor: '#ffffff',
+        width: optimalWidth,
+        height: optimalHeight,
+        style: {
+            width: `${optimalWidth}px`,
+            height: `${optimalHeight}px`,
+            maxWidth: 'none',
+            transform: 'none'
+        }
+    };
+
+    htmlToImage.toJpeg(element, dlConfig)
+        .then(dataUrl => { 
+            const link = document.createElement('a'); 
+            link.download = filename; 
+            link.href = dataUrl; 
+            link.click(); 
+        })
+        .catch(err => alert("Error generating download: " + err.message));
+};
+
 if(document.getElementById('ge-dl')) {
-    document.getElementById('ge-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('ge-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'GE_Matrix.jpeg'; link.href = dataUrl; link.click(); });
+    document.getElementById('ge-dl').onclick = () => downloadAsDesktop('ge-chart', 'GE_Matrix.jpeg');
 }
 if(document.getElementById('gs-dl')) {
-    document.getElementById('gs-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('gs-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'GS_Matrix.jpeg'; link.href = dataUrl; link.click(); });
+    document.getElementById('gs-dl').onclick = () => downloadAsDesktop('gs-chart', 'GS_Matrix.jpeg');
 }
 if(document.getElementById('sm-dl')) {
-    document.getElementById('sm-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('sm-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'Strategy_Map.jpeg'; link.href = dataUrl; link.click(); });
+    document.getElementById('sm-dl').onclick = () => downloadAsDesktop('sm-chart', 'Strategy_Map.jpeg');
 }
 if(document.getElementById('porters-dl')) {
-    document.getElementById('porters-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('porters-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'Porters_Five_Forces.jpeg'; link.href = dataUrl; link.click(); });
+    document.getElementById('porters-dl').onclick = () => downloadAsDesktop('porters-chart', 'Porters_Five_Forces.jpeg');
 }
