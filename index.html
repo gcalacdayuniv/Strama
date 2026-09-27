@@ -3,137 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strategy Plotter: GE, GS, Strategy Map & Porter's 5</title>
+    <title>Strama Plotter: Modular</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <link rel="stylesheet" href="css/style.css"> <!-- Moving the long CSS here conceptually, outputting inline for immediate parity below -->
     <style>
         :root {
-            /* GE Theme */
-            --ge-inv-bg: #ffe0b2;
-            --ge-main-bg: #ffb74d;
-            --ge-div-bg: #f57c00;
-            --ge-inv-color: #212121;
-            --ge-main-color: #212121;
-            --ge-div-color: #fff;
-            
-            /* GS Theme */
-            --gs-bg: #e2ecc9; 
-            --gs-line-color: #212121;
-            --gs-text-color: #212121;
-
-            /* Common */
-            --grid-gap-color: #fff;
-            --axis-color: #d84315;
-            --grid-border: none;
-            
-            /* Strategy Map Theme */
-            --sm-mv-bg: #ffffff;
-            --sm-mv-color: #334155;
-            --sm-fin-bg: #1e293b;
-            --sm-fin-color: #ffffff;
-            --sm-fin-light: rgba(30, 41, 59, 0.1);
-            --sm-cus-bg: #0d9488;
-            --sm-cus-color: #ffffff;
-            --sm-cus-light: rgba(13, 148, 136, 0.1);
-            --sm-int-bg: #7c3aed;
-            --sm-int-color: #ffffff;
-            --sm-int-light: rgba(124, 58, 237, 0.1);
-            --sm-lrn-bg: #e11d48;
-            --sm-lrn-color: #ffffff;
-            --sm-lrn-light: rgba(225, 29, 72, 0.1);
+            --ge-inv-bg: #ffe0b2; --ge-main-bg: #ffb74d; --ge-div-bg: #f57c00;
+            --ge-inv-color: #212121; --ge-main-color: #212121; --ge-div-color: #fff;
+            --gs-bg: #e2ecc9; --gs-line-color: #212121; --gs-text-color: #212121;
+            --grid-gap-color: #fff; --axis-color: #d84315; --grid-border: none;
+            --sm-mv-bg: #ffffff; --sm-mv-color: #334155; --sm-fin-bg: #1e293b; --sm-fin-color: #ffffff; --sm-fin-light: rgba(30, 41, 59, 0.1);
+            --sm-cus-bg: #0d9488; --sm-cus-color: #ffffff; --sm-cus-light: rgba(13, 148, 136, 0.1);
+            --sm-int-bg: #7c3aed; --sm-int-color: #ffffff; --sm-int-light: rgba(124, 58, 237, 0.1);
+            --sm-lrn-bg: #e11d48; --sm-lrn-color: #ffffff; --sm-lrn-light: rgba(225, 29, 72, 0.1);
         }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f5f7;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            overflow-x: hidden;
-        }
-        
-        .navbar {
-            background-color: #1976d2;
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .hamburger {
-            font-size: 24px;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            margin-right: 15px;
-        }
-        .navbar h2 { margin: 0; font-size: 18px; }
-        
-        .side-nav {
-            height: 100%; width: 250px; position: fixed; z-index: 999; top: 0; left: -250px;
-            background-color: #111; overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-        }
-        .side-nav a { padding: 10px 15px 10px 30px; text-decoration: none; font-size: 16px; color: #818181; display: block; transition: 0.2s; }
-        .side-nav a:hover, .side-nav a.active { color: #f1f1f1; background-color: #333; }
-        
+        body { font-family: Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         .view-container { display: none; padding: 20px; }
         .view-container.active { display: block; }
         .main-wrapper { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
-        
         .sidebar { flex: 1 1 500px; min-width: 300px; max-width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .form-panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; }
-        
-        select, input[type="text"], input[type="number"], textarea {
-            padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit;
-        }
-        
-        input[type="color"] {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; padding: 0; display: block; margin: 0 auto;
-        }
+        .form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; font-weight:bold; }
+        select, input[type="text"], input[type="number"], textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit; }
+        input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; padding: 0; display: block; margin: 0 auto; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
-        input[type="color"]::-moz-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
-
         table.theme-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px;}
         table.theme-table td { padding: 8px 4px; vertical-align: middle; }
         table.theme-table td:first-child { font-weight: bold; width: 50%; }
         table.theme-table td:nth-child(2), table.theme-table td:nth-child(3) { text-align: center; width: 25%; }
-        
         .sbu-table-container { width: 100%; overflow-x: auto; margin-bottom: 15px; -webkit-overflow-scrolling: touch; }
         table.sbu-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
         table.sbu-table th, table.sbu-table td { border: 1px solid #ddd; padding: 4px 2px; text-align: center; vertical-align: middle; }
         table.sbu-table th { background-color: #f5f5f5; font-weight: bold; padding: 8px 4px; }
-        table.sbu-table input[type="text"], table.sbu-table input[type="number"], table.sbu-table select {
-            width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid transparent; border-radius: 4px; background-color: #fafafa;
-        }
+        table.sbu-table input[type="text"], table.sbu-table input[type="number"], table.sbu-table select { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid transparent; border-radius: 4px; background-color: #fafafa; }
         table.sbu-table input:focus, table.sbu-table select:focus { border: 1px solid #1976d2; outline: none; background-color: #fff; }
-        
         button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
-        .btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; }
-        .btn-add:hover { background: #115293; }
-        .btn-clear { background: #e0e0e0; color: #333; }
-        .btn-clear:hover { background: #bdbdbd; }
-        .btn-download { background: #2e7d32; color: white; width: 100%; padding: 10px 15px; font-size: 14px; }
-        .btn-download:hover { background: #1b5e20; }
-        .btn-toggle { background: #ff9800; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;}
-        .btn-toggle:hover { background: #e68a00; }
-        .btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; }
-        .btn-delete:hover { background-color: #000; color: #fff; }
+        .btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; } .btn-add:hover { background: #115293; }
+        .btn-clear { background: #e0e0e0; color: #333; } .btn-clear:hover { background: #bdbdbd; }
+        .btn-download { background: #2e7d32; color: white; width: 100%; padding: 10px 15px; font-size: 14px; } .btn-download:hover { background: #1b5e20; }
+        .btn-toggle { background: #ff9800; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;} .btn-toggle:hover { background: #e68a00; }
+        .btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; } .btn-delete:hover { background-color: #000; color: #fff; }
         .main-controls { display: flex; gap: 10px; margin-top: 15px; }
-
-        /* Chart Panels */
-        .chart-panel {
-            flex: 1 1 700px; max-width: 100%; position: relative; background: #fff;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            container-type: inline-size; overflow-x: auto; padding: 20px; box-sizing: border-box;
-        }
+        .chart-panel { flex: 1 1 700px; max-width: 100%; position: relative; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); container-type: inline-size; overflow-x: auto; padding: 20px; box-sizing: border-box; }
         #ge-chart, #gs-chart, #porters-chart { aspect-ratio: 700 / 680; padding: 0; overflow: hidden; }
-        
-        /* New explicit layout control for Porter's Chart to prevent capture collapse */
         #porters-chart { display: flex; align-items: center; justify-content: center; }
 
         /* GE Specific */
@@ -158,7 +72,7 @@
         .label-right { left: 100%; top: 50%; transform: translate(8px, -50%); }
         .ge-axes { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;}
         
-        /* Grand Strategy Specific */
+        /* GS Specific */
         .gs-container { background-color: var(--gs-bg); color: var(--gs-text-color); position: absolute; top: 2%; left: 2%; right: 2%; bottom: 2%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .gs-axis-label { position: absolute; font-size: 2.2cqi; color: var(--gs-text-color); background-color: var(--gs-bg); padding: 6px; z-index: 3; text-align: center; line-height: 1.2; }
         .gs-axis-top { top: 2%; left: 50%; transform: translateX(-50%); }
@@ -176,7 +90,7 @@
         .show-reference .gs-plot-area { display: none; }
         .show-reference .gs-quad-title { margin-bottom: 2cqi; }
 
-        /* Strategy Map Specific */
+        /* SM Specific */
         .sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 800px; background: #fff; padding: 20px; box-sizing: border-box;}
         .sm-top-section { text-align: center; background: var(--sm-mv-bg); color: var(--sm-mv-color); padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0; position: relative; z-index: 2; }
         .sm-top-section p { margin: 0; font-size: 0.95rem; }
@@ -203,682 +117,283 @@
         .sm-lrn-header svg { fill: var(--sm-lrn-color); }
         .sm-lrn-content { background: var(--sm-lrn-light); }
 
-        /* Porter's 5 Forces Specific Styles */
-        .porters-chart-container { 
-            position: relative; 
-            width: 96%; 
-            aspect-ratio: 1 / 1; 
-            background: #ffffff; 
-            border-radius: 12px; 
-            margin: 0 auto; 
-            overflow: hidden; 
-        }
+        /* Porters Specific */
+        .porters-chart-container { position: relative; width: 96%; aspect-ratio: 1 / 1; background: #ffffff; border-radius: 12px; margin: 0 auto; overflow: hidden; }
         .porters-force { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; padding: 1cqi; transition: all 0.3s ease; }
-        
         .porters-force.rivalry { top: 34%; left: 34%; width: 32%; height: 32%; border-radius: 50%; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 4px solid #fff; }
         .porters-force.substitutes { top: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); padding-bottom: 10%; z-index: 5; }
         .porters-force.entrants { bottom: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(50% 0, 100% 25%, 100% 100%, 0 100%, 0 25%); padding-top: 10%; z-index: 5; }
         .porters-force.suppliers { top: 34%; left: 0; width: 41%; height: 32%; clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%); padding-right: 10%; z-index: 5; }
         .porters-force.consumers { top: 34%; right: 0; width: 41%; height: 32%; clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%); padding-left: 10%; z-index: 5; }
-        
         .porters-icon { width: 15%; height: 15%; margin-bottom: 1cqi; }
         .porters-force.rivalry .porters-icon { width: 22%; height: 22%; margin-bottom: 1.5cqi; }
         .porters-title { font-size: 2.1cqi; font-weight: bold; line-height: 1.25; margin-bottom: 1cqi; max-width: 90%; }
         .porters-rating { font-size: 1.6cqi; font-weight: bold; padding: 0.4cqi 1cqi; border-radius: 2cqi; background: rgba(255, 255, 255, 0.25); text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
-    <!-- Modern html-to-image library to correctly support clip-path properties -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800">
 
-<div class="navbar">
-    <button class="hamburger" onclick="toggleMenu()">☰</button>
-    <h2 id="navbar-title">Strategy Plotter</h2>
-</div>
-
-<div class="side-nav" id="side-nav">
-    <a href="#" id="nav-ge" class="active" onclick="switchView('ge')">GE McKinsey Matrix</a>
-    <a href="#" id="nav-gs" onclick="switchView('gs')">Grand Strategy Matrix</a>
-    <a href="#" id="nav-sm" onclick="switchView('sm')">Strategy Map</a>
-    <a href="#" id="nav-porters" onclick="switchView('porters')">Porter's 5 Forces</a>
-</div>
-
-<!-- VIEW: GE MCKINSEY MATRIX -->
-<div class="view-container active" id="view-ge">
-    <div class="main-wrapper">
-        <div class="sidebar">
-            <div class="form-panel">
-                <h3>Matrix Theme Settings</h3>
-                <table class="theme-table">
-                    <tr><td>Theme Preset</td><td colspan="2"><select id="ge-theme" onchange="applyGEPresetTheme()"><option value="orange" selected>Orange (Default)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
-                    <tr><td>Axes Text Color</td><td colspan="2"><input type="color" id="ge-color-axis" value="#d84315" onchange="updateGECustomColors()"></td></tr>
-                    <tr><td>Invest Background</td><td colspan="2"><input type="color" id="ge-bg-invest" value="#ffe0b2" onchange="updateGECustomColors()"></td></tr>
-                    <tr><td>Maintain Background</td><td colspan="2"><input type="color" id="ge-bg-maintain" value="#ffb74d" onchange="updateGECustomColors()"></td></tr>
-                    <tr><td>Divest Background</td><td colspan="2"><input type="color" id="ge-bg-divest" value="#f57c00" onchange="updateGECustomColors()"></td></tr>
-                </table>
-            </div>
-            <div class="form-panel">
-                <h3>Strategic Business Units (SBUs)</h3>
-                <div class="sbu-table-container">
-                    <table class="sbu-table">
-                        <thead><tr><th>Name</th><th>Industry</th><th>Strength</th><th>Size</th><th>Bubble</th><th>Opacity</th><th>Label</th><th>L Color</th><th>L Opacity</th><th></th></tr></thead>
-                        <tbody id="ge-tbody"></tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn-add" onclick="addGESBULine()">+ Add New SBU Line</button>
-                <div class="main-controls">
-                    <button type="button" class="btn-clear" onclick="clearGESBUs()" style="flex:1;">Clear All Data</button>
-                    <button type="button" class="btn-download" onclick="downloadImage('ge-chart')" style="flex:2;">Download Image</button>
-                </div>
-            </div>
-        </div>
-        <div class="chart-panel" id="ge-chart">
-            <div class="axis-title y-axis">Industry Attractiveness</div>
-            <div class="axis-title x-axis">Competitive Strength of Business Unit</div>
-            <div class="ge-axes">
-                <div class="vert-line" style="left: 14.285%; top: 8.823%; width: 2px; height: 79.117%; background: #212121; position: absolute;"></div>
-                <div class="vert-arrow" style="left: calc(14.285% - 4px); top: calc(8.823% - 10px); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #212121; position: absolute;"></div>
-                <div class="horiz-line" style="left: 14.285%; top: 87.941%; width: 78.571%; height: 2px; background: #212121; position: absolute;"></div>
-                <div class="horiz-arrow" style="left: calc(92.857%); top: calc(87.941% - 4px); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 10px solid #212121; position: absolute;"></div>
-            </div>
-            <div class="y-marks"><span>High</span><span>Medium</span><span>Low</span></div>
-            <div class="x-marks"><span>High</span><span>Medium</span><span>Low</span></div>
-            <div class="grid-container ge-grid">
-                <div class="cell invest"><span>Invest</span></div><div class="cell invest"><span>Invest</span></div><div class="cell maintain"><span>Maintain</span></div>
-                <div class="cell invest"><span>Invest</span></div><div class="cell maintain"><span>Maintain</span></div><div class="cell divest"><span>Divest</span></div>
-                <div class="cell maintain"><span>Maintain</span></div><div class="cell divest"><span>Divest</span></div><div class="cell divest"><span>Divest</span></div>
-            </div>
-            <div class="plot-area" id="ge-plot-area"></div>
-        </div>
+<!-- SCREEN 1: Authentication -->
+<div id="auth-screen" class="min-h-screen flex items-center justify-center bg-gray-200">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login</h2>
+        <form id="auth-form" class="space-y-4">
+            <input type="email" id="auth-email" placeholder="Email" required class="w-full p-2 border rounded">
+            <input type="password" id="auth-password" placeholder="Password" required class="w-full p-2 border rounded">
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">Submit</button>
+        </form>
+        <p class="mt-4 text-center text-sm">
+            <a href="#" id="auth-toggle" class="text-blue-500 hover:underline">Switch to Register</a>
+        </p>
     </div>
 </div>
 
-<!-- VIEW: GRAND STRATEGY MATRIX -->
-<div class="view-container" id="view-gs">
-    <div class="main-wrapper">
-        <div class="sidebar">
-            <div class="form-panel">
-                <h3>Matrix Theme Settings</h3>
-                <table class="theme-table">
-                    <tr><td>Background Color</td><td colspan="2"><input type="color" id="gs-bg-color" value="#e2ecc9" onchange="updateGSCustomColors()"></td></tr>
-                    <tr><td>Text Color</td><td colspan="2"><input type="color" id="gs-text-color" value="#212121" onchange="updateGSCustomColors()"></td></tr>
-                    <tr><td>Line Color</td><td colspan="2"><input type="color" id="gs-line-color" value="#212121" onchange="updateGSCustomColors()"></td></tr>
-                </table>
-            </div>
-            <div class="form-panel">
-                <h3>Entities / Divisions</h3>
-                <button type="button" class="btn-toggle" onclick="toggleGSReference()">Toggle Reference / Plot View</button>
-                <div class="sbu-table-container">
-                    <table class="sbu-table">
-                        <thead><tr><th>Name</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Bubble</th><th>Opacity</th><th>Label</th><th>L Color</th><th>L Opacity</th><th></th></tr></thead>
-                        <tbody id="gs-tbody"></tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn-add" onclick="addGSSBULine()">+ Add New Entity</button>
-                <div class="main-controls">
-                    <button type="button" class="btn-clear" onclick="clearGSSBUs()" style="flex:1;">Clear All</button>
-                    <button type="button" class="btn-download" onclick="downloadImage('gs-chart')" style="flex:2;">Download Image</button>
-                </div>
-            </div>
+<!-- SCREEN 2: Dashboard (Project List) -->
+<div id="dashboard-screen" class="hidden min-h-screen">
+    <header class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
+        <h1 class="text-xl font-bold">My Projects</h1>
+        <button id="btn-logout" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600">Logout</button>
+    </header>
+    <main class="p-8 max-w-4xl mx-auto">
+        <div class="flex gap-4 mb-6">
+            <input type="text" id="new-project-name" placeholder="New Project Name" class="flex-1 p-2 border rounded">
+            <button id="btn-create-project" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create</button>
         </div>
-        <div class="chart-panel" id="gs-chart">
-            <div class="gs-container" id="gs-container">
-                <div class="gs-axis-label gs-axis-top">RAPID MARKET GROWTH</div>
-                <div class="gs-axis-label gs-axis-bottom">SLOW MARKET GROWTH</div>
-                <div class="gs-axis-label gs-axis-left">WEAK<br>COMPETITIVE<br>POSITION</div>
-                <div class="gs-axis-label gs-axis-right">STRONG<br>COMPETITIVE<br>POSITION</div>
-                <div class="gs-cross-vert"></div>
-                <div class="gs-cross-horiz"></div>
-                <div class="gs-quadrants-container">
-                    <div class="gs-quadrant"><div class="gs-quad-title">Quadrant II</div><div class="gs-strat-list">1. Market development<br>2. Market penetration<br>3. Product development<br>4. Horizontal integration<br>5. Divestiture<br>6. Liquidation</div></div>
-                    <div class="gs-quadrant"><div class="gs-quad-title">Quadrant I</div><div class="gs-strat-list">1. Market development<br>2. Market penetration<br>3. Product development<br>4. Forward integration<br>5. Backward integration<br>6. Horizontal integration<br>7. Related diversification</div></div>
-                    <div class="gs-quadrant"><div class="gs-quad-title">Quadrant III</div><div class="gs-strat-list">1. Retrenchment<br>2. Related diversification<br>3. Unrelated diversification<br>4. Divestiture<br>5. Liquidation</div></div>
-                    <div class="gs-quadrant"><div class="gs-quad-title">Quadrant IV</div><div class="gs-strat-list">1. Related diversification<br>2. Unrelated diversification<br>3. Joint ventures</div></div>
-                </div>
-                <div class="gs-plot-area" id="gs-plot-area"></div>
-            </div>
+        <div id="project-list" class="space-y-4">
+            <!-- Populated dynamically via JS -->
         </div>
-    </div>
+    </main>
 </div>
 
-<!-- VIEW: STRATEGY MAP -->
-<div class="view-container" id="view-sm">
-    <div class="main-wrapper">
-        <div class="sidebar">
-            <div class="form-panel">
-                <h3>Theme Settings</h3>
-                <table class="theme-table">
-                    <tr><td style="text-align:left;">Perspective Area</td><td>Background</td><td>Text</td></tr>
-                    <tr><td>Mission / Vision Area</td><td><input type="color" id="sm-mv-bg" value="#ffffff" onchange="updateSMColors()"></td><td><input type="color" id="sm-mv-color" value="#334155" onchange="updateSMColors()"></td></tr>
-                    <tr><td>Financial</td><td><input type="color" id="sm-fin-bg" value="#1e293b" onchange="updateSMColors()"></td><td><input type="color" id="sm-fin-color" value="#ffffff" onchange="updateSMColors()"></td></tr>
-                    <tr><td>Customer</td><td><input type="color" id="sm-cus-bg" value="#0d9488" onchange="updateSMColors()"></td><td><input type="color" id="sm-cus-color" value="#ffffff" onchange="updateSMColors()"></td></tr>
-                    <tr><td>Internal Business</td><td><input type="color" id="sm-int-bg" value="#7c3aed" onchange="updateSMColors()"></td><td><input type="color" id="sm-int-color" value="#ffffff" onchange="updateSMColors()"></td></tr>
-                    <tr><td>Learning & Growth</td><td><input type="color" id="sm-lrn-bg" value="#e11d48" onchange="updateSMColors()"></td><td><input type="color" id="sm-lrn-color" value="#ffffff" onchange="updateSMColors()"></td></tr>
-                </table>
-            </div>
-            <div class="form-panel">
-                <h3>Mission & Vision Definitions</h3>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; font-weight: bold;">Mission:</label>
-                    <textarea id="sm-mission-input" rows="2" oninput="updateSMHeader()"></textarea>
+<!-- SCREEN 3: Plotter Editor -->
+<div id="editor-screen" class="hidden h-screen flex flex-col">
+    <div class="bg-blue-600 text-white p-3 px-5 flex items-center justify-between shadow z-50">
+        <div class="flex items-center gap-4">
+            <button id="btn-back-dashboard" class="bg-blue-800 px-3 py-1 rounded hover:bg-blue-900">&larr; Back</button>
+            <h2 id="editor-project-title" class="text-lg font-bold">Project Name</h2>
+        </div>
+        <div class="flex gap-2">
+            <button id="nav-ge" class="px-3 py-1 bg-white text-blue-600 rounded">GE Matrix</button>
+            <button id="nav-gs" class="px-3 py-1 hover:bg-blue-700 rounded">GS Matrix</button>
+            <button id="nav-sm" class="px-3 py-1 hover:bg-blue-700 rounded">Strategy Map</button>
+            <button id="nav-porters" class="px-3 py-1 hover:bg-blue-700 rounded">Porter's 5</button>
+            <button id="btn-save-project" class="ml-4 bg-green-500 px-4 py-1 rounded hover:bg-green-600 font-bold text-white">Save Project</button>
+        </div>
+    </div>
+
+    <!-- The 4 standard views injected directly from the original structural design -->
+    <div class="flex-1 overflow-y-auto relative bg-gray-100">
+        
+        <!-- VIEW: GE MCKINSEY MATRIX -->
+        <div class="view-container active h-full" id="view-ge">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel">
+                        <h3>Matrix Theme Settings</h3>
+                        <table class="theme-table">
+                            <tr><td>Theme Preset</td><td colspan="2"><select id="ge-theme"><option value="orange" selected>Orange (Default)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
+                            <tr><td>Axes Text Color</td><td colspan="2"><input type="color" id="ge-color-axis" value="#d84315"></td></tr>
+                            <tr><td>Invest Background</td><td colspan="2"><input type="color" id="ge-bg-invest" value="#ffe0b2"></td></tr>
+                            <tr><td>Maintain Background</td><td colspan="2"><input type="color" id="ge-bg-maintain" value="#ffb74d"></td></tr>
+                            <tr><td>Divest Background</td><td colspan="2"><input type="color" id="ge-bg-divest" value="#f57c00"></td></tr>
+                        </table>
+                    </div>
+                    <div class="form-panel flex-1">
+                        <h3>Strategic Business Units (SBUs)</h3>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th>Name</th><th>Industry</th><th>Strength</th><th>Size</th><th>Bubble</th><th>Opacity</th><th>Label</th><th>L Color</th><th>L Opacity</th><th></th></tr></thead>
+                                <tbody id="ge-tbody"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add" id="ge-add">+ Add New SBU Line</button>
+                        <div class="main-controls">
+                            <button type="button" class="btn-clear" id="ge-clear" style="flex:1;">Clear All Data</button>
+                            <button type="button" class="btn-download" id="ge-dl" style="flex:2;">Download Image</button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label style="font-size: 12px; font-weight: bold;">Vision:</label>
-                    <textarea id="sm-vision-input" rows="2" oninput="updateSMHeader()"></textarea>
-                </div>
-            </div>
-            <div class="form-panel">
-                <h3>Strategic Objectives</h3>
-                <div class="sbu-table-container">
-                    <table class="sbu-table">
-                        <thead><tr><th style="width: 35%;">Perspective</th><th style="width: 55%;">Objective Description</th><th style="width: 10%;"></th></tr></thead>
-                        <tbody id="sm-tbody"></tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn-add" onclick="addSMObjective()">+ Add New Objective</button>
-                <div class="main-controls">
-                    <button type="button" class="btn-clear" onclick="clearSMObjectives()" style="flex:1;">Clear All Data</button>
-                    <button type="button" class="btn-download" onclick="downloadImage('sm-chart')" style="flex:2;">Download Image</button>
+                <div class="chart-panel" id="ge-chart">
+                    <div class="axis-title y-axis">Industry Attractiveness</div>
+                    <div class="axis-title x-axis">Competitive Strength of Business Unit</div>
+                    <div class="ge-axes">
+                        <div class="vert-line" style="left: 14.285%; top: 8.823%; width: 2px; height: 79.117%; background: #212121; position: absolute;"></div>
+                        <div class="vert-arrow" style="left: calc(14.285% - 4px); top: calc(8.823% - 10px); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #212121; position: absolute;"></div>
+                        <div class="horiz-line" style="left: 14.285%; top: 87.941%; width: 78.571%; height: 2px; background: #212121; position: absolute;"></div>
+                        <div class="horiz-arrow" style="left: calc(92.857%); top: calc(87.941% - 4px); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 10px solid #212121; position: absolute;"></div>
+                    </div>
+                    <div class="y-marks"><span>High</span><span>Medium</span><span>Low</span></div>
+                    <div class="x-marks"><span>High</span><span>Medium</span><span>Low</span></div>
+                    <div class="grid-container ge-grid">
+                        <div class="cell invest"><span>Invest</span></div><div class="cell invest"><span>Invest</span></div><div class="cell maintain"><span>Maintain</span></div>
+                        <div class="cell invest"><span>Invest</span></div><div class="cell maintain"><span>Maintain</span></div><div class="cell divest"><span>Divest</span></div>
+                        <div class="cell maintain"><span>Maintain</span></div><div class="cell divest"><span>Divest</span></div><div class="cell divest"><span>Divest</span></div>
+                    </div>
+                    <div class="plot-area" id="ge-plot-area"></div>
                 </div>
             </div>
         </div>
-        <div class="chart-panel" id="sm-chart">
-            <div class="sm-canvas">
-                <div class="sm-top-section">
-                    <p id="sm-mission-display"><strong>Mission:</strong> <span></span></p>
-                    <p id="sm-vision-display" style="margin-top: 5px;"><strong>Vision:</strong> <span></span></p>
+
+        <!-- VIEW: GRAND STRATEGY MATRIX -->
+        <div class="view-container h-full" id="view-gs">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel">
+                        <h3>Matrix Theme Settings</h3>
+                        <table class="theme-table">
+                            <tr><td>Background Color</td><td colspan="2"><input type="color" id="gs-bg-color" value="#e2ecc9"></td></tr>
+                            <tr><td>Text Color</td><td colspan="2"><input type="color" id="gs-text-color" value="#212121"></td></tr>
+                            <tr><td>Line Color</td><td colspan="2"><input type="color" id="gs-line-color" value="#212121"></td></tr>
+                        </table>
+                    </div>
+                    <div class="form-panel flex-1">
+                        <h3>Entities / Divisions</h3>
+                        <button type="button" class="btn-toggle" id="gs-toggle">Toggle Reference / Plot View</button>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th>Name</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Bubble</th><th>Opacity</th><th>Label</th><th>L Color</th><th>L Opacity</th><th></th></tr></thead>
+                                <tbody id="gs-tbody"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add" id="gs-add">+ Add New Entity</button>
+                        <div class="main-controls">
+                            <button type="button" class="btn-clear" id="gs-clear" style="flex:1;">Clear All</button>
+                            <button type="button" class="btn-download" id="gs-dl" style="flex:2;">Download Image</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="sm-perspectives-wrapper">
-                    <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                    <div class="sm-row">
-                        <div class="sm-header sm-fin-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z" /></svg>
-                            <span>Financial</span>
+                <div class="chart-panel" id="gs-chart">
+                    <div class="gs-container" id="gs-container">
+                        <div class="gs-axis-label gs-axis-top">RAPID MARKET GROWTH</div>
+                        <div class="gs-axis-label gs-axis-bottom">SLOW MARKET GROWTH</div>
+                        <div class="gs-axis-label gs-axis-left">WEAK<br>COMPETITIVE<br>POSITION</div>
+                        <div class="gs-axis-label gs-axis-right">STRONG<br>COMPETITIVE<br>POSITION</div>
+                        <div class="gs-cross-vert"></div>
+                        <div class="gs-cross-horiz"></div>
+                        <div class="gs-quadrants-container">
+                            <div class="gs-quadrant"><div class="gs-quad-title">Quadrant II</div><div class="gs-strat-list">1. Market development<br>2. Market penetration<br>3. Product development<br>4. Horizontal integration<br>5. Divestiture<br>6. Liquidation</div></div>
+                            <div class="gs-quadrant"><div class="gs-quad-title">Quadrant I</div><div class="gs-strat-list">1. Market development<br>2. Market penetration<br>3. Product development<br>4. Forward integration<br>5. Backward integration<br>6. Horizontal integration<br>7. Related diversification</div></div>
+                            <div class="gs-quadrant"><div class="gs-quad-title">Quadrant III</div><div class="gs-strat-list">1. Retrenchment<br>2. Related diversification<br>3. Unrelated diversification<br>4. Divestiture<br>5. Liquidation</div></div>
+                            <div class="gs-quadrant"><div class="gs-quad-title">Quadrant IV</div><div class="gs-strat-list">1. Related diversification<br>2. Unrelated diversification<br>3. Joint ventures</div></div>
                         </div>
-                        <div class="sm-content sm-fin-content" id="sm-fin-content"></div>
-                    </div>
-                    <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                    <div class="sm-row">
-                        <div class="sm-header sm-cus-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                            <span>Customer</span>
-                        </div>
-                        <div class="sm-content sm-cus-content" id="sm-cus-content"></div>
-                    </div>
-                    <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                    <div class="sm-row">
-                        <div class="sm-header sm-int-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49-.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
-                            <span>Internal Business</span>
-                        </div>
-                        <div class="sm-content sm-int-content" id="sm-int-content"></div>
-                    </div>
-                    <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                    <div class="sm-row">
-                        <div class="sm-header sm-lrn-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/></svg>
-                            <span>Learning & Growth</span>
-                        </div>
-                        <div class="sm-content sm-lrn-content" id="sm-lrn-content"></div>
+                        <div class="gs-plot-area" id="gs-plot-area"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- VIEW: PORTER'S 5 FORCES -->
-<div class="view-container" id="view-porters">
-    <div class="main-wrapper">
-        <div class="sidebar">
-            <div class="form-panel">
-                <h3>Porter's 5 Forces Settings</h3>
-                <div class="sbu-table-container">
-                    <table class="sbu-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 25%;">Force</th>
-                                <th style="width: 25%;">Rating</th>
-                                <th style="width: 25%;">Background Color</th>
-                                <th style="width: 25%;">Text Color</th>
-                            </tr>
-                        </thead>
-                        <tbody id="porters-tbody"></tbody>
-                    </table>
+        <!-- VIEW: STRATEGY MAP -->
+        <div class="view-container h-full" id="view-sm">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel">
+                        <h3>Theme Settings</h3>
+                        <table class="theme-table">
+                            <tr><td style="text-align:left;">Perspective Area</td><td>Background</td><td>Text</td></tr>
+                            <tr><td>Mission / Vision Area</td><td><input type="color" id="sm-mv-bg" value="#ffffff"></td><td><input type="color" id="sm-mv-color" value="#334155"></td></tr>
+                            <tr><td>Financial</td><td><input type="color" id="sm-fin-bg" value="#1e293b"></td><td><input type="color" id="sm-fin-color" value="#ffffff"></td></tr>
+                            <tr><td>Customer</td><td><input type="color" id="sm-cus-bg" value="#0d9488"></td><td><input type="color" id="sm-cus-color" value="#ffffff"></td></tr>
+                            <tr><td>Internal Business</td><td><input type="color" id="sm-int-bg" value="#7c3aed"></td><td><input type="color" id="sm-int-color" value="#ffffff"></td></tr>
+                            <tr><td>Learning & Growth</td><td><input type="color" id="sm-lrn-bg" value="#e11d48"></td><td><input type="color" id="sm-lrn-color" value="#ffffff"></td></tr>
+                        </table>
+                    </div>
+                    <div class="form-panel">
+                        <h3>Mission & Vision Definitions</h3>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: bold;">Mission:</label>
+                            <textarea id="sm-mission-input" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: bold;">Vision:</label>
+                            <textarea id="sm-vision-input" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-panel flex-1">
+                        <h3>Strategic Objectives</h3>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th style="width: 35%;">Perspective</th><th style="width: 55%;">Objective Description</th><th style="width: 10%;"></th></tr></thead>
+                                <tbody id="sm-tbody"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add" id="sm-add">+ Add New Objective</button>
+                        <div class="main-controls">
+                            <button type="button" class="btn-clear" id="sm-clear" style="flex:1;">Clear All Data</button>
+                            <button type="button" class="btn-download" id="sm-dl" style="flex:2;">Download Image</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="main-controls">
-                    <button type="button" class="btn-clear" onclick="resetPorters()" style="flex:1;">Reset Defaults</button>
-                    <button type="button" class="btn-download" onclick="downloadImage('porters-chart')" style="flex:2;">Download Image</button>
+                <div class="chart-panel" id="sm-chart">
+                    <div class="sm-canvas">
+                        <div class="sm-top-section">
+                            <p id="sm-mission-display"><strong>Mission:</strong> <span></span></p>
+                            <p id="sm-vision-display" style="margin-top: 5px;"><strong>Vision:</strong> <span></span></p>
+                        </div>
+                        <div class="sm-perspectives-wrapper">
+                            <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
+                            <div class="sm-row">
+                                <div class="sm-header sm-fin-header">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z" /></svg>
+                                    <span>Financial</span>
+                                </div>
+                                <div class="sm-content sm-fin-content" id="sm-fin-content"></div>
+                            </div>
+                            <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
+                            <div class="sm-row">
+                                <div class="sm-header sm-cus-header">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                    <span>Customer</span>
+                                </div>
+                                <div class="sm-content sm-cus-content" id="sm-cus-content"></div>
+                            </div>
+                            <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
+                            <div class="sm-row">
+                                <div class="sm-header sm-int-header">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49-.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                                    <span>Internal Business</span>
+                                </div>
+                                <div class="sm-content sm-int-content" id="sm-int-content"></div>
+                            </div>
+                            <div class="sm-level-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
+                            <div class="sm-row">
+                                <div class="sm-header sm-lrn-header">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/></svg>
+                                    <span>Learning & Growth</span>
+                                </div>
+                                <div class="sm-content sm-lrn-content" id="sm-lrn-content"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="chart-panel" id="porters-chart">
-            <div class="porters-chart-container" id="porters-container"></div>
+
+        <!-- VIEW: PORTER'S 5 FORCES -->
+        <div class="view-container h-full" id="view-porters">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel flex-1">
+                        <h3>Porter's 5 Forces Settings</h3>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th style="width: 25%;">Force</th><th style="width: 25%;">Rating</th><th style="width: 25%;">Background Color</th><th style="width: 25%;">Text Color</th></tr></thead>
+                                <tbody id="porters-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="main-controls">
+                            <button type="button" class="btn-clear" id="porters-reset" style="flex:1;">Reset Defaults</button>
+                            <button type="button" class="btn-download" id="porters-dl" style="flex:2;">Download Image</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-panel flex items-center justify-center" id="porters-chart">
+                    <div class="porters-chart-container" id="porters-container"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-    /* ================= MENU LOGIC ================= */
-    let menuOpen = false;
-    function toggleMenu() {
-        const sideNav = document.getElementById("side-nav");
-        menuOpen = !menuOpen;
-        sideNav.style.left = menuOpen ? "0px" : "-250px";
-    }
-
-    function switchView(view) {
-        document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.side-nav a').forEach(el => el.classList.remove('active'));
-
-        if (view === 'ge') {
-            document.getElementById("view-ge").classList.add("active");
-            document.getElementById("nav-ge").classList.add("active");
-            document.getElementById("navbar-title").innerText = "GE McKinsey Matrix";
-            renderGEChart();
-        } else if (view === 'gs') {
-            document.getElementById("view-gs").classList.add("active");
-            document.getElementById("nav-gs").classList.add("active");
-            document.getElementById("navbar-title").innerText = "Grand Strategy Matrix";
-            renderGSChart();
-        } else if (view === 'sm') {
-            document.getElementById("view-sm").classList.add("active");
-            document.getElementById("nav-sm").classList.add("active");
-            document.getElementById("navbar-title").innerText = "Strategy Map";
-            renderSMChart();
-        } else if (view === 'porters') {
-            document.getElementById("view-porters").classList.add("active");
-            document.getElementById("nav-porters").classList.add("active");
-            document.getElementById("navbar-title").innerText = "Porter's 5 Forces";
-            renderPortersChart();
-        }
-        toggleMenu();
-    }
-
-    /* ================= UTILS ================= */
-    function hexToRgba(hex, alphaPercent) {
-        if (!hex) return `rgba(255, 255, 255, ${alphaPercent / 100})`;
-        hex = hex.replace(/^#/, '');
-        if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        const a = Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2);
-        return `rgba(${r}, ${g}, ${b}, ${a})`;
-    }
-
-    function downloadImage(chartId) {
-        const chartElement = document.getElementById(chartId);
-        
-        // Preserve current layout state to restore later
-        const originalScrollLeft = chartElement.scrollLeft;
-        const originalScrollTop = chartElement.scrollTop;
-        const originalOverflow = chartElement.style.overflow;
-        
-        // Temporarily adjust styles for complete layout capturing
-        chartElement.style.overflow = 'visible';
-        chartElement.scrollLeft = 0;
-        chartElement.scrollTop = 0;
-
-        htmlToImage.toPng(chartElement, {
-            pixelRatio: 2,
-            backgroundColor: '#ffffff'
-        }).then(function (dataUrl) {
-            const link = document.createElement('a');
-            
-            let fileName = chartId + '.png';
-            if (chartId === 'ge-chart') fileName = 'GE_McKinsey_Matrix.png';
-            else if (chartId === 'gs-chart') fileName = 'Grand_Strategy_Matrix.png';
-            else if (chartId === 'sm-chart') fileName = 'Strategy_Map.png';
-            else if (chartId === 'porters-chart') fileName = 'Porters_Five_Forces.png';
-            
-            link.download = fileName;
-            link.href = dataUrl;
-            link.click();
-            
-            // Restore layout state natively
-            chartElement.style.overflow = originalOverflow;
-            chartElement.scrollLeft = originalScrollLeft;
-            chartElement.scrollTop = originalScrollTop;
-        }).catch(function (error) {
-            console.error('Download failed!', error);
-            
-            // Ensure bounds are restored even on failure
-            chartElement.style.overflow = originalOverflow;
-            chartElement.scrollLeft = originalScrollLeft;
-            chartElement.scrollTop = originalScrollTop;
-        });
-    }
-
-    /* ================= GE MCKINSEY LOGIC ================= */
-    let geSbus = [];
-    function applyGEPresetTheme() {
-        const theme = document.getElementById('ge-theme').value;
-        const root = document.documentElement;
-        if (theme === 'orange') {
-            document.getElementById('ge-bg-invest').value = '#ffe0b2'; document.getElementById('ge-bg-maintain').value = '#ffb74d';
-            document.getElementById('ge-bg-divest').value = '#f57c00'; document.getElementById('ge-color-axis').value = '#d84315';
-            root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
-            root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
-        } else if (theme === 'bw') {
-            document.getElementById('ge-bg-invest').value = '#ffffff'; document.getElementById('ge-bg-maintain').value = '#ffffff';
-            document.getElementById('ge-bg-divest').value = '#ffffff'; document.getElementById('ge-color-axis').value = '#000000';
-            root.style.setProperty('--grid-gap-color', '#000'); root.style.setProperty('--grid-border', '2px solid #000');
-            root.style.setProperty('--ge-inv-color', '#000'); root.style.setProperty('--ge-main-color', '#000'); root.style.setProperty('--ge-div-color', '#000');
-        }
-        updateGECustomColors();
-    }
-    function updateGECustomColors() {
-        const root = document.documentElement;
-        if(document.getElementById('ge-theme').value === 'custom') {
-            root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
-            root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
-        }
-        root.style.setProperty('--ge-inv-bg', document.getElementById('ge-bg-invest').value);
-        root.style.setProperty('--ge-main-bg', document.getElementById('ge-bg-maintain').value);
-        root.style.setProperty('--ge-div-bg', document.getElementById('ge-bg-divest').value);
-        root.style.setProperty('--axis-color', document.getElementById('ge-color-axis').value);
-    }
-    function saveGECookies() { document.cookie = `geMatrixData=${encodeURIComponent(JSON.stringify(geSbus))}; max-age=31536000; path=/`; }
-    function loadGECookies() {
-        const name = "geMatrixData="; const ca = decodeURIComponent(document.cookie).split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(name) === 0) { try { geSbus = JSON.parse(c.substring(name.length, c.length)); } catch(e) {} }
-        }
-    }
-    function updateGESBU(index, field, value) { geSbus[index][field] = value; saveGECookies(); renderGEChart(); }
-    function addGESBULine() {
-        geSbus.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 });
-        saveGECookies(); buildGETable(); renderGEChart();
-    }
-    function deleteGESBU(index) { geSbus.splice(index, 1); saveGECookies(); buildGETable(); renderGEChart(); }
-    function clearGESBUs() { geSbus.length = 0; saveGECookies(); buildGETable(); renderGEChart(); }
-    function buildGETable() {
-        const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
-        if (geSbus.length === 0) { tbody.innerHTML = '<tr><td colspan="10">No SBUs added. Click "Add New SBU Line" below.</td></tr>'; return; }
-        geSbus.forEach((sbu, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" value="${sbu.name}" oninput="updateGESBU(${index}, 'name', this.value)"></td>
-                <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.attr}" oninput="updateGESBU(${index}, 'attr', parseFloat(this.value) || 1)"></td>
-                <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" oninput="updateGESBU(${index}, 'comp', parseFloat(this.value) || 1)"></td>
-                <td><input type="number" min="10" max="100" value="${sbu.size}" oninput="updateGESBU(${index}, 'size', parseFloat(this.value) || 10)"></td>
-                <td><input type="color" value="${sbu.color}" oninput="updateGESBU(${index}, 'color', this.value)"></td>
-                <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" oninput="updateGESBU(${index}, 'bubbleOpacity', parseFloat(this.value) || 0)"></td>
-                <td><select onchange="updateGESBU(${index}, 'pos', this.value)"><option value="top" ${sbu.pos === 'top' ? 'selected' : ''}>Top</option><option value="bottom" ${sbu.pos === 'bottom' ? 'selected' : ''}>Bot</option><option value="left" ${sbu.pos === 'left' ? 'selected' : ''}>Left</option><option value="right" ${sbu.pos === 'right' ? 'selected' : ''}>Right</option></select></td>
-                <td><input type="color" value="${sbu.labelBgColor || "#ffffff"}" oninput="updateGESBU(${index}, 'labelBgColor', this.value)"></td>
-                <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" oninput="updateGESBU(${index}, 'labelBgOpacity', parseFloat(this.value) || 0)"></td>
-                <td><button type="button" class="btn-delete" onclick="deleteGESBU(${index})">X</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-    function renderGEChart() {
-        const plotArea = document.getElementById('ge-plot-area'); plotArea.innerHTML = '';
-        geSbus.forEach((sbu) => {
-            const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
-            el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
-            const compVal = Math.max(1.0, Math.min(5.0, sbu.comp)); const attrVal = Math.max(1.0, Math.min(5.0, sbu.attr));
-            el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%'; el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
-            const label = document.createElement('div'); label.className = 'bubble-label label-' + sbu.pos; label.textContent = sbu.name;
-            label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
-            el.appendChild(label); plotArea.appendChild(el);
-        });
-    }
-
-    /* ================= GRAND STRATEGY LOGIC ================= */
-    let gsSbus = []; let isGSReferenceMode = false;
-    function toggleGSReference() {
-        const container = document.getElementById('gs-container'); isGSReferenceMode = !isGSReferenceMode;
-        if(isGSReferenceMode) { container.classList.add('show-reference'); } else { container.classList.remove('show-reference'); }
-    }
-    function updateGSCustomColors() {
-        const root = document.documentElement;
-        root.style.setProperty('--gs-bg', document.getElementById('gs-bg-color').value);
-        root.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
-        root.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
-    }
-    function saveGSCookies() { document.cookie = `gsMatrixData2=${encodeURIComponent(JSON.stringify(gsSbus))}; max-age=31536000; path=/`; }
-    function loadGSCookies() {
-        const name = "gsMatrixData2="; const ca = decodeURIComponent(document.cookie).split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(name) === 0) { try { gsSbus = JSON.parse(c.substring(name.length, c.length)); } catch(e) {} }
-        }
-    }
-    function updateGSSBU(index, field, value) { gsSbus[index][field] = value; saveGSCookies(); renderGSChart(); }
-    function addGSSBULine() {
-        gsSbus.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 });
-        saveGSCookies(); buildGSTable(); renderGSChart();
-    }
-    function deleteGSSBU(index) { gsSbus.splice(index, 1); saveGSCookies(); buildGSTable(); renderGSChart(); }
-    function clearGSSBUs() { gsSbus.length = 0; saveGSCookies(); buildGSTable(); renderGSChart(); }
-    function buildGSTable() {
-        const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
-        if (gsSbus.length === 0) { tbody.innerHTML = '<tr><td colspan="10">No Entities added. Click "Add New Entity" below.</td></tr>'; return; }
-        gsSbus.forEach((sbu, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" value="${sbu.name}" oninput="updateGSSBU(${index}, 'name', this.value)"></td>
-                <td><input type="number" min="0" max="9" step="0.01" value="${sbu.xVal}" oninput="updateGSSBU(${index}, 'xVal', parseFloat(this.value) || 0)"></td>
-                <td><input type="number" min="0" max="9" step="0.01" value="${sbu.yVal}" oninput="updateGSSBU(${index}, 'yVal', parseFloat(this.value) || 0)"></td>
-                <td><input type="number" min="10" max="100" value="${sbu.size}" oninput="updateGSSBU(${index}, 'size', parseFloat(this.value) || 10)"></td>
-                <td><input type="color" value="${sbu.color}" oninput="updateGSSBU(${index}, 'color', this.value)"></td>
-                <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" oninput="updateGSSBU(${index}, 'bubbleOpacity', parseFloat(this.value) || 0)"></td>
-                <td><select onchange="updateGSSBU(${index}, 'pos', this.value)"><option value="top" ${sbu.pos === 'top' ? 'selected' : ''}>Top</option><option value="bottom" ${sbu.pos === 'bottom' ? 'selected' : ''}>Bot</option><option value="left" ${sbu.pos === 'left' ? 'selected' : ''}>Left</option><option value="right" ${sbu.pos === 'right' ? 'selected' : ''}>Right</option></select></td>
-                <td><input type="color" value="${sbu.labelBgColor || "#ffffff"}" oninput="updateGSSBU(${index}, 'labelBgColor', this.value)"></td>
-                <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" oninput="updateGSSBU(${index}, 'labelBgOpacity', parseFloat(this.value) || 0)"></td>
-                <td><button type="button" class="btn-delete" onclick="deleteGSSBU(${index})">X</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-    function renderGSChart() {
-        const plotArea = document.getElementById('gs-plot-area'); plotArea.innerHTML = '';
-        gsSbus.forEach((sbu) => {
-            const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
-            el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
-            const xVal = Math.max(0, Math.min(9, sbu.xVal)); const yVal = Math.max(0, Math.min(9, sbu.yVal));
-            el.style.left = ((xVal / 9) * 100) + '%'; el.style.top = (100 - ((yVal / 9) * 100)) + '%';
-            const label = document.createElement('div'); label.className = 'bubble-label label-' + sbu.pos; label.textContent = sbu.name;
-            label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
-            el.appendChild(label); plotArea.appendChild(el);
-        });
-    }
-
-    /* ================= STRATEGY MAP LOGIC ================= */
-    let smData = {
-        mission: "To provide outstanding service...",
-        vision: "To be the global leader...",
-        objectives: [],
-        colors: {
-            mvBg: "#ffffff", mvColor: "#334155",
-            finBg: "#1e293b", finColor: "#ffffff",
-            cusBg: "#0d9488", cusColor: "#ffffff",
-            intBg: "#7c3aed", intColor: "#ffffff",
-            lrnBg: "#e11d48", lrnColor: "#ffffff"
-        }
-    };
-
-    function saveSMCookies() { document.cookie = `smDataStore=${encodeURIComponent(JSON.stringify(smData))}; max-age=31536000; path=/`; }
-    function loadSMCookies() {
-        const name = "smDataStore="; const ca = decodeURIComponent(document.cookie).split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(name) === 0) {
-                try { 
-                    const stored = JSON.parse(c.substring(name.length, c.length));
-                    smData = { ...smData, ...stored };
-                    if (!smData.colors) smData.colors = {
-                        mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff",
-                        cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff"
-                    };
-                } catch(e) {}
-            }
-        }
-    }
-
-    function initSMForm() {
-        document.getElementById('sm-mission-input').value = smData.mission;
-        document.getElementById('sm-vision-input').value = smData.vision;
-        
-        document.getElementById('sm-mv-bg').value = smData.colors.mvBg; document.getElementById('sm-mv-color').value = smData.colors.mvColor;
-        document.getElementById('sm-fin-bg').value = smData.colors.finBg; document.getElementById('sm-fin-color').value = smData.colors.finColor;
-        document.getElementById('sm-cus-bg').value = smData.colors.cusBg; document.getElementById('sm-cus-color').value = smData.colors.cusColor;
-        document.getElementById('sm-int-bg').value = smData.colors.intBg; document.getElementById('sm-int-color').value = smData.colors.intColor;
-        document.getElementById('sm-lrn-bg').value = smData.colors.lrnBg; document.getElementById('sm-lrn-color').value = smData.colors.lrnColor;
-
-        updateSMColors();
-        updateSMHeader();
-        buildSMTable();
-    }
-
-    function updateSMColors() {
-        smData.colors = {
-            mvBg: document.getElementById('sm-mv-bg').value, mvColor: document.getElementById('sm-mv-color').value,
-            finBg: document.getElementById('sm-fin-bg').value, finColor: document.getElementById('sm-fin-color').value,
-            cusBg: document.getElementById('sm-cus-bg').value, cusColor: document.getElementById('sm-cus-color').value,
-            intBg: document.getElementById('sm-int-bg').value, intColor: document.getElementById('sm-int-color').value,
-            lrnBg: document.getElementById('sm-lrn-bg').value, lrnColor: document.getElementById('sm-lrn-color').value
-        };
-
-        const root = document.documentElement;
-        root.style.setProperty('--sm-mv-bg', smData.colors.mvBg); root.style.setProperty('--sm-mv-color', smData.colors.mvColor);
-        root.style.setProperty('--sm-fin-bg', smData.colors.finBg); root.style.setProperty('--sm-fin-color', smData.colors.finColor);
-        root.style.setProperty('--sm-fin-light', hexToRgba(smData.colors.finBg, 12));
-        root.style.setProperty('--sm-cus-bg', smData.colors.cusBg); root.style.setProperty('--sm-cus-color', smData.colors.cusColor);
-        root.style.setProperty('--sm-cus-light', hexToRgba(smData.colors.cusBg, 12));
-        root.style.setProperty('--sm-int-bg', smData.colors.intBg); root.style.setProperty('--sm-int-color', smData.colors.intColor);
-        root.style.setProperty('--sm-int-light', hexToRgba(smData.colors.intBg, 12));
-        root.style.setProperty('--sm-lrn-bg', smData.colors.lrnBg); root.style.setProperty('--sm-lrn-color', smData.colors.lrnColor);
-        root.style.setProperty('--sm-lrn-light', hexToRgba(smData.colors.lrnBg, 12));
-
-        saveSMCookies();
-    }
-
-    function updateSMHeader() {
-        smData.mission = document.getElementById('sm-mission-input').value;
-        smData.vision = document.getElementById('sm-vision-input').value;
-        document.querySelector('#sm-mission-display span').innerText = smData.mission;
-        document.querySelector('#sm-vision-display span').innerText = smData.vision;
-        saveSMCookies();
-    }
-
-    function addSMObjective() { smData.objectives.push({ perspective: "fin", text: "Increase revenue" }); saveSMCookies(); buildSMTable(); renderSMChart(); }
-    function updateSMObjective(index, field, value) { smData.objectives[index][field] = value; saveSMCookies(); renderSMChart(); }
-    function deleteSMObjective(index) { smData.objectives.splice(index, 1); saveSMCookies(); buildSMTable(); renderSMChart(); }
-    function clearSMObjectives() { smData.objectives = []; saveSMCookies(); buildSMTable(); renderSMChart(); }
-
-    function buildSMTable() {
-        const tbody = document.getElementById('sm-tbody'); tbody.innerHTML = '';
-        if (smData.objectives.length === 0) { tbody.innerHTML = '<tr><td colspan="3">No objectives added.</td></tr>'; return; }
-        smData.objectives.forEach((obj, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <select onchange="updateSMObjective(${index}, 'perspective', this.value)">
-                        <option value="fin" ${obj.perspective === 'fin' ? 'selected' : ''}>Financial</option>
-                        <option value="cus" ${obj.perspective === 'cus' ? 'selected' : ''}>Customer</option>
-                        <option value="int" ${obj.perspective === 'int' ? 'selected' : ''}>Internal Business</option>
-                        <option value="lrn" ${obj.perspective === 'lrn' ? 'selected' : ''}>Learning & Growth</option>
-                    </select>
-                </td>
-                <td><input type="text" value="${obj.text}" oninput="updateSMObjective(${index}, 'text', this.value)"></td>
-                <td><button type="button" class="btn-delete" onclick="deleteSMObjective(${index})" style="width: 100%;">X</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function renderSMChart() {
-        document.getElementById('sm-fin-content').innerHTML = '';
-        document.getElementById('sm-cus-content').innerHTML = '';
-        document.getElementById('sm-int-content').innerHTML = '';
-        document.getElementById('sm-lrn-content').innerHTML = '';
-
-        smData.objectives.forEach(obj => {
-            const el = document.createElement('div');
-            el.className = 'sm-box'; el.innerText = obj.text;
-            const targetContent = document.getElementById(`sm-${obj.perspective}-content`);
-            if(targetContent) targetContent.appendChild(el);
-        });
-    }
-
-    /* ================= PORTER'S 5 FORCES LOGIC ================= */
-    const defaultPortersData = [
-        { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#4bc89e', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 0 1 4-4h13.8M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 0 1-4 4H3.2"/></svg>' },
-        { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#2CC6D2', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>' },
-        { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#fbb321', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>' },
-        { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#0caae9', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>' },
-        { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#fa7902', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"></path><path d="M13 19l6-6"></path><path d="M16 16l4 4"></path><path d="M19 21l2-2"></path><path d="M9.5 6.5L21 18v3h-3L6.5 9.5"></path><path d="M5 11l6-6"></path><path d="M8 8L4 4"></path><path d="M5 3L3 5"></path></svg>' }
-    ];
-
-    let portersData = JSON.parse(JSON.stringify(defaultPortersData));
-
-    function savePortersCookies() { document.cookie = `portersData3=${encodeURIComponent(JSON.stringify(portersData))}; max-age=31536000; path=/`; }
-    function loadPortersCookies() {
-        const name = "portersData3="; const ca = decodeURIComponent(document.cookie).split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(name) === 0) {
-                try {
-                    let parsed = JSON.parse(c.substring(name.length, c.length));
-                    if(parsed && parsed.length === 5) {
-                        portersData = defaultPortersData.map((def, idx) => ({
-                            ...def, rating: parsed[idx].rating || def.rating, bg: parsed[idx].bg || def.bg, color: parsed[idx].color || def.color
-                        }));
-                    }
-                } catch(e) {}
-            }
-        }
-    }
-
-    function resetPorters() { portersData = JSON.parse(JSON.stringify(defaultPortersData)); savePortersCookies(); buildPortersTable(); renderPortersChart(); }
-    function updatePorters(index, field, value) { portersData[index][field] = value; savePortersCookies(); renderPortersChart(); }
-
-    function buildPortersTable() {
-        const tbody = document.getElementById('porters-tbody'); tbody.innerHTML = '';
-        portersData.forEach((force, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="text-align: left; padding-left: 10px;">${force.title.replace('<br>', ' ')}</td>
-                <td>
-                    <select onchange="updatePorters(${index}, 'rating', this.value)">
-                        <option value="Low" ${force.rating === 'Low' ? 'selected' : ''}>Low</option>
-                        <option value="Moderate" ${force.rating === 'Moderate' ? 'selected' : ''}>Moderate</option>
-                        <option value="High" ${force.rating === 'High' ? 'selected' : ''}>High</option>
-                    </select>
-                </td>
-                <td><input type="color" value="${force.bg}" oninput="updatePorters(${index}, 'bg', this.value)"></td>
-                <td><input type="color" value="${force.color}" oninput="updatePorters(${index}, 'color', this.value)"></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function renderPortersChart() {
-        const container = document.getElementById('porters-container'); container.innerHTML = '';
-        portersData.forEach((force) => {
-            const div = document.createElement('div'); div.className = `porters-force ${force.id}`;
-            div.style.backgroundColor = force.bg; div.style.color = force.color;
-            div.innerHTML = `<div class="porters-icon">${force.icon}</div><div class="porters-title">${force.title}</div><div class="porters-rating">${force.rating}</div>`;
-            container.appendChild(div);
-        });
-    }
-
-    /* ================= INITIALIZATION ================= */
-    window.onload = () => {
-        loadGECookies(); loadGSCookies(); loadSMCookies(); loadPortersCookies();
-        
-        applyGEPresetTheme(); updateGSCustomColors();
-        
-        buildGETable(); renderGEChart();
-        buildGSTable(); renderGSChart();
-        initSMForm(); renderSMChart();
-        buildPortersTable(); renderPortersChart();
-    };
-</script>
-
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
