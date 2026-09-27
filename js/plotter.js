@@ -20,8 +20,11 @@ function hexToRgba(hex, alphaPercent) {
     if (!hex) return `rgba(255, 255, 255, ${alphaPercent / 100})`;
     hex = hex.replace(/^#/, '');
     if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
-    const r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2)})`;
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const a = Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2);
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
 export function loadProjectIntoEditor(project) {
@@ -58,29 +61,29 @@ function buildGETable() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><input type="text" value="${sbu.name}" data-idx="${i}" data-field="name" class="ge-input"></td>
-            <td><input type="number" min="1" max="5" step="0.01" value="${sbu.attr}" data-idx="${i}" data-field="attr" class="ge-input"></td>
-            <td><input type="number" min="1" max="5" step="0.01" value="${sbu.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
+            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.attr}" data-idx="${i}" data-field="attr" class="ge-input"></td>
+            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
             <td><input type="number" min="10" max="100" value="${sbu.size}" data-idx="${i}" data-field="size" class="ge-input"></td>
             <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity || 100}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="ge-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
             <td><input type="color" value="${sbu.labelBgColor || '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity || 90}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 function renderGEChart() {
-    const plot = document.getElementById('ge-plot-area'); plot.innerHTML = '';
-    geData.forEach(sbu => {
-        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1/1';
-        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity || 100);
-        const compVal = Math.max(1, Math.min(5, sbu.comp)); const attrVal = Math.max(1, Math.min(5, sbu.attr));
+    const plotArea = document.getElementById('ge-plot-area'); plotArea.innerHTML = '';
+    geData.forEach((sbu) => {
+        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
+        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
+        const compVal = Math.max(1.0, Math.min(5.0, sbu.comp)); const attrVal = Math.max(1.0, Math.min(5.0, sbu.attr));
         el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%'; el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
         const label = document.createElement('div'); label.className = 'bubble-label label-' + sbu.pos; label.textContent = sbu.name;
-        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || '#ffffff', sbu.labelBgOpacity || 90);
-        el.appendChild(label); plot.appendChild(el);
+        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+        el.appendChild(label); plotArea.appendChild(el);
     });
 }
 document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGETable(); renderGEChart(); };
@@ -91,18 +94,27 @@ document.getElementById('ge-theme').addEventListener('change', e => {
     const root = document.documentElement;
     if (e.target.value === 'orange') {
         root.style.setProperty('--ge-inv-bg', '#ffe0b2'); root.style.setProperty('--ge-main-bg', '#ffb74d'); root.style.setProperty('--ge-div-bg', '#f57c00');
-        document.getElementById('ge-bg-invest').value = '#ffe0b2'; document.getElementById('ge-bg-maintain').value = '#ffb74d'; document.getElementById('ge-bg-divest').value = '#f57c00';
+        root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
+        root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
+        document.getElementById('ge-bg-invest').value = '#ffe0b2'; document.getElementById('ge-bg-maintain').value = '#ffb74d'; document.getElementById('ge-bg-divest').value = '#f57c00'; document.getElementById('ge-color-axis').value = '#d84315';
     } else if (e.target.value === 'bw') {
-        root.style.setProperty('--ge-inv-bg', '#ffffff'); root.style.setProperty('--ge-main-bg', '#e0e0e0'); root.style.setProperty('--ge-div-bg', '#9e9e9e');
-        document.getElementById('ge-bg-invest').value = '#ffffff'; document.getElementById('ge-bg-maintain').value = '#e0e0e0'; document.getElementById('ge-bg-divest').value = '#9e9e9e';
+        root.style.setProperty('--ge-inv-bg', '#ffffff'); root.style.setProperty('--ge-main-bg', '#ffffff'); root.style.setProperty('--ge-div-bg', '#ffffff');
+        root.style.setProperty('--grid-gap-color', '#000'); root.style.setProperty('--grid-border', '2px solid #000');
+        root.style.setProperty('--ge-inv-color', '#000'); root.style.setProperty('--ge-main-color', '#000'); root.style.setProperty('--ge-div-color', '#000');
+        document.getElementById('ge-bg-invest').value = '#ffffff'; document.getElementById('ge-bg-maintain').value = '#ffffff'; document.getElementById('ge-bg-divest').value = '#ffffff'; document.getElementById('ge-color-axis').value = '#000000';
     }
 });
 ['ge-color-axis', 'ge-bg-invest', 'ge-bg-maintain', 'ge-bg-divest'].forEach(id => {
     document.getElementById(id).addEventListener('input', e => {
-        if(id === 'ge-color-axis') document.documentElement.style.setProperty('--axis-color', e.target.value);
-        if(id === 'ge-bg-invest') document.documentElement.style.setProperty('--ge-inv-bg', e.target.value);
-        if(id === 'ge-bg-maintain') document.documentElement.style.setProperty('--ge-main-bg', e.target.value);
-        if(id === 'ge-bg-divest') document.documentElement.style.setProperty('--ge-div-bg', e.target.value);
+        const root = document.documentElement;
+        if(document.getElementById('ge-theme').value === 'custom') {
+            root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
+            root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
+        }
+        if(id === 'ge-color-axis') root.style.setProperty('--axis-color', e.target.value);
+        if(id === 'ge-bg-invest') root.style.setProperty('--ge-inv-bg', e.target.value);
+        if(id === 'ge-bg-maintain') root.style.setProperty('--ge-main-bg', e.target.value);
+        if(id === 'ge-bg-divest') root.style.setProperty('--ge-div-bg', e.target.value);
         document.getElementById('ge-theme').value = 'custom';
     });
 });
@@ -115,39 +127,39 @@ function buildGSTable() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><input type="text" value="${sbu.name || ''}" data-idx="${i}" data-field="name" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.x || 4.5}" data-idx="${i}" data-field="x" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.y || 4.5}" data-idx="${i}" data-field="y" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.x !== undefined ? sbu.x : 5.0}" data-idx="${i}" data-field="x" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.1" value="${sbu.y !== undefined ? sbu.y : 5.0}" data-idx="${i}" data-field="y" class="gs-input"></td>
             <td><input type="number" min="10" max="100" value="${sbu.size || 30}" data-idx="${i}" data-field="size" class="gs-input"></td>
-            <td><input type="color" value="${sbu.color || '#1976d2'}" data-idx="${i}" data-field="color" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity || 100}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
+            <td><input type="color" value="${sbu.color || '#43a047'}" data-idx="${i}" data-field="color" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="gs-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
             <td><input type="color" value="${sbu.labelBgColor || '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity || 90}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 function renderGSChart() {
-    const plot = document.getElementById('gs-plot-area'); plot.innerHTML = '';
-    gsData.forEach(sbu => {
+    const plotArea = document.getElementById('gs-plot-area'); plotArea.innerHTML = '';
+    gsData.forEach((sbu) => {
         const el = document.createElement('div'); el.className = 'bubble'; 
-        el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1/1';
-        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity || 100);
-        const xVal = Math.max(0, Math.min(9, sbu.x || 4.5)); 
-        const yVal = Math.max(0, Math.min(9, sbu.y || 4.5));
+        el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
+        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
+        const xVal = Math.max(0, Math.min(9, sbu.x !== undefined ? sbu.x : 5.0)); 
+        const yVal = Math.max(0, Math.min(9, sbu.y !== undefined ? sbu.y : 5.0));
         el.style.left = ((xVal / 9) * 100) + '%'; 
         el.style.top = (100 - ((yVal / 9) * 100)) + '%';
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
-        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || '#ffffff', sbu.labelBgOpacity || 90);
-        el.appendChild(label); plot.appendChild(el);
+        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+        el.appendChild(label); plotArea.appendChild(el);
     });
     
     document.documentElement.style.setProperty('--gs-bg', document.getElementById('gs-bg-color').value);
     document.documentElement.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
     document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
 }
-document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", x: 4.5, y: 4.5, size: 30, color: "#4caf50", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGSTable(); renderGSChart(); };
+document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", x: 5.0, y: 5.0, size: 30, color: "#43a047", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGSTable(); renderGSChart(); };
 document.getElementById('gs-clear').onclick = () => { gsData = []; buildGSTable(); renderGSChart(); };
 document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
 document.getElementById('gs-tbody').addEventListener('input', e => { if(e.target.classList.contains('gs-input')){ gsData[e.target.dataset.idx][e.target.dataset.field] = e.target.type==='number'?parseFloat(e.target.value):e.target.value; renderGSChart(); } });
@@ -170,7 +182,7 @@ function buildSMTable() {
                 <option value="lrn" ${obj.perspective==='lrn'?'selected':''}>Learning & Growth</option>
             </select></td>
             <td><input type="text" value="${obj.text || ''}" data-idx="${i}" data-field="text" class="sm-input"></td>
-            <td><button class="btn-delete" data-idx="${i}">X</button></td>
+            <td><button class="btn-delete" data-idx="${i}" style="width: 100%;">X</button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -183,9 +195,11 @@ function renderSMChart() {
     
     if(smData.objectives) {
         smData.objectives.forEach(obj => {
-            const el = document.createElement('div'); el.className = 'sm-box'; el.textContent = obj.text;
-            const container = document.getElementById('sm-' + obj.perspective + '-content');
-            if(container) container.appendChild(el);
+            const el = document.createElement('div'); 
+            el.className = 'sm-box'; 
+            el.innerText = obj.text;
+            const targetContent = document.getElementById(`sm-${obj.perspective}-content`);
+            if(targetContent) targetContent.appendChild(el);
         });
     }
 }
@@ -194,8 +208,8 @@ function updateSMUI() {
     
     document.getElementById('sm-mission-input').value = smData.mission || '';
     document.getElementById('sm-vision-input').value = smData.vision || '';
-    document.getElementById('sm-mission-display').querySelector('span').textContent = smData.mission || '';
-    document.getElementById('sm-vision-display').querySelector('span').textContent = smData.vision || '';
+    document.getElementById('sm-mission-display').querySelector('span').innerText = smData.mission || '';
+    document.getElementById('sm-vision-display').querySelector('span').innerText = smData.vision || '';
     
     document.getElementById('sm-mv-bg').value = smData.colors.mvBg;
     document.getElementById('sm-mv-color').value = smData.colors.mvColor;
@@ -215,10 +229,10 @@ function updateSMUI() {
     root.style.setProperty('--sm-int-bg', smData.colors.intBg); root.style.setProperty('--sm-int-color', smData.colors.intColor);
     root.style.setProperty('--sm-lrn-bg', smData.colors.lrnBg); root.style.setProperty('--sm-lrn-color', smData.colors.lrnColor);
     
-    root.style.setProperty('--sm-fin-light', hexToRgba(smData.colors.finBg, 10));
-    root.style.setProperty('--sm-cus-light', hexToRgba(smData.colors.cusBg, 10));
-    root.style.setProperty('--sm-int-light', hexToRgba(smData.colors.intBg, 10));
-    root.style.setProperty('--sm-lrn-light', hexToRgba(smData.colors.lrnBg, 10));
+    root.style.setProperty('--sm-fin-light', hexToRgba(smData.colors.finBg, 12));
+    root.style.setProperty('--sm-cus-light', hexToRgba(smData.colors.cusBg, 12));
+    root.style.setProperty('--sm-int-light', hexToRgba(smData.colors.intBg, 12));
+    root.style.setProperty('--sm-lrn-light', hexToRgba(smData.colors.lrnBg, 12));
 }
 document.getElementById('sm-add').onclick = () => { if(!smData.objectives) smData.objectives = []; smData.objectives.push({ perspective: "fin", text: "New Objective" }); buildSMTable(); renderSMChart(); };
 document.getElementById('sm-clear').onclick = () => { smData.objectives = []; buildSMTable(); renderSMChart(); };
@@ -228,7 +242,7 @@ document.getElementById('sm-tbody').addEventListener('click', e => { if(e.target
     document.getElementById(id).addEventListener('input', e => {
         const field = id.includes('mission') ? 'mission' : 'vision';
         smData[field] = e.target.value;
-        document.getElementById(`sm-${field}-display`).querySelector('span').textContent = e.target.value;
+        document.getElementById(`sm-${field}-display`).querySelector('span').innerText = e.target.value;
     });
 });
 ['sm-mv-bg', 'sm-mv-color', 'sm-fin-bg', 'sm-fin-color', 'sm-cus-bg', 'sm-cus-color', 'sm-int-bg', 'sm-int-color', 'sm-lrn-bg', 'sm-lrn-color'].forEach(id => {
