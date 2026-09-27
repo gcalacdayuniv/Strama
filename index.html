@@ -4,41 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strama Plotter: Modular</title>
+    <link rel="icon" href="data:,"> <!-- Silences the favicon 404 error -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
-    <link rel="stylesheet" href="css/style.css"> <!-- Moving the long CSS here conceptually, outputting inline for immediate parity below -->
     <style>
         :root {
+            /* GE Theme */
             --ge-inv-bg: #ffe0b2; --ge-main-bg: #ffb74d; --ge-div-bg: #f57c00;
             --ge-inv-color: #212121; --ge-main-color: #212121; --ge-div-color: #fff;
+            /* GS Theme */
             --gs-bg: #e2ecc9; --gs-line-color: #212121; --gs-text-color: #212121;
+            /* Common */
             --grid-gap-color: #fff; --axis-color: #d84315; --grid-border: none;
+            /* Strategy Map Theme */
             --sm-mv-bg: #ffffff; --sm-mv-color: #334155; --sm-fin-bg: #1e293b; --sm-fin-color: #ffffff; --sm-fin-light: rgba(30, 41, 59, 0.1);
             --sm-cus-bg: #0d9488; --sm-cus-color: #ffffff; --sm-cus-light: rgba(13, 148, 136, 0.1);
             --sm-int-bg: #7c3aed; --sm-int-color: #ffffff; --sm-int-light: rgba(124, 58, 237, 0.1);
             --sm-lrn-bg: #e11d48; --sm-lrn-color: #ffffff; --sm-lrn-light: rgba(225, 29, 72, 0.1);
         }
+        
         body { font-family: Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         .view-container { display: none; padding: 20px; }
         .view-container.active { display: block; }
         .main-wrapper { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+        
         .sidebar { flex: 1 1 500px; min-width: 300px; max-width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .form-panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; font-weight:bold; }
+        .form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; font-weight: bold; }
+        
         select, input[type="text"], input[type="number"], textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit; }
+        
         input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; padding: 0; display: block; margin: 0 auto; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
+        
         table.theme-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px;}
         table.theme-table td { padding: 8px 4px; vertical-align: middle; }
         table.theme-table td:first-child { font-weight: bold; width: 50%; }
         table.theme-table td:nth-child(2), table.theme-table td:nth-child(3) { text-align: center; width: 25%; }
+        
         .sbu-table-container { width: 100%; overflow-x: auto; margin-bottom: 15px; -webkit-overflow-scrolling: touch; }
         table.sbu-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
         table.sbu-table th, table.sbu-table td { border: 1px solid #ddd; padding: 4px 2px; text-align: center; vertical-align: middle; }
         table.sbu-table th { background-color: #f5f5f5; font-weight: bold; padding: 8px 4px; }
         table.sbu-table input[type="text"], table.sbu-table input[type="number"], table.sbu-table select { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid transparent; border-radius: 4px; background-color: #fafafa; }
         table.sbu-table input:focus, table.sbu-table select:focus { border: 1px solid #1976d2; outline: none; background-color: #fff; }
+        
         button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
         .btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; } .btn-add:hover { background: #115293; }
         .btn-clear { background: #e0e0e0; color: #333; } .btn-clear:hover { background: #bdbdbd; }
@@ -46,6 +57,8 @@
         .btn-toggle { background: #ff9800; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;} .btn-toggle:hover { background: #e68a00; }
         .btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; } .btn-delete:hover { background-color: #000; color: #fff; }
         .main-controls { display: flex; gap: 10px; margin-top: 15px; }
+
+        /* Chart Panels */
         .chart-panel { flex: 1 1 700px; max-width: 100%; position: relative; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); container-type: inline-size; overflow-x: auto; padding: 20px; box-sizing: border-box; }
         #ge-chart, #gs-chart, #porters-chart { aspect-ratio: 700 / 680; padding: 0; overflow: hidden; }
         #porters-chart { display: flex; align-items: center; justify-content: center; }
@@ -138,8 +151,9 @@
     <div class="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login</h2>
         <form id="auth-form" class="space-y-4">
-            <input type="email" id="auth-email" placeholder="Email" required class="w-full p-2 border rounded">
-            <input type="password" id="auth-password" placeholder="Password" required class="w-full p-2 border rounded">
+            <!-- Autocomplete tags added to prevent browser DOM warnings -->
+            <input type="email" id="auth-email" autocomplete="username" placeholder="Email" required class="w-full p-2 border rounded">
+            <input type="password" id="auth-password" autocomplete="current-password" placeholder="Password" required class="w-full p-2 border rounded">
             <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">Submit</button>
         </form>
         <p class="mt-4 text-center text-sm">
