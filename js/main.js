@@ -22,6 +22,7 @@ window.switchEditorView = (viewId) => {
 
 document.getElementById('nav-ge').onclick = () => switchEditorView('ge');
 document.getElementById('nav-gs').onclick = () => switchEditorView('gs');
+document.getElementById('nav-space').onclick = () => switchEditorView('space');
 document.getElementById('nav-sm').onclick = () => switchEditorView('sm');
 document.getElementById('nav-porters').onclick = () => switchEditorView('porters');
 
