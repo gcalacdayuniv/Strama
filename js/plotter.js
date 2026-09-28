@@ -59,6 +59,14 @@ function buildGETable() {
     const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
     if (!geData.length) { tbody.innerHTML = '<tr><td colspan="10">No SBUs added.</td></tr>'; return; }
     geData.forEach((sbu, i) => {
+        const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
+        const lBgCol = sbu.labelBgColor || '#ffffff';
+        const lOpac = sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90;
+        const sTop = sbu.pos === 'top' ? 'selected' : '';
+        const sBot = sbu.pos === 'bottom' ? 'selected' : '';
+        const sLft = sbu.pos === 'left' ? 'selected' : '';
+        const sRgt = sbu.pos === 'right' ? 'selected' : '';
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><input type="text" value="${sbu.name}" data-idx="${i}" data-field="name" class="ge-input"></td>
@@ -66,10 +74,15 @@ function buildGETable() {
             <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
             <td><input type="number" min="10" max="100" value="${sbu.size}" data-idx="${i}" data-field="size" class="ge-input"></td>
             <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
-            <td><select data-idx="${i}" data-field="pos" class="ge-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
-            <td><input type="color" value="${sbu.labelBgColor \vert{}\vert{} '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
+            <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="ge-input">
+                <option value="top" ${sTop}>Top</option>
+                <option value="bottom" ${sBot}>Bot</option>
+                <option value="left" ${sLft}>Left</option>
+                <option value="right" ${sRgt}>Right</option>
+            </select></td>
+            <td><input type="color" value="${lBgCol}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
+            <td><input type="number" min="0" max="100" value="${lOpac}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -142,17 +155,35 @@ function buildGSTable() {
     const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
     if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="10">No Entities added.</td></tr>'; return; }
     gsData.forEach((sbu, i) => {
+        const nm = sbu.name || '';
+        const xV = sbu.xVal !== undefined ? sbu.xVal : 4.5;
+        const yV = sbu.yVal !== undefined ? sbu.yVal : 4.5;
+        const sz = sbu.size || 30;
+        const col = sbu.color || '#1976d2';
+        const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
+        const sTop = sbu.pos === 'top' ? 'selected' : '';
+        const sBot = sbu.pos === 'bottom' ? 'selected' : '';
+        const sLft = sbu.pos === 'left' ? 'selected' : '';
+        const sRgt = sbu.pos === 'right' ? 'selected' : '';
+        const lBgCol = sbu.labelBgColor || '#ffffff';
+        const lOpac = sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${sbu.name \vert{}\vert{} ''}" data-idx="${i}" data-field="name" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.01" value="${sbu.xVal !== undefined ? sbu.xVal : 4.5}" data-idx="${i}" data-field="xVal" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.01" value="${sbu.yVal !== undefined ? sbu.yVal : 4.5}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
-            <td><input type="number" min="10" max="100" value="${sbu.size \vert{}\vert{} 30}" data-idx="${i}" data-field="size" class="gs-input"></td>
-            <td><input type="color" value="${sbu.color \vert{}\vert{} '#1976d2'}" data-idx="${i}" data-field="color" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
-            <td><select data-idx="${i}" data-field="pos" class="gs-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
-            <td><input type="color" value="${sbu.labelBgColor \vert{}\vert{} '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
+            <td><input type="text" value="${nm}" data-idx="${i}" data-field="name" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.01" value="${xV}" data-idx="${i}" data-field="xVal" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.01" value="${yV}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
+            <td><input type="number" min="10" max="100" value="${sz}" data-idx="${i}" data-field="size" class="gs-input"></td>
+            <td><input type="color" value="${col}" data-idx="${i}" data-field="color" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="gs-input">
+                <option value="top" ${sTop}>Top</option>
+                <option value="bottom" ${sBot}>Bot</option>
+                <option value="left" ${sLft}>Left</option>
+                <option value="right" ${sRgt}>Right</option>
+            </select></td>
+            <td><input type="color" value="${lBgCol}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
+            <td><input type="number" min="0" max="100" value="${lOpac}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -202,14 +233,29 @@ function buildSpaceTable() {
     const tbody = document.getElementById('space-tbody'); tbody.innerHTML = '';
     if (!spaceData.length) { tbody.innerHTML = '<tr><td colspan="7">No Entities added.</td></tr>'; return; }
     spaceData.forEach((sbu, i) => {
+        const nm = sbu.name || '';
+        const xV = sbu.xVal !== undefined ? sbu.xVal : 3.0;
+        const yV = sbu.yVal !== undefined ? sbu.yVal : 3.0;
+        const sz = sbu.size || 30;
+        const col = sbu.color || '#9c27b0';
+        const sTop = sbu.pos === 'top' ? 'selected' : '';
+        const sBot = sbu.pos === 'bottom' ? 'selected' : '';
+        const sLft = sbu.pos === 'left' ? 'selected' : '';
+        const sRgt = sbu.pos === 'right' ? 'selected' : '';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${sbu.name \vert{}\vert{} ''}" data-idx="${i}" data-field="name" class="space-input"></td>
-            <td><input type="number" min="-7" max="7" step="0.01" value="${sbu.xVal !== undefined ? sbu.xVal : 3.0}" data-idx="${i}" data-field="xVal" class="space-input"></td>
-            <td><input type="number" min="-7" max="7" step="0.01" value="${sbu.yVal !== undefined ? sbu.yVal : 3.0}" data-idx="${i}" data-field="yVal" class="space-input"></td>
-            <td><input type="number" min="10" max="100" value="${sbu.size \vert{}\vert{} 30}" data-idx="${i}" data-field="size" class="space-input"></td>
-            <td><input type="color" value="${sbu.color \vert{}\vert{} '#9c27b0'}" data-idx="${i}" data-field="color" class="space-input"></td>
-            <td><select data-idx="${i}" data-field="pos" class="space-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
+            <td><input type="text" value="${nm}" data-idx="${i}" data-field="name" class="space-input"></td>
+            <td><input type="number" min="-7" max="7" step="0.01" value="${xV}" data-idx="${i}" data-field="xVal" class="space-input"></td>
+            <td><input type="number" min="-7" max="7" step="0.01" value="${yV}" data-idx="${i}" data-field="yVal" class="space-input"></td>
+            <td><input type="number" min="10" max="100" value="${sz}" data-idx="${i}" data-field="size" class="space-input"></td>
+            <td><input type="color" value="${col}" data-idx="${i}" data-field="color" class="space-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="space-input">
+                <option value="top" ${sTop}>Top</option>
+                <option value="bottom" ${sBot}>Bot</option>
+                <option value="left" ${sLft}>Left</option>
+                <option value="right" ${sRgt}>Right</option>
+            </select></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -220,24 +266,22 @@ function renderSpaceChart() {
     const svgOverlay = document.getElementById('space-svg-overlay');
     plotArea.innerHTML = '';
     
-    // Setup Axis Ticks
     const ticksContainer = document.getElementById('space-ticks');
     if (ticksContainer.innerHTML === '') {
         let ticks = '';
         for(let i = -7; i <= 7; i++) {
             if(i === 0) continue;
-            const pos = 50 + (i / 14) * 100;
-            ticks += `<div class="space-tick-x" style="left: ${pos}%;"></div>`;
-            ticks += `<div class="space-tick-label-x" style="left: ${pos}\%;">${i}</div>`;
+            const posPct = 50 + (i / 14) * 100;
+            ticks += `<div class="space-tick-x" style="left: ${posPct}%;"></div>`;
+            ticks += `<div class="space-tick-label-x" style="left: ${posPct}\%;">${i}</div>`;
             
-            const topPos = 50 - (i / 14) * 100;
-            ticks += `<div class="space-tick-y" style="top: ${topPos}%;"></div>`;
-            ticks += `<div class="space-tick-label-y" style="top: ${topPos}\%;">${i}</div>`;
+            const topPosPct = 50 - (i / 14) * 100;
+            ticks += `<div class="space-tick-y" style="top: ${topPosPct}%;"></div>`;
+            ticks += `<div class="space-tick-label-y" style="top: ${topPosPct}\%;">${i}</div>`;
         }
         ticksContainer.innerHTML = ticks;
     }
 
-    // Build directional SVG arrows
     let svgHtml = ``;
     spaceData.forEach((sbu, i) => {
         const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
@@ -253,7 +297,6 @@ function renderSpaceChart() {
         const xVal = Math.max(-7, Math.min(7, sbu.xVal !== undefined ? sbu.xVal : 3.0)); 
         const yVal = Math.max(-7, Math.min(7, sbu.yVal !== undefined ? sbu.yVal : 3.0));
         
-        // Scale conversion: center is 50%, range is 14 total units.
         const leftPct = 50 + (xVal / 14) * 100; 
         const topPct = 50 - (yVal / 14) * 100; 
         
@@ -266,7 +309,6 @@ function renderSpaceChart() {
         el.style.top = topPct + '%';
         
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
-        // Label defaults to a safe readable contrast
         label.style.color = '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
         label.style.backgroundColor = hexToRgba(sbu.color || "#9c27b0", 70);
@@ -304,15 +346,21 @@ function buildSMTable() {
     const tbody = document.getElementById('sm-tbody'); tbody.innerHTML = '';
     if (!smData.objectives || !smData.objectives.length) { tbody.innerHTML = '<tr><td colspan="3">No objectives added.</td></tr>'; return; }
     smData.objectives.forEach((obj, i) => {
+        const sFin = obj.perspective === 'fin' ? 'selected' : '';
+        const sCus = obj.perspective === 'cus' ? 'selected' : '';
+        const sInt = obj.perspective === 'int' ? 'selected' : '';
+        const sLrn = obj.perspective === 'lrn' ? 'selected' : '';
+        const txt = obj.text || '';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><select data-idx="${i}" data-field="perspective" class="sm-input">
-                <option value="fin" ${obj.perspective==='fin'?'selected':''}>Financial</option>
-                <option value="cus" ${obj.perspective==='cus'?'selected':''}>Customer</option>
-                <option value="int" ${obj.perspective==='int'?'selected':''}>Internal Business</option>
-                <option value="lrn" ${obj.perspective==='lrn'?'selected':''}>Learning & Growth</option>
+                <option value="fin" ${sFin}>Financial</option>
+                <option value="cus" ${sCus}>Customer</option>
+                <option value="int" ${sInt}>Internal Business</option>
+                <option value="lrn" ${sLrn}>Learning & Growth</option>
             </select></td>
-            <td><input type="text" value="${obj.text || ''}" data-idx="${i}" data-field="text" class="sm-input"></td>
+            <td><input type="text" value="${txt}" data-idx="${i}" data-field="text" class="sm-input"></td>
             <td><button class="btn-delete" data-idx="${i}" style="width: 100%;">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -406,13 +454,18 @@ if(document.getElementById('porters-toggle')) {
 function buildPortersTable() {
     const tbody = document.getElementById('porters-tbody'); tbody.innerHTML = '';
     portersData.forEach((force, i) => {
+        const idUp = force.id.toUpperCase();
+        const sLow = force.rating === 'Low' ? 'selected' : '';
+        const sMod = force.rating === 'Moderate' ? 'selected' : '';
+        const sHigh = force.rating === 'High' ? 'selected' : '';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="font-weight:bold; font-size:12px;">${force.id.toUpperCase()}</td>
+            <td style="font-weight:bold; font-size:12px;">${idUp}</td>
             <td><select data-idx="${i}" data-field="rating" class="porters-input">
-                <option value="Low" ${force.rating==='Low'?'selected':''}>Low</option>
-                <option value="Moderate" ${force.rating==='Moderate'?'selected':''}>Moderate</option>
-                <option value="High" ${force.rating==='High'?'selected':''}>High</option>
+                <option value="Low" ${sLow}>Low</option>
+                <option value="Moderate" ${sMod}>Moderate</option>
+                <option value="High" ${sHigh}>High</option>
             </select></td>
             <td><input type="color" value="${force.bg}" data-idx="${i}" data-field="bg" class="porters-input"></td>
             <td><input type="color" value="${force.color}" data-idx="${i}" data-field="color" class="porters-input"></td>
