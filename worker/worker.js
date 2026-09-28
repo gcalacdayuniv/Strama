@@ -81,18 +81,21 @@ export default {
             }
 
             // PROJECTS: Update Data
+            // NOTE: Ensure your backend D1 Schema `projects` table now has the `space_data` column mapping
+            // Schema: ID, User_ID, Name, GE_Data, GS_Data, SM_Data, Porters_Data, Space_Data, Updated_At
             if (path.startsWith('/api/projects/') && method === 'PUT') {
                 const projectId = path.split('/').pop();
-                const { name, ge_data, gs_data, sm_data, porters_data } = await request.json();
+                const { name, ge_data, gs_data, sm_data, porters_data, space_data } = await request.json();
                 
                 await env.DB.prepare(
-                    `UPDATE projects SET name = ?, ge_data = ?, gs_data = ?, sm_data = ?, porters_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`
+                    `UPDATE projects SET name = ?, ge_data = ?, gs_data = ?, sm_data = ?, porters_data = ?, space_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`
                 ).bind(
                     name, 
                     JSON.stringify(ge_data), 
                     JSON.stringify(gs_data), 
                     JSON.stringify(sm_data), 
                     JSON.stringify(porters_data), 
+                    JSON.stringify(space_data),
                     projectId, 
                     userId
                 ).run();
