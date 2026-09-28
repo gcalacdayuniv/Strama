@@ -12,7 +12,7 @@ const defaultPorters = [
     { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#4bc89e', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' },
     { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#2CC6D2', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' },
     { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#fbb321', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>' },
-    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#0caae9', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 1 0 7.75"></path></svg>' },
+    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#0caae9', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>' },
     { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#fa7902', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' }
 ];
 let portersData = JSON.parse(JSON.stringify(defaultPorters));
@@ -291,16 +291,22 @@ document.getElementById('sm-tbody').addEventListener('click', e => {
 });
 
 /* ================= PORTER'S 5 FORCES LOGIC ================= */
+if(document.getElementById('porters-toggle')) {
+    document.getElementById('porters-toggle').onclick = () => {
+        document.getElementById('porters-chart').classList.toggle('show-radar');
+    };
+}
+
 function buildPortersTable() {
     const tbody = document.getElementById('porters-tbody'); tbody.innerHTML = '';
     portersData.forEach((force, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="font-weight:bold; font-size:12px; text-align:left; padding-left:6px;">${force.id.toUpperCase()}</td>
+            <td style="font-weight:bold; font-size:12px;">${force.id.toUpperCase()}</td>
             <td><select data-idx="${i}" data-field="rating" class="porters-input">
-                <option value="Low" ${force.rating==='Low'?'selected':''}>Low (1)</option>
-                <option value="Moderate" ${force.rating==='Moderate'?'selected':''}>Moderate (3)</option>
-                <option value="High" ${force.rating==='High'?'selected':''}>High (5)</option>
+                <option value="Low" ${force.rating==='Low'?'selected':''}>Low</option>
+                <option value="Moderate" ${force.rating==='Moderate'?'selected':''}>Moderate</option>
+                <option value="High" ${force.rating==='High'?'selected':''}>High</option>
             </select></td>
             <td><input type="color" value="${force.bg}" data-idx="${i}" data-field="bg" class="porters-input"></td>
             <td><input type="color" value="${force.color}" data-idx="${i}" data-field="color" class="porters-input"></td>
@@ -308,110 +314,92 @@ function buildPortersTable() {
         tbody.appendChild(tr);
     });
 }
-
 function renderPortersChart() {
-    // 1. Render Figure 1: Structural Diagram
-    const diagramContainer = document.getElementById('porters-container-diagram');
-    diagramContainer.innerHTML = '';
+    const container = document.getElementById('porters-container'); container.innerHTML = '';
     portersData.forEach(force => {
-        const el = document.createElement('div');
-        el.className = `porters-force ${force.id}`;
-        el.style.backgroundColor = force.bg;
-        el.style.color = force.color;
-        el.innerHTML = `<div class="porters-icon">${force.icon || ''}</div><div class="porters-title">${force.title}</div><div class="porters-rating">${force.rating}</div>`;
-        diagramContainer.appendChild(el);
+        const el = document.createElement('div'); el.className = `porters-force ${force.id}`;
+        el.style.backgroundColor = force.bg; el.style.color = force.color;
+        el.innerHTML = `<div class="porters-icon">${force.icon}</div><div class="porters-title">${force.title}</div><div class="porters-rating">${force.rating}</div>`;
+        container.appendChild(el);
     });
-
-    // 2. Render Figure 2: Pentagonal Radar Chart
-    const radarContainer = document.getElementById('porters-container-radar');
-    radarContainer.innerHTML = '';
     
-    const ratingMap = { 'Low': 1, 'Moderate': 3, 'High': 5 };
-    const order = ['rivalry', 'entrants', 'substitutes', 'suppliers', 'consumers'];
-    const orderedData = order.map(id => portersData.find(d => d.id === id) || {id, title: id, rating: 'Moderate'});
+    renderPortersRadarChart();
+}
+function renderPortersRadarChart() {
+    const radarContainer = document.getElementById('porters-radar-container');
+    if (!radarContainer) return;
     
-    const svgSize = 600;
-    const center = svgSize / 2;
+    const size = 600;
+    const center = size / 2;
     const maxRadius = 200;
     
-    const angles = [
-        -Math.PI / 2,                           // Top (Rivalry)
-        -Math.PI / 2 + (2 * Math.PI / 5),       // Right-top (Entrants)
-        -Math.PI / 2 + (4 * Math.PI / 5),       // Right-bottom (Substitutes)
-        -Math.PI / 2 + (6 * Math.PI / 5),       // Left-bottom (Suppliers)
-        -Math.PI / 2 + (8 * Math.PI / 5)        // Left-top (Consumers)
-    ];
+    let svg = `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="font-family: sans-serif;">`;
     
-    let svgHTML = `<svg viewBox="0 0 ${svgSize} ${svgSize}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">`;
-    
-    // Draw Pentagonal Grid Levels
+    // Draw 5 concentric pentagons for grid levels
     for (let level = 1; level <= 5; level++) {
         const r = (maxRadius / 5) * level;
-        let points = '';
-        angles.forEach(angle => {
-            const x = center + r * Math.cos(angle);
-            const y = center + r * Math.sin(angle);
+        let points = "";
+        for (let i = 0; i < 5; i++) {
+            const angle = (Math.PI * 2 * i / 5);
+            const x = center + r * Math.sin(angle);
+            const y = center - r * Math.cos(angle);
             points += `${x},${y} `;
-        });
-        svgHTML += `<polygon points="${points.trim()}" fill="none" stroke="#d1d5db" stroke-width="1"/>`;
+        }
+        svg += `<polygon points="${points.trim()}" fill="none" stroke="#e2e8f0" stroke-width="1" />`;
         
-        if (level <= 5) {
-            svgHTML += `<text x="${center + 4}" y="${center - r + 12}" fill="#6b7280" font-size="11" font-family="Arial">${level}</text>`;
+        // Add rating markers (1-5) on the top axis line
+        if (level > 0) {
+            const textY = center - r;
+            svg += `<text x="${center}" y="${textY}" font-size="12" fill="#94a3b8" text-anchor="middle" dy="-4">${level}</text>`;
         }
     }
-    svgHTML += `<text x="${center + 4}" y="${center + 4}" fill="#6b7280" font-size="11" font-family="Arial">0</text>`;
     
-    // Axis Spokes
-    angles.forEach(angle => {
-        const x = center + maxRadius * Math.cos(angle);
-        const y = center + maxRadius * Math.sin(angle);
-        svgHTML += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="#d1d5db" stroke-width="1"/>`;
-    });
+    // Draw 5 spokes originating from the center
+    for (let i = 0; i < 5; i++) {
+        const angle = (Math.PI * 2 * i / 5);
+        const x = center + maxRadius * Math.sin(angle);
+        const y = center - maxRadius * Math.cos(angle);
+        svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1" />`;
+    }
     
-    // Data Points
-    let dataPoints = '';
-    orderedData.forEach((force, i) => {
-        const val = ratingMap[force.rating] || 3;
-        const r = (maxRadius / 5) * val;
-        const x = center + r * Math.cos(angles[i]);
-        const y = center + r * Math.sin(angles[i]);
+    // Map string ratings to numeric values
+    const ratingMap = { 'Low': 1, 'Moderate': 3, 'High': 5 };
+    // Maintain a consistent clock-wise mapping layout matching standard radar formats
+    const forceOrder = ['rivalry', 'substitutes', 'entrants', 'suppliers', 'consumers'];
+    
+    let dataPoints = "";
+    forceOrder.forEach((forceId, i) => {
+        const force = portersData.find(f => f.id === forceId);
+        const score = ratingMap[force.rating] || 1;
+        const r = (maxRadius / 5) * score;
+        const angle = (Math.PI * 2 * i / 5);
+        const x = center + r * Math.sin(angle);
+        const y = center - r * Math.cos(angle);
         dataPoints += `${x},${y} `;
+        
+        // Determine label coordinates placed further out radially
+        const lx = center + (maxRadius + 35) * Math.sin(angle);
+        const ly = center - (maxRadius + 20) * Math.cos(angle);
+        const titleClean = force.title.replace('<br>', ' ');
+        svg += `<text x="${lx}" y="${ly}" font-size="14" font-weight="bold" fill="#334155" text-anchor="middle" dominant-baseline="middle">${titleClean}</text>`;
     });
     
-    // Radar Line
-    svgHTML += `<polygon points="${dataPoints.trim()}" fill="none" stroke="#f97316" stroke-width="1.5"/>`;
+    // Draw radar dynamic payload polygon
+    svg += `<polygon points="${dataPoints.trim()}" fill="rgba(250, 121, 2, 0.15)" stroke="#fa7902" stroke-width="2" />`;
     
-    // Data Markers & Labels
-    orderedData.forEach((force, i) => {
-        const val = ratingMap[force.rating] || 3;
-        const r = (maxRadius / 5) * val;
-        const px = center + r * Math.cos(angles[i]);
-        const py = center + r * Math.sin(angles[i]);
-        
-        const crossSize = 4;
-        svgHTML += `<line x1="${px - crossSize}" y1="${py - crossSize}" x2="${px + crossSize}" y2="${py + crossSize}" stroke="#f97316" stroke-width="1.5"/>`;
-        svgHTML += `<line x1="${px - crossSize}" y1="${py + crossSize}" x2="${px + crossSize}" y2="${py - crossSize}" stroke="#f97316" stroke-width="1.5"/>`;
-        
-        let labelR = maxRadius + 20; 
-        let lx = center + labelR * Math.cos(angles[i]);
-        let ly = center + labelR * Math.sin(angles[i]);
-        
-        let anchor = "middle";
-        if (i === 1 || i === 2) { anchor = "start"; lx += 10; }
-        if (i === 3 || i === 4) { anchor = "end"; lx -= 10; }
-        if (i === 0) { ly -= 10; }
-        if (i === 2 || i === 3) { ly += 15; }
-        
-        let cleanTitle = force.title.replace(/<br>/g, ' ');
-        if (cleanTitle === "Rivalry Among Competing Firms") cleanTitle = "Competing Firms";
-        if (cleanTitle === "Potential Entry of New Competitors") cleanTitle = "New Competitors";
-        if (cleanTitle === "Potential Development of Substitute Products") cleanTitle = "Substitute Products";
-        
-        svgHTML += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" fill="#374151" font-size="12" font-family="Arial">${cleanTitle} (${force.rating})</text>`;
+    // Plot precise score dots at vertices
+    forceOrder.forEach((forceId, i) => {
+        const force = portersData.find(f => f.id === forceId);
+        const score = ratingMap[force.rating] || 1;
+        const r = (maxRadius / 5) * score;
+        const angle = (Math.PI * 2 * i / 5);
+        const x = center + r * Math.sin(angle);
+        const y = center - r * Math.cos(angle);
+        svg += `<circle cx="${x}" cy="${y}" r="5" fill="#fa7902" />`;
     });
     
-    svgHTML += `</svg>`;
-    radarContainer.innerHTML = svgHTML;
+    svg += `</svg>`;
+    radarContainer.innerHTML = svg;
 }
 
 document.getElementById('porters-reset').onclick = () => { portersData = JSON.parse(JSON.stringify(defaultPorters)); buildPortersTable(); renderPortersChart(); };
