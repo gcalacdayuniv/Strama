@@ -171,18 +171,8 @@
         .sm-lrn-header svg { fill: var(--sm-lrn-color); }
         .sm-lrn-content { background: var(--sm-lrn-light); }
 
-        /* Porters Specific */
-        .porters-chart-container { position: relative; width: 96%; aspect-ratio: 1 / 1; background: #ffffff; border-radius: 12px; margin: 0 auto; overflow: hidden; }
-        .porters-force { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; padding: 1cqi; transition: all 0.3s ease; }
-        .porters-force.rivalry { top: 34%; left: 34%; width: 32%; height: 32%; border-radius: 50%; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 4px solid #fff; }
-        .porters-force.substitutes { top: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); padding-bottom: 10%; z-index: 5; }
-        .porters-force.entrants { bottom: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(50% 0, 100% 25%, 100% 100%, 0 100%, 0 25%); padding-top: 10%; z-index: 5; }
-        .porters-force.suppliers { top: 34%; left: 0; width: 41%; height: 32%; clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%); padding-right: 10%; z-index: 5; }
-        .porters-force.consumers { top: 34%; right: 0; width: 41%; height: 32%; clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%); padding-left: 10%; z-index: 5; }
-        .porters-icon { width: 15%; height: 15%; margin-bottom: 1cqi; }
-        .porters-force.rivalry .porters-icon { width: 22%; height: 22%; margin-bottom: 1.5cqi; }
-        .porters-title { font-size: 2.1cqi; font-weight: bold; line-height: 1.25; margin-bottom: 1cqi; max-width: 90%; }
-        .porters-rating { font-size: 1.6cqi; font-weight: bold; padding: 0.4cqi 1cqi; border-radius: 2cqi; background: rgba(255, 255, 255, 0.25); text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Porters Specific Radar Map Container */
+        .porters-chart-container { position: relative; width: 100%; height: 100%; min-height: 500px; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 12px; margin: 0 auto; overflow: visible; padding: 20px; box-sizing: border-box;}
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -451,7 +441,7 @@
                         <h3>Porter's 5 Forces Settings</h3>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th style="width: 25%;">Force</th><th style="width: 25%;">Rating</th><th style="width: 25%;">Background Color</th><th style="width: 25%;">Text Color</th></tr></thead>
+                                <thead><tr><th style="width: 50%;">Force</th><th style="width: 50%;">Rating</th></tr></thead>
                                 <tbody id="porters-tbody"></tbody>
                             </table>
                         </div>
