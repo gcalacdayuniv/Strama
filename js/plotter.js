@@ -3,6 +3,7 @@ import { currentProjectId } from './projects.js';
 
 let geData = [];
 let gsData = [];
+let spaceData = [];
 let smData = {
     mission: "", vision: "", objectives: [],
     colors: { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" }
@@ -22,12 +23,13 @@ function hexToRgba(hex, alphaPercent) {
     hex = hex.replace(/^#/, '');
     if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
     const r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2)})`;
+    return `rgba(${r},${g}, ${b},${Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2)})`;
 }
 
 export function loadProjectIntoEditor(project) {
     geData = project.ge_data ? JSON.parse(project.ge_data) : [];
     gsData = project.gs_data ? JSON.parse(project.gs_data) : [];
+    spaceData = project.space_data ? JSON.parse(project.space_data) : [];
     smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" }};
     portersData = project.porters_data ? JSON.parse(project.porters_data) : JSON.parse(JSON.stringify(defaultPorters));
     
@@ -38,7 +40,7 @@ export async function saveCurrentProject() {
     try {
         const title = document.getElementById('editor-project-title').innerText;
         await request(`/projects/${currentProjectId}`, 'PUT', {
-            name: title, ge_data: geData, gs_data: gsData, sm_data: smData, porters_data: portersData
+            name: title, ge_data: geData, gs_data: gsData, space_data: spaceData, sm_data: smData, porters_data: portersData
         });
         alert('Project saved successfully');
     } catch (e) { alert(e.message); }
@@ -47,6 +49,7 @@ export async function saveCurrentProject() {
 function renderAll() {
     buildGETable(); renderGEChart();
     buildGSTable(); renderGSChart();
+    buildSpaceTable(); renderSpaceChart();
     buildSMTable(); renderSMChart(); updateSMUI();
     buildPortersTable(); renderPortersChart();
 }
@@ -65,7 +68,7 @@ function buildGETable() {
             <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="ge-input"></td>
             <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="ge-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
-            <td><input type="color" value="${sbu.labelBgColor || '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
+            <td><input type="color" value="${sbu.labelBgColor \vert{}\vert{} '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
             <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
@@ -141,14 +144,14 @@ function buildGSTable() {
     gsData.forEach((sbu, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${sbu.name || ''}" data-idx="${i}" data-field="name" class="gs-input"></td>
+            <td><input type="text" value="${sbu.name \vert{}\vert{} ''}" data-idx="${i}" data-field="name" class="gs-input"></td>
             <td><input type="number" min="0" max="9" step="0.01" value="${sbu.xVal !== undefined ? sbu.xVal : 4.5}" data-idx="${i}" data-field="xVal" class="gs-input"></td>
             <td><input type="number" min="0" max="9" step="0.01" value="${sbu.yVal !== undefined ? sbu.yVal : 4.5}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
-            <td><input type="number" min="10" max="100" value="${sbu.size || 30}" data-idx="${i}" data-field="size" class="gs-input"></td>
-            <td><input type="color" value="${sbu.color || '#1976d2'}" data-idx="${i}" data-field="color" class="gs-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.size \vert{}\vert{} 30}" data-idx="${i}" data-field="size" class="gs-input"></td>
+            <td><input type="color" value="${sbu.color \vert{}\vert{} '#1976d2'}" data-idx="${i}" data-field="color" class="gs-input"></td>
             <td><input type="number" min="0" max="100" value="${sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="gs-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
-            <td><input type="color" value="${sbu.labelBgColor || '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
+            <td><input type="color" value="${sbu.labelBgColor \vert{}\vert{} '#ffffff'}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
             <td><input type="number" min="0" max="100" value="${sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
@@ -191,6 +194,109 @@ document.getElementById('gs-tbody').addEventListener('click', e => {
 });
 ['gs-bg-color', 'gs-text-color', 'gs-line-color'].forEach(id => {
     document.getElementById(id).addEventListener('input', renderGSChart);
+});
+
+
+/* ================= SPACE MATRIX LOGIC ================= */
+function buildSpaceTable() {
+    const tbody = document.getElementById('space-tbody'); tbody.innerHTML = '';
+    if (!spaceData.length) { tbody.innerHTML = '<tr><td colspan="7">No Entities added.</td></tr>'; return; }
+    spaceData.forEach((sbu, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${sbu.name \vert{}\vert{} ''}" data-idx="${i}" data-field="name" class="space-input"></td>
+            <td><input type="number" min="-7" max="7" step="0.01" value="${sbu.xVal !== undefined ? sbu.xVal : 3.0}" data-idx="${i}" data-field="xVal" class="space-input"></td>
+            <td><input type="number" min="-7" max="7" step="0.01" value="${sbu.yVal !== undefined ? sbu.yVal : 3.0}" data-idx="${i}" data-field="yVal" class="space-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.size \vert{}\vert{} 30}" data-idx="${i}" data-field="size" class="space-input"></td>
+            <td><input type="color" value="${sbu.color \vert{}\vert{} '#9c27b0'}" data-idx="${i}" data-field="color" class="space-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="space-input"><option value="top" ${sbu.pos==='top'?'selected':''}>Top</option><option value="bottom" ${sbu.pos==='bottom'?'selected':''}>Bot</option><option value="left" ${sbu.pos==='left'?'selected':''}>Left</option><option value="right" ${sbu.pos==='right'?'selected':''}>Right</option></select></td>
+            <td><button class="btn-delete" data-idx="${i}">X</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderSpaceChart() {
+    const plotArea = document.getElementById('space-plot-area'); 
+    const svgOverlay = document.getElementById('space-svg-overlay');
+    plotArea.innerHTML = '';
+    
+    // Setup Axis Ticks
+    const ticksContainer = document.getElementById('space-ticks');
+    if (ticksContainer.innerHTML === '') {
+        let ticks = '';
+        for(let i = -7; i <= 7; i++) {
+            if(i === 0) continue;
+            const pos = 50 + (i / 14) * 100;
+            ticks += `<div class="space-tick-x" style="left: ${pos}%;"></div>`;
+            ticks += `<div class="space-tick-label-x" style="left: ${pos}\%;">${i}</div>`;
+            
+            const topPos = 50 - (i / 14) * 100;
+            ticks += `<div class="space-tick-y" style="top: ${topPos}%;"></div>`;
+            ticks += `<div class="space-tick-label-y" style="top: ${topPos}\%;">${i}</div>`;
+        }
+        ticksContainer.innerHTML = ticks;
+    }
+
+    // Build directional SVG arrows
+    let svgHtml = ``;
+    spaceData.forEach((sbu, i) => {
+        const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
+        svgHtml += `
+        <defs>
+            <marker id="arrowhead-space-${i}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <polygon points="0 0, 8 4, 0 8" fill="${arrowColor}" />
+            </marker>
+        </defs>`;
+    });
+
+    spaceData.forEach((sbu, i) => {
+        const xVal = Math.max(-7, Math.min(7, sbu.xVal !== undefined ? sbu.xVal : 3.0)); 
+        const yVal = Math.max(-7, Math.min(7, sbu.yVal !== undefined ? sbu.yVal : 3.0));
+        
+        // Scale conversion: center is 50%, range is 14 total units.
+        const leftPct = 50 + (xVal / 14) * 100; 
+        const topPct = 50 - (yVal / 14) * 100; 
+        
+        const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
+        svgHtml += `<line x1="50%" y1="50%" x2="${leftPct}%" y2="${topPct}%" stroke="${arrowColor}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
+
+        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
+        el.style.backgroundColor = sbu.color || '#9c27b0';
+        el.style.left = leftPct + '%'; 
+        el.style.top = topPct + '%';
+        
+        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
+        // Label defaults to a safe readable contrast
+        label.style.color = '#ffffff'; 
+        label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
+        label.style.backgroundColor = hexToRgba(sbu.color || "#9c27b0", 70);
+        
+        el.appendChild(label); plotArea.appendChild(el);
+    });
+    
+    svgOverlay.innerHTML = `<svg width="100%" height="100%" style="overflow: visible;">${svgHtml}</svg>`;
+    
+    document.documentElement.style.setProperty('--space-bg', document.getElementById('space-bg-color').value);
+    document.documentElement.style.setProperty('--space-text-color', document.getElementById('space-text-color').value);
+    document.documentElement.style.setProperty('--space-line-color', document.getElementById('space-line-color').value);
+}
+document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#9c27b0", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
+document.getElementById('space-clear').onclick = () => { spaceData = []; buildSpaceTable(); renderSpaceChart(); };
+document.getElementById('space-tbody').addEventListener('input', e => { 
+    if(e.target.classList.contains('space-input')) { 
+        spaceData[e.target.dataset.idx][e.target.dataset.field] = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value; 
+        renderSpaceChart(); 
+    } 
+});
+document.getElementById('space-tbody').addEventListener('click', e => { 
+    if(e.target.classList.contains('btn-delete')) { 
+        spaceData.splice(e.target.dataset.idx, 1); 
+        buildSpaceTable(); 
+        renderSpaceChart(); 
+    } 
+});
+['space-bg-color', 'space-text-color', 'space-line-color'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderSpaceChart);
 });
 
 /* ================= STRATEGY MAP LOGIC ================= */
@@ -329,14 +435,12 @@ function renderPortersRadarChart() {
     const radarContainer = document.getElementById('porters-radar-container');
     if (!radarContainer) return;
     
-    // Increase viewBox size and reduce relative maxRadius to give labels more room
     const size = 800;
     const center = size / 2;
     const maxRadius = 240; 
     
     let svg = `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="font-family: sans-serif;">`;
     
-    // Draw 5 concentric pentagons for grid levels
     for (let level = 1; level <= 5; level++) {
         const r = (maxRadius / 5) * level;
         let points = "";
@@ -348,14 +452,12 @@ function renderPortersRadarChart() {
         }
         svg += `<polygon points="${points.trim()}" fill="none" stroke="#e2e8f0" stroke-width="1.5" />`;
         
-        // Add rating markers (1-5) on the top axis line
         if (level > 0) {
             const textY = center - r;
             svg += `<text x="${center}" y="${textY}" font-size="14" fill="#94a3b8" text-anchor="middle" dy="-6">${level}</text>`;
         }
     }
     
-    // Draw 5 spokes originating from the center
     for (let i = 0; i < 5; i++) {
         const angle = (Math.PI * 2 * i / 5);
         const x = center + maxRadius * Math.sin(angle);
@@ -363,7 +465,6 @@ function renderPortersRadarChart() {
         svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1.5" />`;
     }
     
-    // Map string ratings to numeric values
     const ratingMap = { 'Low': 1, 'Moderate': 3, 'High': 5 };
     const forceOrder = ['rivalry', 'substitutes', 'entrants', 'suppliers', 'consumers'];
     
@@ -377,11 +478,9 @@ function renderPortersRadarChart() {
         const y = center - r * Math.cos(angle);
         dataPoints += `${x},${y} `;
         
-        // Push text further out to prevent overlapping with radar lines
         const lx = center + (maxRadius + 60) * Math.sin(angle);
         const ly = center - (maxRadius + 45) * Math.cos(angle);
         
-        // Use <tspan> to wrap text using the <br> from the default data
         const titleLines = force.title.split('<br>');
         svg += `<text x="${lx}" y="${ly}" font-size="16" font-weight="bold" fill="#334155" text-anchor="middle" dominant-baseline="middle">`;
         titleLines.forEach((line, index) => {
@@ -391,10 +490,8 @@ function renderPortersRadarChart() {
         svg += `</text>`;
     });
     
-    // Draw radar dynamic payload polygon
     svg += `<polygon points="${dataPoints.trim()}" fill="rgba(250, 121, 2, 0.15)" stroke="#fa7902" stroke-width="2.5" />`;
     
-    // Plot precise score dots at vertices
     forceOrder.forEach((forceId, i) => {
         const force = portersData.find(f => f.id === forceId);
         const score = ratingMap[force.rating] || 1;
@@ -424,6 +521,9 @@ if(document.getElementById('ge-dl')) {
 }
 if(document.getElementById('gs-dl')) {
     document.getElementById('gs-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('gs-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'GS_Matrix.jpeg'; link.href = dataUrl; link.click(); });
+}
+if(document.getElementById('space-dl')) {
+    document.getElementById('space-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('space-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'SPACE_Matrix.jpeg'; link.href = dataUrl; link.click(); });
 }
 if(document.getElementById('sm-dl')) {
     document.getElementById('sm-dl').onclick = () => htmlToImage.toJpeg(document.getElementById('sm-chart'), dlConfig).then(dataUrl => { const link = document.createElement('a'); link.download = 'Strategy_Map.jpeg'; link.href = dataUrl; link.click(); });
