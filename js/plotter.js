@@ -329,9 +329,10 @@ function renderPortersRadarChart() {
     const radarContainer = document.getElementById('porters-radar-container');
     if (!radarContainer) return;
     
-    const size = 600;
+    // Increase viewBox size and reduce relative maxRadius to give labels more room
+    const size = 800;
     const center = size / 2;
-    const maxRadius = 200;
+    const maxRadius = 240; 
     
     let svg = `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="font-family: sans-serif;">`;
     
@@ -345,12 +346,12 @@ function renderPortersRadarChart() {
             const y = center - r * Math.cos(angle);
             points += `${x},${y} `;
         }
-        svg += `<polygon points="${points.trim()}" fill="none" stroke="#e2e8f0" stroke-width="1" />`;
+        svg += `<polygon points="${points.trim()}" fill="none" stroke="#e2e8f0" stroke-width="1.5" />`;
         
         // Add rating markers (1-5) on the top axis line
         if (level > 0) {
             const textY = center - r;
-            svg += `<text x="${center}" y="${textY}" font-size="12" fill="#94a3b8" text-anchor="middle" dy="-4">${level}</text>`;
+            svg += `<text x="${center}" y="${textY}" font-size="14" fill="#94a3b8" text-anchor="middle" dy="-6">${level}</text>`;
         }
     }
     
@@ -359,12 +360,11 @@ function renderPortersRadarChart() {
         const angle = (Math.PI * 2 * i / 5);
         const x = center + maxRadius * Math.sin(angle);
         const y = center - maxRadius * Math.cos(angle);
-        svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1" />`;
+        svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1.5" />`;
     }
     
     // Map string ratings to numeric values
     const ratingMap = { 'Low': 1, 'Moderate': 3, 'High': 5 };
-    // Maintain a consistent clock-wise mapping layout matching standard radar formats
     const forceOrder = ['rivalry', 'substitutes', 'entrants', 'suppliers', 'consumers'];
     
     let dataPoints = "";
@@ -377,15 +377,22 @@ function renderPortersRadarChart() {
         const y = center - r * Math.cos(angle);
         dataPoints += `${x},${y} `;
         
-        // Determine label coordinates placed further out radially
-        const lx = center + (maxRadius + 35) * Math.sin(angle);
-        const ly = center - (maxRadius + 20) * Math.cos(angle);
-        const titleClean = force.title.replace('<br>', ' ');
-        svg += `<text x="${lx}" y="${ly}" font-size="14" font-weight="bold" fill="#334155" text-anchor="middle" dominant-baseline="middle">${titleClean}</text>`;
+        // Push text further out to prevent overlapping with radar lines
+        const lx = center + (maxRadius + 60) * Math.sin(angle);
+        const ly = center - (maxRadius + 45) * Math.cos(angle);
+        
+        // Use <tspan> to wrap text using the <br> from the default data
+        const titleLines = force.title.split('<br>');
+        svg += `<text x="${lx}" y="${ly}" font-size="16" font-weight="bold" fill="#334155" text-anchor="middle" dominant-baseline="middle">`;
+        titleLines.forEach((line, index) => {
+            const dy = index === 0 ? ((titleLines.length - 1) * -10) : 20;
+            svg += `<tspan x="${lx}" dy="${dy}">${line.trim()}</tspan>`;
+        });
+        svg += `</text>`;
     });
     
     // Draw radar dynamic payload polygon
-    svg += `<polygon points="${dataPoints.trim()}" fill="rgba(250, 121, 2, 0.15)" stroke="#fa7902" stroke-width="2" />`;
+    svg += `<polygon points="${dataPoints.trim()}" fill="rgba(250, 121, 2, 0.15)" stroke="#fa7902" stroke-width="2.5" />`;
     
     // Plot precise score dots at vertices
     forceOrder.forEach((forceId, i) => {
@@ -395,7 +402,7 @@ function renderPortersRadarChart() {
         const angle = (Math.PI * 2 * i / 5);
         const x = center + r * Math.sin(angle);
         const y = center - r * Math.cos(angle);
-        svg += `<circle cx="${x}" cy="${y}" r="5" fill="#fa7902" />`;
+        svg += `<circle cx="${x}" cy="${y}" r="6" fill="#fa7902" />`;
     });
     
     svg += `</svg>`;
