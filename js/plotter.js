@@ -229,6 +229,12 @@ document.getElementById('gs-tbody').addEventListener('click', e => {
 
 
 /* ================= SPACE MATRIX LOGIC ================= */
+if(document.getElementById('space-toggle')) {
+    document.getElementById('space-toggle').onclick = () => {
+        document.getElementById('space-container').classList.toggle('show-reference');
+    };
+}
+
 function buildSpaceTable() {
     const tbody = document.getElementById('space-tbody'); tbody.innerHTML = '';
     if (!spaceData.length) { tbody.innerHTML = '<tr><td colspan="7">No Entities added.</td></tr>'; return; }
@@ -297,11 +303,22 @@ function renderSpaceChart() {
         const xVal = Math.max(-7, Math.min(7, sbu.xVal !== undefined ? sbu.xVal : 3.0)); 
         const yVal = Math.max(-7, Math.min(7, sbu.yVal !== undefined ? sbu.yVal : 3.0));
         
+        let ratio = 1;
+        const vectorLen = Math.sqrt(xVal * xVal + yVal * yVal);
+        if (vectorLen > 0) {
+            ratio = (vectorLen + 1.25) / vectorLen;
+        }
+        
+        const lineEndX = xVal * ratio;
+        const lineEndY = yVal * ratio;
+        const endXPct = 50 + (lineEndX / 14) * 100;
+        const endYPct = 50 - (lineEndY / 14) * 100;
+        
         const leftPct = 50 + (xVal / 14) * 100; 
         const topPct = 50 - (yVal / 14) * 100; 
         
         const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
-        svgHtml += `<line x1="50%" y1="50%" x2="${leftPct}%" y2="${topPct}%" stroke="${arrowColor}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
+        svgHtml += `<line x1="50%" y1="50%" x2="${endXPct}%" y2="${endYPct}%" stroke="${arrowColor}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
 
         const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
         el.style.backgroundColor = sbu.color || '#9c27b0';
