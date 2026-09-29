@@ -5,7 +5,7 @@ export default {
         const method = request.method;
 
         const corsHeaders = {
-            'Access-Control-Allow-Origin': '*', // Restrict this to your Pages domain in production
+            'Access-Control-Allow-Origin': '*', 
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             'Content-Type': 'application/json'
@@ -22,7 +22,6 @@ export default {
                 if (!email || !password) return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: corsHeaders });
                 
                 const userId = crypto.randomUUID();
-                // Note: In production, hash the password using Web Crypto API. Using plain for direct implementation parity.
                 await env.DB.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')
                     .bind(userId, email, password).run();
                 return new Response(JSON.stringify({ message: 'User created' }), { headers: corsHeaders });
@@ -83,14 +82,15 @@ export default {
             // PROJECTS: Update Data
             if (path.startsWith('/api/projects/') && method === 'PUT') {
                 const projectId = path.split('/').pop();
-                const { name, ge_data, gs_data, sm_data, porters_data } = await request.json();
+                const { name, ge_data, gs_data, space_data, sm_data, porters_data } = await request.json();
                 
                 await env.DB.prepare(
-                    `UPDATE projects SET name = ?, ge_data = ?, gs_data = ?, sm_data = ?, porters_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`
+                    `UPDATE projects SET name = ?, ge_data = ?, gs_data = ?, space_data = ?, sm_data = ?, porters_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`
                 ).bind(
                     name, 
                     JSON.stringify(ge_data), 
                     JSON.stringify(gs_data), 
+                    JSON.stringify(space_data), 
                     JSON.stringify(sm_data), 
                     JSON.stringify(porters_data), 
                     projectId, 
