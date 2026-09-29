@@ -4,26 +4,27 @@ import { currentProjectId } from './projects.js';
 let entitiesData = [];
 let spaceData = [];
 
-// Matrix Theme Configurations (stored permanently inside gs_data column slot)
+// Matrix Theme Configurations
 let appThemes = {
-    ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00' },
-    gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
-    space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+    ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00', custom: {} },
+    gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315', custom: {} },
+    space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315', custom: {} },
     sm: { preset: 'orange' },
-    porters: { preset: 'orange' }
+    porters: { preset: 'orange', custom: [] }
 };
 
 let smData = {
     mission: "", vision: "", objectives: [],
-    colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }
+    colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" },
+    customColors: {}
 };
 
 const defaultPorters = [
-    { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#ff9800', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' },
-    { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#ffb74d', color: '#212121', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' },
-    { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#f57c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>' },
-    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#fb8c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>' },
-    { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#e65100', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' }
+    { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#ff9800', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>' },
+    { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#ffb74d', color: '#212121', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>' },
+    { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#f57c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg>' },
+    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#fb8c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>' },
+    { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#e65100', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>' }
 ];
 let portersData = JSON.parse(JSON.stringify(defaultPorters));
 
@@ -38,20 +39,25 @@ function hexToRgba(hex, alphaPercent) {
 export function loadProjectIntoEditor(project) {
     let rawGE = project.ge_data ? JSON.parse(project.ge_data) : [];
     
-    // Determine if gs_data carries our appThemes object vs legacy array mapping
     let rawGS = project.gs_data ? JSON.parse(project.gs_data) : [];
     if (!Array.isArray(rawGS) && rawGS.ge) {
         appThemes = rawGS;
         rawGS = [];
     } else {
         appThemes = {
-            ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00' },
-            gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
-            space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+            ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00', custom: {} },
+            gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315', custom: {} },
+            space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315', custom: {} },
             sm: { preset: 'orange' },
-            porters: { preset: 'orange' }
+            porters: { preset: 'orange', custom: [] }
         };
     }
+
+    if (!appThemes.ge.custom) appThemes.ge.custom = {};
+    if (!appThemes.gs.custom) appThemes.gs.custom = {};
+    if (!appThemes.space.custom) appThemes.space.custom = {};
+    if (!appThemes.porters) appThemes.porters = { preset: 'orange', custom: [] };
+    if (!appThemes.porters.custom) appThemes.porters.custom = [];
 
     entitiesData = rawGE.map((item, i) => {
         return {
@@ -65,9 +71,11 @@ export function loadProjectIntoEditor(project) {
     });
 
     spaceData = project.space_data ? JSON.parse(project.space_data) : [];
-    smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }};
+    smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }, customColors: {}};
     portersData = project.porters_data ? JSON.parse(project.porters_data) : JSON.parse(JSON.stringify(defaultPorters));
     
+    if(!smData.customColors) smData.customColors = {};
+
     applyThemesToUI();
     renderAll();
 }
@@ -211,6 +219,13 @@ document.getElementById('ge-theme').addEventListener('change', e => {
     } else if (e.target.value === 'bw') {
         appThemes.ge.invest = '#ffffff'; appThemes.ge.maintain = '#ffffff';
         appThemes.ge.divest = '#ffffff'; appThemes.ge.axis = '#000000';
+    } else if (e.target.value === 'custom') {
+        if (appThemes.ge.custom && Object.keys(appThemes.ge.custom).length > 0) {
+            appThemes.ge.invest = appThemes.ge.custom.invest || appThemes.ge.invest;
+            appThemes.ge.maintain = appThemes.ge.custom.maintain || appThemes.ge.maintain;
+            appThemes.ge.divest = appThemes.ge.custom.divest || appThemes.ge.divest;
+            appThemes.ge.axis = appThemes.ge.custom.axis || appThemes.ge.axis;
+        }
     }
     
     document.getElementById('ge-bg-invest').value = appThemes.ge.invest;
@@ -219,6 +234,7 @@ document.getElementById('ge-theme').addEventListener('change', e => {
     document.getElementById('ge-color-axis').value = appThemes.ge.axis;
     updateGECustomColors();
 });
+
 function updateGECustomColors() {
     const root = document.documentElement;
     if(appThemes.ge.preset === 'custom' || document.getElementById('ge-theme').value === 'custom') {
@@ -236,14 +252,17 @@ function updateGECustomColors() {
     root.style.setProperty('--ge-div-bg', appThemes.ge.divest);
     root.style.setProperty('--axis-color', appThemes.ge.axis);
 }
+
 ['ge-color-axis', 'ge-bg-invest', 'ge-bg-maintain', 'ge-bg-divest'].forEach(id => {
     document.getElementById(id).addEventListener('input', e => {
         document.getElementById('ge-theme').value = 'custom';
         appThemes.ge.preset = 'custom';
-        if(id === 'ge-color-axis') appThemes.ge.axis = e.target.value;
-        if(id === 'ge-bg-invest') appThemes.ge.invest = e.target.value;
-        if(id === 'ge-bg-maintain') appThemes.ge.maintain = e.target.value;
-        if(id === 'ge-bg-divest') appThemes.ge.divest = e.target.value;
+        if (!appThemes.ge.custom) appThemes.ge.custom = {};
+        
+        if(id === 'ge-color-axis') { appThemes.ge.axis = e.target.value; appThemes.ge.custom.axis = e.target.value; }
+        if(id === 'ge-bg-invest') { appThemes.ge.invest = e.target.value; appThemes.ge.custom.invest = e.target.value; }
+        if(id === 'ge-bg-maintain') { appThemes.ge.maintain = e.target.value; appThemes.ge.custom.maintain = e.target.value; }
+        if(id === 'ge-bg-divest') { appThemes.ge.divest = e.target.value; appThemes.ge.custom.divest = e.target.value; }
         updateGECustomColors();
     });
 });
@@ -306,6 +325,12 @@ document.getElementById('gs-theme').addEventListener('change', e => {
         appThemes.gs.bg = '#fff3e0'; appThemes.gs.text = '#212121'; appThemes.gs.line = '#d84315';
     } else if (e.target.value === 'bw') {
         appThemes.gs.bg = '#ffffff'; appThemes.gs.text = '#000000'; appThemes.gs.line = '#000000';
+    } else if (e.target.value === 'custom') {
+        if (appThemes.gs.custom && Object.keys(appThemes.gs.custom).length > 0) {
+            appThemes.gs.bg = appThemes.gs.custom.bg || appThemes.gs.bg;
+            appThemes.gs.text = appThemes.gs.custom.text || appThemes.gs.text;
+            appThemes.gs.line = appThemes.gs.custom.line || appThemes.gs.line;
+        }
     }
     document.getElementById('gs-bg-color').value = appThemes.gs.bg;
     document.getElementById('gs-text-color').value = appThemes.gs.text;
@@ -317,9 +342,11 @@ document.getElementById('gs-theme').addEventListener('change', e => {
     document.getElementById(id).addEventListener('input', e => {
         document.getElementById('gs-theme').value = 'custom';
         appThemes.gs.preset = 'custom';
-        if(id === 'gs-bg-color') appThemes.gs.bg = e.target.value;
-        if(id === 'gs-text-color') appThemes.gs.text = e.target.value;
-        if(id === 'gs-line-color') appThemes.gs.line = e.target.value;
+        if (!appThemes.gs.custom) appThemes.gs.custom = {};
+        
+        if(id === 'gs-bg-color') { appThemes.gs.bg = e.target.value; appThemes.gs.custom.bg = e.target.value; }
+        if(id === 'gs-text-color') { appThemes.gs.text = e.target.value; appThemes.gs.custom.text = e.target.value; }
+        if(id === 'gs-line-color') { appThemes.gs.line = e.target.value; appThemes.gs.custom.line = e.target.value; }
         renderGSChart();
     });
 });
@@ -458,6 +485,12 @@ document.getElementById('space-theme').addEventListener('change', e => {
         appThemes.space.bg = '#fff3e0'; appThemes.space.text = '#212121'; appThemes.space.line = '#d84315';
     } else if (e.target.value === 'bw') {
         appThemes.space.bg = '#ffffff'; appThemes.space.text = '#000000'; appThemes.space.line = '#000000';
+    } else if (e.target.value === 'custom') {
+        if (appThemes.space.custom && Object.keys(appThemes.space.custom).length > 0) {
+            appThemes.space.bg = appThemes.space.custom.bg || appThemes.space.bg;
+            appThemes.space.text = appThemes.space.custom.text || appThemes.space.text;
+            appThemes.space.line = appThemes.space.custom.line || appThemes.space.line;
+        }
     }
     document.getElementById('space-bg-color').value = appThemes.space.bg;
     document.getElementById('space-text-color').value = appThemes.space.text;
@@ -469,9 +502,11 @@ document.getElementById('space-theme').addEventListener('change', e => {
     document.getElementById(id).addEventListener('input', e => {
         document.getElementById('space-theme').value = 'custom';
         appThemes.space.preset = 'custom';
-        if(id === 'space-bg-color') appThemes.space.bg = e.target.value;
-        if(id === 'space-text-color') appThemes.space.text = e.target.value;
-        if(id === 'space-line-color') appThemes.space.line = e.target.value;
+        if (!appThemes.space.custom) appThemes.space.custom = {};
+        
+        if(id === 'space-bg-color') { appThemes.space.bg = e.target.value; appThemes.space.custom.bg = e.target.value; }
+        if(id === 'space-text-color') { appThemes.space.text = e.target.value; appThemes.space.custom.text = e.target.value; }
+        if(id === 'space-line-color') { appThemes.space.line = e.target.value; appThemes.space.custom.line = e.target.value; }
         renderSpaceChart();
     });
 });
@@ -583,6 +618,10 @@ document.getElementById('sm-theme').addEventListener('change', e => {
         smData.colors = { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" };
     } else if (e.target.value === 'bw') {
         smData.colors = { mvBg: "#ffffff", mvColor: "#000000", finBg: "#333333", finColor: "#ffffff", cusBg: "#555555", cusColor: "#ffffff", intBg: "#777777", intColor: "#ffffff", lrnBg: "#999999", lrnColor: "#ffffff" };
+    } else if (e.target.value === 'custom') {
+        if (smData.customColors && Object.keys(smData.customColors).length > 0) {
+            smData.colors = JSON.parse(JSON.stringify(smData.customColors));
+        }
     }
     updateSMUI();
 });
@@ -593,6 +632,10 @@ document.getElementById('sm-theme').addEventListener('change', e => {
         appThemes.sm.preset = 'custom';
         const key = id.replace('sm-', '').replace('-bg', 'Bg').replace('-color', 'Color');
         smData.colors[key] = e.target.value;
+        
+        if (!smData.customColors) smData.customColors = {};
+        smData.customColors[key] = e.target.value;
+        
         updateSMUI();
     });
 });
@@ -722,6 +765,13 @@ document.getElementById('porters-theme').addEventListener('change', e => {
     } else if (e.target.value === 'bw') {
         const palettes = ['#666666', '#999999', '#444444', '#777777', '#222222'];
         portersData.forEach((p, i) => { p.bg = palettes[i]; p.color = '#ffffff'; });
+    } else if (e.target.value === 'custom') {
+        if (appThemes.porters.custom && appThemes.porters.custom.length === 5) {
+            portersData.forEach((p, i) => { 
+                p.bg = appThemes.porters.custom[i].bg; 
+                p.color = appThemes.porters.custom[i].color; 
+            });
+        }
     }
     buildPortersTable();
     renderPortersChart();
@@ -734,11 +784,19 @@ document.getElementById('porters-reset').onclick = () => {
     buildPortersTable(); 
     renderPortersChart(); 
 };
+
 document.getElementById('porters-tbody').addEventListener('input', e => {
     if(e.target.classList.contains('porters-input')){
         document.getElementById('porters-theme').value = 'custom';
         appThemes.porters.preset = 'custom';
         portersData[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+        
+        if (!appThemes.porters.custom || appThemes.porters.custom.length < 5) {
+            appThemes.porters.custom = portersData.map(p => ({ bg: p.bg, color: p.color }));
+        } else {
+            appThemes.porters.custom[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+        }
+        
         renderPortersChart();
     }
 });
