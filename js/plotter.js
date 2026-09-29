@@ -3,6 +3,16 @@ import { currentProjectId } from './projects.js';
 
 let entitiesData = [];
 let spaceData = [];
+
+// Matrix Theme Configurations (stored permanently inside gs_data column slot)
+let appThemes = {
+    ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00' },
+    gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+    space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+    sm: { preset: 'orange' },
+    porters: { preset: 'orange' }
+};
+
 let smData = {
     mission: "", vision: "", objectives: [],
     colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }
@@ -17,10 +27,32 @@ const defaultPorters = [
 ];
 let portersData = JSON.parse(JSON.stringify(defaultPorters));
 
+function hexToRgba(hex, alphaPercent) {
+    if (!hex) return `rgba(255, 255, 255, ${alphaPercent / 100})`;
+    hex = hex.replace(/^#/, '');
+    if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    const r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r},${g}, ${b},${Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2)})`;
+}
+
 export function loadProjectIntoEditor(project) {
     let rawGE = project.ge_data ? JSON.parse(project.ge_data) : [];
-    let rawGS = project.gs_data ? JSON.parse(project.gs_data) : [];
     
+    // Determine if gs_data carries our appThemes object vs legacy array mapping
+    let rawGS = project.gs_data ? JSON.parse(project.gs_data) : [];
+    if (!Array.isArray(rawGS) && rawGS.ge) {
+        appThemes = rawGS;
+        rawGS = [];
+    } else {
+        appThemes = {
+            ge: { preset: 'orange', axis: '#d84315', invest: '#ffe0b2', maintain: '#ffb74d', divest: '#f57c00' },
+            gs: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+            space: { preset: 'orange', bg: '#fff3e0', text: '#212121', line: '#d84315' },
+            sm: { preset: 'orange' },
+            porters: { preset: 'orange' }
+        };
+    }
+
     entitiesData = rawGE.map((item, i) => {
         return {
             id: item.id || crypto.randomUUID(),
@@ -36,7 +68,30 @@ export function loadProjectIntoEditor(project) {
     smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }};
     portersData = project.porters_data ? JSON.parse(project.porters_data) : JSON.parse(JSON.stringify(defaultPorters));
     
+    applyThemesToUI();
     renderAll();
+}
+
+function applyThemesToUI() {
+    document.getElementById('ge-theme').value = appThemes.ge.preset;
+    document.getElementById('ge-color-axis').value = appThemes.ge.axis;
+    document.getElementById('ge-bg-invest').value = appThemes.ge.invest;
+    document.getElementById('ge-bg-maintain').value = appThemes.ge.maintain;
+    document.getElementById('ge-bg-divest').value = appThemes.ge.divest;
+    updateGECustomColors();
+
+    document.getElementById('gs-theme').value = appThemes.gs.preset;
+    document.getElementById('gs-bg-color').value = appThemes.gs.bg;
+    document.getElementById('gs-text-color').value = appThemes.gs.text;
+    document.getElementById('gs-line-color').value = appThemes.gs.line;
+    
+    document.getElementById('space-theme').value = appThemes.space.preset;
+    document.getElementById('space-bg-color').value = appThemes.space.bg;
+    document.getElementById('space-text-color').value = appThemes.space.text;
+    document.getElementById('space-line-color').value = appThemes.space.line;
+    
+    document.getElementById('sm-theme').value = appThemes.sm.preset;
+    document.getElementById('porters-theme').value = appThemes.porters.preset;
 }
 
 export async function saveCurrentProject() {
@@ -45,7 +100,7 @@ export async function saveCurrentProject() {
         await request(`/projects/${currentProjectId}`, 'PUT', {
             name: title, 
             ge_data: entitiesData, 
-            gs_data: [], 
+            gs_data: appThemes, 
             space_data: spaceData,
             sm_data: smData, 
             porters_data: portersData
@@ -103,7 +158,6 @@ document.getElementById('entities-tbody').addEventListener('click', e => {
     } 
 });
 
-
 /* ================= GE MCKINSEY LOGIC ================= */
 function buildGETable() {
     const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
@@ -136,7 +190,7 @@ function renderGEChart() {
         
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        label.style.backgroundColor = hexToRgba(sbu.color || '#f57c00', 70);
         
         el.appendChild(label); plotArea.appendChild(el);
     });
@@ -150,34 +204,46 @@ document.getElementById('ge-tbody').addEventListener('input', e => {
 });
 
 document.getElementById('ge-theme').addEventListener('change', e => {
-    const root = document.documentElement;
+    appThemes.ge.preset = e.target.value;
     if (e.target.value === 'orange') {
-        document.getElementById('ge-bg-invest').value = '#ffe0b2'; document.getElementById('ge-bg-maintain').value = '#ffb74d';
-        document.getElementById('ge-bg-divest').value = '#f57c00'; document.getElementById('ge-color-axis').value = '#d84315';
-        root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
-        root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
+        appThemes.ge.invest = '#ffe0b2'; appThemes.ge.maintain = '#ffb74d';
+        appThemes.ge.divest = '#f57c00'; appThemes.ge.axis = '#d84315';
     } else if (e.target.value === 'bw') {
-        document.getElementById('ge-bg-invest').value = '#ffffff'; document.getElementById('ge-bg-maintain').value = '#ffffff';
-        document.getElementById('ge-bg-divest').value = '#ffffff'; document.getElementById('ge-color-axis').value = '#000000';
-        root.style.setProperty('--grid-gap-color', '#000'); root.style.setProperty('--grid-border', '2px solid #000');
-        root.style.setProperty('--ge-inv-color', '#000'); root.style.setProperty('--ge-main-color', '#000'); root.style.setProperty('--ge-div-color', '#000');
+        appThemes.ge.invest = '#ffffff'; appThemes.ge.maintain = '#ffffff';
+        appThemes.ge.divest = '#ffffff'; appThemes.ge.axis = '#000000';
     }
+    
+    document.getElementById('ge-bg-invest').value = appThemes.ge.invest;
+    document.getElementById('ge-bg-maintain').value = appThemes.ge.maintain;
+    document.getElementById('ge-bg-divest').value = appThemes.ge.divest;
+    document.getElementById('ge-color-axis').value = appThemes.ge.axis;
     updateGECustomColors();
 });
 function updateGECustomColors() {
     const root = document.documentElement;
-    if(document.getElementById('ge-theme').value === 'custom') {
+    if(appThemes.ge.preset === 'custom' || document.getElementById('ge-theme').value === 'custom') {
+        root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
+        root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
+    } else if (appThemes.ge.preset === 'bw') {
+        root.style.setProperty('--grid-gap-color', '#000'); root.style.setProperty('--grid-border', '2px solid #000');
+        root.style.setProperty('--ge-inv-color', '#000'); root.style.setProperty('--ge-main-color', '#000'); root.style.setProperty('--ge-div-color', '#000');
+    } else {
         root.style.setProperty('--grid-gap-color', '#fff'); root.style.setProperty('--grid-border', 'none');
         root.style.setProperty('--ge-inv-color', '#212121'); root.style.setProperty('--ge-main-color', '#212121'); root.style.setProperty('--ge-div-color', '#fff');
     }
-    root.style.setProperty('--ge-inv-bg', document.getElementById('ge-bg-invest').value);
-    root.style.setProperty('--ge-main-bg', document.getElementById('ge-bg-maintain').value);
-    root.style.setProperty('--ge-div-bg', document.getElementById('ge-bg-divest').value);
-    root.style.setProperty('--axis-color', document.getElementById('ge-color-axis').value);
+    root.style.setProperty('--ge-inv-bg', appThemes.ge.invest);
+    root.style.setProperty('--ge-main-bg', appThemes.ge.maintain);
+    root.style.setProperty('--ge-div-bg', appThemes.ge.divest);
+    root.style.setProperty('--axis-color', appThemes.ge.axis);
 }
 ['ge-color-axis', 'ge-bg-invest', 'ge-bg-maintain', 'ge-bg-divest'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
+    document.getElementById(id).addEventListener('input', e => {
         document.getElementById('ge-theme').value = 'custom';
+        appThemes.ge.preset = 'custom';
+        if(id === 'ge-color-axis') appThemes.ge.axis = e.target.value;
+        if(id === 'ge-bg-invest') appThemes.ge.invest = e.target.value;
+        if(id === 'ge-bg-maintain') appThemes.ge.maintain = e.target.value;
+        if(id === 'ge-bg-divest') appThemes.ge.divest = e.target.value;
         updateGECustomColors();
     });
 });
@@ -216,14 +282,14 @@ function renderGSChart() {
         
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        label.style.backgroundColor = hexToRgba(sbu.color || '#f57c00', 70);
         
         el.appendChild(label); plotArea.appendChild(el);
     });
     
-    document.documentElement.style.setProperty('--gs-bg', document.getElementById('gs-bg-color').value);
-    document.documentElement.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
-    document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
+    document.documentElement.style.setProperty('--gs-bg', appThemes.gs.bg);
+    document.documentElement.style.setProperty('--gs-text-color', appThemes.gs.text);
+    document.documentElement.style.setProperty('--gs-line-color', appThemes.gs.line);
 }
 
 document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
@@ -235,25 +301,28 @@ document.getElementById('gs-tbody').addEventListener('input', e => {
 });
 
 document.getElementById('gs-theme').addEventListener('change', e => {
+    appThemes.gs.preset = e.target.value;
     if (e.target.value === 'orange') {
-        document.getElementById('gs-bg-color').value = '#fff3e0';
-        document.getElementById('gs-text-color').value = '#212121';
-        document.getElementById('gs-line-color').value = '#d84315';
+        appThemes.gs.bg = '#fff3e0'; appThemes.gs.text = '#212121'; appThemes.gs.line = '#d84315';
     } else if (e.target.value === 'bw') {
-        document.getElementById('gs-bg-color').value = '#ffffff';
-        document.getElementById('gs-text-color').value = '#000000';
-        document.getElementById('gs-line-color').value = '#000000';
+        appThemes.gs.bg = '#ffffff'; appThemes.gs.text = '#000000'; appThemes.gs.line = '#000000';
     }
+    document.getElementById('gs-bg-color').value = appThemes.gs.bg;
+    document.getElementById('gs-text-color').value = appThemes.gs.text;
+    document.getElementById('gs-line-color').value = appThemes.gs.line;
     renderGSChart();
 });
 
 ['gs-bg-color', 'gs-text-color', 'gs-line-color'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
+    document.getElementById(id).addEventListener('input', e => {
         document.getElementById('gs-theme').value = 'custom';
+        appThemes.gs.preset = 'custom';
+        if(id === 'gs-bg-color') appThemes.gs.bg = e.target.value;
+        if(id === 'gs-text-color') appThemes.gs.text = e.target.value;
+        if(id === 'gs-line-color') appThemes.gs.line = e.target.value;
         renderGSChart();
     });
 });
-
 
 /* ================= SPACE MATRIX LOGIC ================= */
 if(document.getElementById('space-toggle')) {
@@ -355,16 +424,16 @@ function renderSpaceChart() {
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        label.style.backgroundColor = hexToRgba(sbu.color || '#f57c00', 70);
         
         el.appendChild(label); plotArea.appendChild(el);
     });
     
     svgOverlay.innerHTML = `<svg width="100%" height="100%" style="overflow: visible;">${svgHtml}</svg>`;
     
-    document.documentElement.style.setProperty('--space-bg', document.getElementById('space-bg-color').value);
-    document.documentElement.style.setProperty('--space-text-color', document.getElementById('space-text-color').value);
-    document.documentElement.style.setProperty('--space-line-color', document.getElementById('space-line-color').value);
+    document.documentElement.style.setProperty('--space-bg', appThemes.space.bg);
+    document.documentElement.style.setProperty('--space-text-color', appThemes.space.text);
+    document.documentElement.style.setProperty('--space-line-color', appThemes.space.line);
 }
 
 document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#f57c00", labelColor: "#ffffff", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
@@ -384,21 +453,25 @@ document.getElementById('space-tbody').addEventListener('click', e => {
 });
 
 document.getElementById('space-theme').addEventListener('change', e => {
+    appThemes.space.preset = e.target.value;
     if (e.target.value === 'orange') {
-        document.getElementById('space-bg-color').value = '#fff3e0';
-        document.getElementById('space-text-color').value = '#212121';
-        document.getElementById('space-line-color').value = '#d84315';
+        appThemes.space.bg = '#fff3e0'; appThemes.space.text = '#212121'; appThemes.space.line = '#d84315';
     } else if (e.target.value === 'bw') {
-        document.getElementById('space-bg-color').value = '#ffffff';
-        document.getElementById('space-text-color').value = '#000000';
-        document.getElementById('space-line-color').value = '#000000';
+        appThemes.space.bg = '#ffffff'; appThemes.space.text = '#000000'; appThemes.space.line = '#000000';
     }
+    document.getElementById('space-bg-color').value = appThemes.space.bg;
+    document.getElementById('space-text-color').value = appThemes.space.text;
+    document.getElementById('space-line-color').value = appThemes.space.line;
     renderSpaceChart();
 });
 
 ['space-bg-color', 'space-text-color', 'space-line-color'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
+    document.getElementById(id).addEventListener('input', e => {
         document.getElementById('space-theme').value = 'custom';
+        appThemes.space.preset = 'custom';
+        if(id === 'space-bg-color') appThemes.space.bg = e.target.value;
+        if(id === 'space-text-color') appThemes.space.text = e.target.value;
+        if(id === 'space-line-color') appThemes.space.line = e.target.value;
         renderSpaceChart();
     });
 });
@@ -505,6 +578,7 @@ document.getElementById('sm-tbody').addEventListener('click', e => {
 });
 
 document.getElementById('sm-theme').addEventListener('change', e => {
+    appThemes.sm.preset = e.target.value;
     if (e.target.value === 'orange') {
         smData.colors = { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" };
     } else if (e.target.value === 'bw') {
@@ -516,6 +590,7 @@ document.getElementById('sm-theme').addEventListener('change', e => {
 ['sm-mv-bg', 'sm-mv-color', 'sm-fin-bg', 'sm-fin-color', 'sm-cus-bg', 'sm-cus-color', 'sm-int-bg', 'sm-int-color', 'sm-lrn-bg', 'sm-lrn-color'].forEach(id => {
     document.getElementById(id).addEventListener('input', e => {
         document.getElementById('sm-theme').value = 'custom';
+        appThemes.sm.preset = 'custom';
         const key = id.replace('sm-', '').replace('-bg', 'Bg').replace('-color', 'Color');
         smData.colors[key] = e.target.value;
         updateSMUI();
@@ -621,7 +696,6 @@ function renderPortersRadarChart() {
         svg += `</text>`;
     });
     
-    // Use the primary Rivalry color for the radar fill and stroke
     const primaryRadarColor = portersData.find(f => f.id === 'rivalry').bg || '#f57c00';
     svg += `<polygon points="${dataPoints.trim()}" fill="${primaryRadarColor}25" stroke="${primaryRadarColor}" stroke-width="2.5" />`;
     
@@ -640,6 +714,7 @@ function renderPortersRadarChart() {
 }
 
 document.getElementById('porters-theme').addEventListener('change', e => {
+    appThemes.porters.preset = e.target.value;
     if (e.target.value === 'orange') {
         const palettes = ['#ff9800', '#ffb74d', '#f57c00', '#fb8c00', '#e65100'];
         const textColors = ['#ffffff', '#212121', '#ffffff', '#ffffff', '#ffffff'];
@@ -652,10 +727,17 @@ document.getElementById('porters-theme').addEventListener('change', e => {
     renderPortersChart();
 });
 
-document.getElementById('porters-reset').onclick = () => { portersData = JSON.parse(JSON.stringify(defaultPorters)); buildPortersTable(); renderPortersChart(); };
+document.getElementById('porters-reset').onclick = () => { 
+    portersData = JSON.parse(JSON.stringify(defaultPorters)); 
+    appThemes.porters.preset = 'orange'; 
+    document.getElementById('porters-theme').value = 'orange'; 
+    buildPortersTable(); 
+    renderPortersChart(); 
+};
 document.getElementById('porters-tbody').addEventListener('input', e => {
     if(e.target.classList.contains('porters-input')){
         document.getElementById('porters-theme').value = 'custom';
+        appThemes.porters.preset = 'custom';
         portersData[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
         renderPortersChart();
     }
