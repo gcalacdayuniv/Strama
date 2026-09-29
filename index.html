@@ -6,7 +6,6 @@
     <title>Strama Plotter: Modular</title>
     <link rel="icon" href="data:,">
     <script>
-        // Suppress Tailwind CDN production warning to maintain a clean console
         const origWarn = console.warn;
         console.warn = (...args) => {
             if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
@@ -18,43 +17,24 @@
     <style>
         :root {
             /* GE Theme */
-            --ge-inv-bg: #ffe0b2;
-            --ge-main-bg: #ffb74d;
-            --ge-div-bg: #f57c00;
-            --ge-inv-color: #212121;
-            --ge-main-color: #212121;
-            --ge-div-color: #fff;
+            --ge-inv-bg: #ffe0b2; --ge-main-bg: #ffb74d; --ge-div-bg: #f57c00;
+            --ge-inv-color: #212121; --ge-main-color: #212121; --ge-div-color: #fff;
             
             /* GS Theme */
-            --gs-bg: #e2ecc9; 
-            --gs-line-color: #212121;
-            --gs-text-color: #212121;
+            --gs-bg: #e2ecc9; --gs-line-color: #212121; --gs-text-color: #212121;
             
             /* SPACE Theme */
-            --space-bg: #ffffff;
-            --space-line-color: #000000;
-            --space-text-color: #212121;
+            --space-bg: #ffffff; --space-line-color: #000000; --space-text-color: #212121;
 
             /* Common */
-            --grid-gap-color: #fff;
-            --axis-color: #d84315;
-            --grid-border: none;
+            --grid-gap-color: #fff; --axis-color: #d84315; --grid-border: none;
             
             /* Strategy Map Theme */
-            --sm-mv-bg: #ffffff;
-            --sm-mv-color: #334155;
-            --sm-fin-bg: #1e293b;
-            --sm-fin-color: #ffffff;
-            --sm-fin-light: rgba(30, 41, 59, 0.1);
-            --sm-cus-bg: #0d9488;
-            --sm-cus-color: #ffffff;
-            --sm-cus-light: rgba(13, 148, 136, 0.1);
-            --sm-int-bg: #7c3aed;
-            --sm-int-color: #ffffff;
-            --sm-int-light: rgba(124, 58, 237, 0.1);
-            --sm-lrn-bg: #e11d48;
-            --sm-lrn-color: #ffffff;
-            --sm-lrn-light: rgba(225, 29, 72, 0.1);
+            --sm-mv-bg: #ffffff; --sm-mv-color: #334155;
+            --sm-fin-bg: #1e293b; --sm-fin-color: #ffffff; --sm-fin-light: rgba(30, 41, 59, 0.1);
+            --sm-cus-bg: #0d9488; --sm-cus-color: #ffffff; --sm-cus-light: rgba(13, 148, 136, 0.1);
+            --sm-int-bg: #7c3aed; --sm-int-color: #ffffff; --sm-int-light: rgba(124, 58, 237, 0.1);
+            --sm-lrn-bg: #e11d48; --sm-lrn-color: #ffffff; --sm-lrn-light: rgba(225, 29, 72, 0.1);
         }
         
         body { font-family: Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
@@ -93,12 +73,10 @@
         .btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; } .btn-delete:hover { background-color: #000; color: #fff; }
         .main-controls { display: flex; gap: 10px; margin-top: 15px; }
 
-        /* Chart Panels */
         .chart-panel { flex: 1 1 700px; max-width: 100%; position: relative; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); container-type: inline-size; overflow-x: auto; padding: 20px; box-sizing: border-box; }
         #ge-chart, #gs-chart, #porters-chart, #space-chart { aspect-ratio: 700 / 680; padding: 0; overflow: hidden; }
         #porters-chart { display: flex; align-items: center; justify-content: center; }
 
-        /* General Plotting Bubbles */
         .plot-area, .gs-plot-area, .space-plot-area { position: absolute; pointer-events: none; z-index: 5; }
         .bubble { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); pointer-events: auto; display: flex; align-items: center; justify-content: center; }
         .bubble-label { position: absolute; font-weight: bold; font-size: 1.7cqi; white-space: nowrap; padding: 0.4cqi 0.8cqi; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none; }
@@ -107,7 +85,6 @@
         .label-left { right: 100%; top: 50%; transform: translate(-8px, -50%); }
         .label-right { left: 100%; top: 50%; transform: translate(8px, -50%); }
 
-        /* GE Specific */
         .axis-title { position: absolute; color: var(--axis-color); font-weight: bold; font-size: 2.57cqi; }
         .axis-title.y-axis { left: 5.714%; top: 45.588%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; }
         .axis-title.x-axis { left: 25.714%; top: 91.176%; width: 65.428%; text-align: center; }
@@ -123,7 +100,6 @@
         .plot-area { left: 25.714%; top: 11.764%; width: 65.428%; height: 67.352%; }
         .ge-axes { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;}
         
-        /* GS Specific */
         .gs-container { background-color: var(--gs-bg); color: var(--gs-text-color); position: absolute; top: 2%; left: 2%; right: 2%; bottom: 2%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .gs-axis-label { position: absolute; font-size: 2.2cqi; color: var(--gs-text-color); background-color: var(--gs-bg); padding: 6px; z-index: 3; text-align: center; line-height: 1.2; }
         .gs-axis-top { top: 2%; left: 50%; transform: translateX(-50%); }
@@ -141,7 +117,6 @@
         .show-reference .gs-plot-area { display: none; }
         .show-reference .gs-quad-title { margin-bottom: 2cqi; }
 
-        /* SPACE Specific */
         .space-container { background-color: var(--space-bg); color: var(--space-text-color); position: absolute; top: 2%; left: 2%; right: 2%; bottom: 2%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); overflow: hidden; }
         .space-axis-vert { position: absolute; left: 50%; top: 5%; bottom: 5%; width: 2px; background: var(--space-line-color); transform: translateX(-50%); z-index: 2;}
         .space-axis-horiz { position: absolute; left: 5%; right: 5%; top: 50%; height: 2px; background: var(--space-line-color); transform: translateY(-50%); z-index: 2;}
@@ -166,59 +141,27 @@
         .show-reference .space-svg-overlay, .show-reference .space-plot-area { display: none; }
         .show-reference .space-quad-title { opacity: 1; font-size: 3.5cqi; margin-bottom: 1cqi; font-style: normal; font-weight: bold; color: #000000; }
 
-        /* Strategy Map Specific */
         .sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 800px; background: #fff; padding: 20px; box-sizing: border-box;}
-        
-        .sm-top-section { 
-            text-align: center; background: var(--sm-mv-bg); color: var(--sm-mv-color); padding: 15px; 
-            border-radius: 8px; border: 2px solid #e2e8f0; position: relative; z-index: 2;
-        }
+        .sm-top-section { text-align: center; background: var(--sm-mv-bg); color: var(--sm-mv-color); padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0; position: relative; z-index: 2;}
         .sm-top-section p { margin: 0; font-size: 0.95rem; }
-        
         .sm-perspectives-wrapper { display: flex; flex-direction: column; position: relative; width: 100%; flex-grow: 1;}
-        
-        .sm-level-arrow {
-            display: flex; justify-content: center; align-items: center; height: 35px; width: 100%; z-index: 1;
-        }
+        .sm-level-arrow { display: flex; justify-content: center; align-items: center; height: 35px; width: 100%; z-index: 1;}
         .sm-level-arrow svg { height: 28px; width: 28px; fill: #94a3b8; }
-        
         .sm-row { display: flex; width: 100%; min-height: 100px; position: relative; z-index: 2; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .sm-header {
-            width: 150px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 10px; position: relative; clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
-        }
+        .sm-header { width: 150px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; position: relative; clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%); }
         .sm-header svg { width: 36px; height: 36px; margin-bottom: 8px; }
         .sm-header span { font-weight: bold; font-size: 0.9rem; text-align: center; width: 80%; }
-        
         .sm-content { flex-grow: 1; padding: 15px; padding-left: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-radius: 0 6px 6px 0; }
-        .sm-box {
-            background: #fff; border: 1px solid rgba(0,0,0,0.1); padding: 12px 15px; border-radius: 6px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.85rem; color: #1e293b; font-weight: 500; text-align: center; max-width: 200px; flex: 1 1 auto;
-        }
+        .sm-box { background: #fff; border: 1px solid rgba(0,0,0,0.1); padding: 12px 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.85rem; color: #1e293b; font-weight: 500; text-align: center; max-width: 200px; flex: 1 1 auto; }
+        .sm-fin-header { background: var(--sm-fin-bg); color: var(--sm-fin-color); } .sm-fin-header svg { fill: var(--sm-fin-color); } .sm-fin-content { background: var(--sm-fin-light); }
+        .sm-cus-header { background: var(--sm-cus-bg); color: var(--sm-cus-color); } .sm-cus-header svg { fill: var(--sm-cus-color); } .sm-cus-content { background: var(--sm-cus-light); }
+        .sm-int-header { background: var(--sm-int-bg); color: var(--sm-int-color); } .sm-int-header svg { fill: var(--sm-int-color); } .sm-int-content { background: var(--sm-int-light); }
+        .sm-lrn-header { background: var(--sm-lrn-bg); color: var(--sm-lrn-color); } .sm-lrn-header svg { fill: var(--sm-lrn-color); } .sm-lrn-content { background: var(--sm-lrn-light); }
 
-        .sm-fin-header { background: var(--sm-fin-bg); color: var(--sm-fin-color); }
-        .sm-fin-header svg { fill: var(--sm-fin-color); }
-        .sm-fin-content { background: var(--sm-fin-light); }
-        
-        .sm-cus-header { background: var(--sm-cus-bg); color: var(--sm-cus-color); }
-        .sm-cus-header svg { fill: var(--sm-cus-color); }
-        .sm-cus-content { background: var(--sm-cus-light); }
-        
-        .sm-int-header { background: var(--sm-int-bg); color: var(--sm-int-color); }
-        .sm-int-header svg { fill: var(--sm-int-color); }
-        .sm-int-content { background: var(--sm-int-light); }
-        
-        .sm-lrn-header { background: var(--sm-lrn-bg); color: var(--sm-lrn-color); }
-        .sm-lrn-header svg { fill: var(--sm-lrn-color); }
-        .sm-lrn-content { background: var(--sm-lrn-light); }
-
-        /* Porters Specific */
         .porters-chart-container { position: relative; width: 96%; aspect-ratio: 1 / 1; background: #ffffff; border-radius: 12px; margin: 0 auto; overflow: hidden; }
         .porters-radar-container { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; }
-        
         .show-radar .porters-chart-container { display: none; }
         .show-radar .porters-radar-container { display: flex; }
-
         .porters-force { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; padding: 1cqi; transition: all 0.3s ease; }
         .porters-force.rivalry { top: 34%; left: 34%; width: 32%; height: 32%; border-radius: 50%; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 4px solid #fff; }
         .porters-force.substitutes { top: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); padding-bottom: 10%; z-index: 5; }
@@ -255,7 +198,7 @@
     </div>
 </div>
 
-<!-- SCREEN 2: Dashboard (Project List) -->
+<!-- SCREEN 2: Dashboard -->
 <div id="dashboard-screen" class="hidden min-h-screen">
     <header class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
         <h1 class="text-xl font-bold">My Projects</h1>
@@ -266,9 +209,7 @@
             <input type="text" id="new-project-name" placeholder="New Project Name" class="flex-1 p-2 border rounded">
             <button id="btn-create-project" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create</button>
         </div>
-        <div id="project-list" class="space-y-4">
-            <!-- Populated dynamically via JS -->
-        </div>
+        <div id="project-list" class="space-y-4"></div>
     </main>
 </div>
 
@@ -280,7 +221,8 @@
             <h2 id="editor-project-title" class="text-lg font-bold">Project Name</h2>
         </div>
         <div class="flex gap-2">
-            <button id="nav-ge" class="px-3 py-1 bg-white text-blue-600 rounded">GE Matrix</button>
+            <button id="nav-entities" class="px-3 py-1 bg-white text-blue-600 rounded">Master Entities</button>
+            <button id="nav-ge" class="px-3 py-1 hover:bg-blue-700 rounded">GE Matrix</button>
             <button id="nav-gs" class="px-3 py-1 hover:bg-blue-700 rounded">GS Matrix</button>
             <button id="nav-space" class="px-3 py-1 hover:bg-blue-700 rounded">SPACE Matrix</button>
             <button id="nav-sm" class="px-3 py-1 hover:bg-blue-700 rounded">Strategy Map</button>
@@ -291,6 +233,28 @@
 
     <div class="flex-1 overflow-y-auto relative bg-gray-100">
         
+        <!-- VIEW: MASTER ENTITIES -->
+        <div class="view-container active h-full" id="view-entities">
+            <div class="main-wrapper h-full">
+                <div class="sidebar" style="flex: 1 1 100%; max-width: 800px; margin: 0 auto;">
+                    <div class="form-panel">
+                        <h3>Master Entities List (Applies to GE & GS Matrix)</h3>
+                        <p class="text-sm text-gray-600 mb-4">Define your divisions and SBUs here. The X, Y values and bubble sizes are plotted individually in the GE and GS matrix tabs.</p>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th style="width: 40%">Entity Name</th><th style="width: 25%">Bubble Color</th><th style="width: 25%">Text Color</th><th style="width: 10%"></th></tr></thead>
+                                <tbody id="entities-tbody"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add" id="entities-add">+ Add New Entity</button>
+                        <div class="main-controls">
+                            <button type="button" class="btn-clear" id="entities-clear" style="flex:1;">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- VIEW: GE MCKINSEY MATRIX -->
         <div class="view-container h-full" id="view-ge">
             <div class="main-wrapper h-full">
@@ -306,17 +270,15 @@
                         </table>
                     </div>
                     <div class="form-panel flex-1">
-                        <h3>Strategic Business Units (SBUs)</h3>
+                        <h3>GE Matrix Adjustments</h3>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th>Name</th><th>Industry</th><th>Strength</th><th>Size</th><th>Bubble Color</th><th>Text Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
+                                <thead><tr><th>Entity</th><th>Attr. (Y)</th><th>Strength (X)</th><th>Size</th><th>Label Pos</th></tr></thead>
                                 <tbody id="ge-tbody"></tbody>
                             </table>
                         </div>
-                        <button type="button" class="btn-add" id="ge-add">+ Add New SBU Line</button>
                         <div class="main-controls">
-                            <button type="button" class="btn-clear" id="ge-clear" style="flex:1;">Clear All Data</button>
-                            <button type="button" class="btn-download" id="ge-dl" style="flex:2;">Download Image</button>
+                            <button type="button" class="btn-download" id="ge-dl" style="flex:1;">Download Image</button>
                         </div>
                     </div>
                 </div>
@@ -355,18 +317,16 @@
                         </table>
                     </div>
                     <div class="form-panel flex-1">
-                        <h3>Entities / Divisions</h3>
+                        <h3>Grand Strategy Adjustments</h3>
                         <button type="button" class="btn-toggle" id="gs-toggle">Toggle Reference / Plot View</button>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th>Name</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Bubble Color</th><th>Text Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
+                                <thead><tr><th>Entity</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Label Pos</th></tr></thead>
                                 <tbody id="gs-tbody"></tbody>
                             </table>
                         </div>
-                        <button type="button" class="btn-add" id="gs-add">+ Add New Entity</button>
                         <div class="main-controls">
-                            <button type="button" class="btn-clear" id="gs-clear" style="flex:1;">Clear All</button>
-                            <button type="button" class="btn-download" id="gs-dl" style="flex:2;">Download Image</button>
+                            <button type="button" class="btn-download" id="gs-dl" style="flex:1;">Download Image</button>
                         </div>
                     </div>
                 </div>
@@ -391,7 +351,7 @@
         </div>
 
         <!-- VIEW: SPACE MATRIX -->
-        <div class="view-container active h-full" id="view-space">
+        <div class="view-container h-full" id="view-space">
             <div class="main-wrapper h-full">
                 <div class="sidebar">
                     <div class="form-panel">
@@ -505,10 +465,7 @@
                             <p id="sm-vision-display" style="margin-top: 5px;"><strong>Vision:</strong> <span></span></p>
                         </div>
                         <div class="sm-perspectives-wrapper">
-                            <!-- Arrow leading to Mission/Vision -->
                             <div class="sm-level-arrow"><svg viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                            
-                            <!-- Financial -->
                             <div class="sm-row">
                                 <div class="sm-header sm-fin-header">
                                     <svg viewBox="0 0 24 24"><path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z" /></svg>
@@ -516,11 +473,7 @@
                                 </div>
                                 <div class="sm-content sm-fin-content" id="sm-fin-content"></div>
                             </div>
-                            
-                            <!-- Arrow to Financial -->
                             <div class="sm-level-arrow"><svg viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                            
-                            <!-- Customer -->
                             <div class="sm-row">
                                 <div class="sm-header sm-cus-header">
                                     <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -528,11 +481,7 @@
                                 </div>
                                 <div class="sm-content sm-cus-content" id="sm-cus-content"></div>
                             </div>
-                            
-                            <!-- Arrow to Customer -->
                             <div class="sm-level-arrow"><svg viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                            
-                            <!-- Internal Business -->
                             <div class="sm-row">
                                 <div class="sm-header sm-int-header">
                                     <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49-.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
@@ -540,11 +489,7 @@
                                 </div>
                                 <div class="sm-content sm-int-content" id="sm-int-content"></div>
                             </div>
-                            
-                            <!-- Arrow to Internal -->
                             <div class="sm-level-arrow"><svg viewBox="0 0 24 24"><path d="M12 4l-8 8h6v8h4v-8h6z"/></svg></div>
-                            
-                            <!-- Learning and Growth -->
                             <div class="sm-row">
                                 <div class="sm-header sm-lrn-header">
                                     <svg viewBox="0 0 24 24"><path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/></svg>
