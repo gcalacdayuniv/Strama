@@ -16,27 +16,41 @@ export default {
         }
 
         try {
+            if (!env.DB) {
+                return new Response(JSON.stringify({ error: 'Database binding is missing. Please verify your wrangler.toml configuration.' }), { status: 500, headers: corsHeaders });
+            }
+
             // AUTH: Register
             if (path === '/api/register' && method === 'POST') {
-                const { email, password } = await request.json();
-                if (!email || !password) return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: corsHeaders });
+                const { username, email, phone_number, password } = await request.json();
+                if (!email || !password || !username) {
+                    return new Response(JSON.stringify({ error: 'Missing registration fields.' }), { status: 400, headers: corsHeaders });
+                }
                 
                 const userId = crypto.randomUUID();
-                await env.DB.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')
-                    .bind(userId, email, password).run();
-                return new Response(JSON.stringify({ message: 'User created' }), { headers: corsHeaders });
+                await env.DB.prepare('INSERT INTO users (id, username, email, phone_number, password_hash) VALUES (?, ?, ?, ?, ?)')
+                    .bind(userId, username, email, phone_number, password).run();
+                return new Response(JSON.stringify({ message: 'User successfully created.' }), { headers: corsHeaders });
             }
 
             // AUTH: Login
             if (path === '/api/login' && method === 'POST') {
-                const { email, password } = await request.json();
-                const user = await env.DB.prepare('SELECT id FROM users WHERE email = ? AND password_hash = ?')
-                    .bind(email, password).first();
+                const { identifier, password } = await request.json();
                 
-                if (!user) return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401, headers: corsHeaders });
+                if (!identifier || !password) {
+                    return new Response(JSON.stringify({ error: 'Missing login credentials.' }), { status: 400, headers: corsHeaders });
+                }
+
+                const user = await env.DB.prepare('SELECT id FROM users WHERE (email = ? OR username = ? OR phone_number = ?) AND password_hash = ?')
+                    .bind(identifier, identifier, identifier, password).first();
+                
+                if (!user) {
+                    return new Response(JSON.stringify({ error: 'Invalid user credentials.' }), { status: 401, headers: corsHeaders });
+                }
                 
                 const token = crypto.randomUUID();
-                const expiresAt = new Date(Date.now() + 86400000).toISOString(); // 1 day
+                const expiresAt = new Date(Date.now() + 86400000).toISOString(); 
+                
                 await env.DB.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)')
                     .bind(token, user.id, expiresAt).run();
                 
@@ -46,11 +60,16 @@ export default {
             // MIDDLEWARE: Validate Session
             const authHeader = request.headers.get('Authorization');
             const token = authHeader ? authHeader.split(' ')[1] : null;
-            if (!token) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+            if (!token) {
+                return new Response(JSON.stringify({ error: 'Unauthorized access.' }), { status: 401, headers: corsHeaders });
+            }
             
             const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ? AND expires_at > CURRENT_TIMESTAMP')
                 .bind(token).first();
-            if (!session) return new Response(JSON.stringify({ error: 'Invalid or expired session' }), { status: 401, headers: corsHeaders });
+                
+            if (!session) {
+                return new Response(JSON.stringify({ error: 'Invalid or expired session token.' }), { status: 401, headers: corsHeaders });
+            }
             
             const userId = session.user_id;
 
@@ -75,7 +94,9 @@ export default {
                 const projectId = path.split('/').pop();
                 const project = await env.DB.prepare('SELECT * FROM projects WHERE id = ? AND user_id = ?')
                     .bind(projectId, userId).first();
-                if (!project) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers: corsHeaders });
+                if (!project) {
+                    return new Response(JSON.stringify({ error: 'Project not found.' }), { status: 404, headers: corsHeaders });
+                }
                 return new Response(JSON.stringify(project), { headers: corsHeaders });
             }
 
@@ -96,20 +117,20 @@ export default {
                     projectId, 
                     userId
                 ).run();
-                return new Response(JSON.stringify({ message: 'Saved successfully' }), { headers: corsHeaders });
+                return new Response(JSON.stringify({ message: 'Project saved successfully.' }), { headers: corsHeaders });
             }
 
             // PROJECTS: Delete
             if (path.startsWith('/api/projects/') && method === 'DELETE') {
                 const projectId = path.split('/').pop();
                 await env.DB.prepare('DELETE FROM projects WHERE id = ? AND user_id = ?').bind(projectId, userId).run();
-                return new Response(JSON.stringify({ message: 'Deleted' }), { headers: corsHeaders });
+                return new Response(JSON.stringify({ message: 'Project deleted successfully.' }), { headers: corsHeaders });
             }
 
-            return new Response(JSON.stringify({ error: 'Route not found' }), { status: 404, headers: corsHeaders });
+            return new Response(JSON.stringify({ error: 'API route not found.' }), { status: 404, headers: corsHeaders });
 
         } catch (err) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+            return new Response(JSON.stringify({ error: err.message, stack: err.stack }), { status: 500, headers: corsHeaders });
         }
     }
 };
