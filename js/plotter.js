@@ -57,9 +57,10 @@ function renderAll() {
 /* ================= GE MCKINSEY LOGIC ================= */
 function buildGETable() {
     const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
-    if (!geData.length) { tbody.innerHTML = '<tr><td colspan="8">No SBUs added.</td></tr>'; return; }
+    if (!geData.length) { tbody.innerHTML = '<tr><td colspan="9">No SBUs added.</td></tr>'; return; }
     geData.forEach((sbu, i) => {
         const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
+        const lblCol = sbu.labelColor || '#ffffff';
         const sTop = sbu.pos === 'top' ? 'selected' : '';
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
         const sLft = sbu.pos === 'left' ? 'selected' : '';
@@ -72,6 +73,7 @@ function buildGETable() {
             <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
             <td><input type="number" min="10" max="100" value="${sbu.size}" data-idx="${i}" data-field="size" class="ge-input"></td>
             <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="ge-input"></td>
+            <td><input type="color" value="${lblCol}" data-idx="${i}" data-field="labelColor" class="ge-input"></td>
             <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="ge-input">
                 <option value="top" ${sTop}>Top</option>
@@ -93,7 +95,7 @@ function renderGEChart() {
         el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%'; el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
         
-        label.style.color = '#ffffff'; 
+        label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
         label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
         
@@ -101,7 +103,7 @@ function renderGEChart() {
     });
 }
 
-document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", bubbleOpacity: 100, pos: "top" }); buildGETable(); renderGEChart(); };
+document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", labelColor: "#ffffff", bubbleOpacity: 100, pos: "top" }); buildGETable(); renderGEChart(); };
 document.getElementById('ge-clear').onclick = () => { geData = []; buildGETable(); renderGEChart(); };
 document.getElementById('ge-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('ge-input')) { 
@@ -153,13 +155,14 @@ function updateGECustomColors() {
 /* ================= GRAND STRATEGY LOGIC ================= */
 function buildGSTable() {
     const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
-    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="8">No Entities added.</td></tr>'; return; }
+    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="9">No Entities added.</td></tr>'; return; }
     gsData.forEach((sbu, i) => {
         const nm = sbu.name || '';
         const xV = sbu.xVal !== undefined ? sbu.xVal : 4.5;
         const yV = sbu.yVal !== undefined ? sbu.yVal : 4.5;
         const sz = sbu.size || 30;
         const col = sbu.color || '#1976d2';
+        const lblCol = sbu.labelColor || '#ffffff';
         const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
         const sTop = sbu.pos === 'top' ? 'selected' : '';
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
@@ -173,6 +176,7 @@ function buildGSTable() {
             <td><input type="number" min="0" max="9" step="0.01" value="${yV}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
             <td><input type="number" min="10" max="100" value="${sz}" data-idx="${i}" data-field="size" class="gs-input"></td>
             <td><input type="color" value="${col}" data-idx="${i}" data-field="color" class="gs-input"></td>
+            <td><input type="color" value="${lblCol}" data-idx="${i}" data-field="labelColor" class="gs-input"></td>
             <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="gs-input">
                 <option value="top" ${sTop}>Top</option>
@@ -196,7 +200,7 @@ function renderGSChart() {
         el.style.top = (100 - ((yVal / 9) * 100)) + '%';
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
         
-        label.style.color = '#ffffff'; 
+        label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
         label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
         
@@ -207,7 +211,8 @@ function renderGSChart() {
     document.documentElement.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
     document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
 }
-document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", bubbleOpacity: 100, pos: "top" }); buildGSTable(); renderGSChart(); };
+
+document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", labelColor: "#ffffff", bubbleOpacity: 100, pos: "top" }); buildGSTable(); renderGSChart(); };
 document.getElementById('gs-clear').onclick = () => { gsData = []; buildGSTable(); renderGSChart(); };
 document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
 document.getElementById('gs-tbody').addEventListener('input', e => { 
@@ -223,8 +228,25 @@ document.getElementById('gs-tbody').addEventListener('click', e => {
         renderGSChart(); 
     } 
 });
+
+document.getElementById('gs-theme').addEventListener('change', e => {
+    if (e.target.value === 'default') {
+        document.getElementById('gs-bg-color').value = '#e2ecc9';
+        document.getElementById('gs-text-color').value = '#212121';
+        document.getElementById('gs-line-color').value = '#212121';
+    } else if (e.target.value === 'bw') {
+        document.getElementById('gs-bg-color').value = '#ffffff';
+        document.getElementById('gs-text-color').value = '#000000';
+        document.getElementById('gs-line-color').value = '#000000';
+    }
+    renderGSChart();
+});
+
 ['gs-bg-color', 'gs-text-color', 'gs-line-color'].forEach(id => {
-    document.getElementById(id).addEventListener('input', renderGSChart);
+    document.getElementById(id).addEventListener('input', () => {
+        document.getElementById('gs-theme').value = 'custom';
+        renderGSChart();
+    });
 });
 
 
@@ -237,13 +259,14 @@ if(document.getElementById('space-toggle')) {
 
 function buildSpaceTable() {
     const tbody = document.getElementById('space-tbody'); tbody.innerHTML = '';
-    if (!spaceData.length) { tbody.innerHTML = '<tr><td colspan="7">No Entities added.</td></tr>'; return; }
+    if (!spaceData.length) { tbody.innerHTML = '<tr><td colspan="8">No Entities added.</td></tr>'; return; }
     spaceData.forEach((sbu, i) => {
         const nm = sbu.name || '';
         const xV = sbu.xVal !== undefined ? sbu.xVal : 3.0;
         const yV = sbu.yVal !== undefined ? sbu.yVal : 3.0;
         const sz = sbu.size || 30;
         const col = sbu.color || '#9c27b0';
+        const lblCol = sbu.labelColor || '#ffffff';
         const sTop = sbu.pos === 'top' ? 'selected' : '';
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
         const sLft = sbu.pos === 'left' ? 'selected' : '';
@@ -256,6 +279,7 @@ function buildSpaceTable() {
             <td><input type="number" min="-7" max="7" step="0.01" value="${yV}" data-idx="${i}" data-field="yVal" class="space-input"></td>
             <td><input type="number" min="10" max="100" value="${sz}" data-idx="${i}" data-field="size" class="space-input"></td>
             <td><input type="color" value="${col}" data-idx="${i}" data-field="color" class="space-input"></td>
+            <td><input type="color" value="${lblCol}" data-idx="${i}" data-field="labelColor" class="space-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="space-input">
                 <option value="top" ${sTop}>Top</option>
                 <option value="bottom" ${sBot}>Bot</option>
@@ -326,7 +350,7 @@ function renderSpaceChart() {
         el.style.top = topPct + '%';
         
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
-        label.style.color = '#ffffff'; 
+        label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
         label.style.backgroundColor = hexToRgba(sbu.color || "#9c27b0", 70);
         
@@ -339,7 +363,8 @@ function renderSpaceChart() {
     document.documentElement.style.setProperty('--space-text-color', document.getElementById('space-text-color').value);
     document.documentElement.style.setProperty('--space-line-color', document.getElementById('space-line-color').value);
 }
-document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#9c27b0", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
+
+document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#9c27b0", labelColor: "#ffffff", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
 document.getElementById('space-clear').onclick = () => { spaceData = []; buildSpaceTable(); renderSpaceChart(); };
 document.getElementById('space-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('space-input')) { 
@@ -354,8 +379,25 @@ document.getElementById('space-tbody').addEventListener('click', e => {
         renderSpaceChart(); 
     } 
 });
+
+document.getElementById('space-theme').addEventListener('change', e => {
+    if (e.target.value === 'default') {
+        document.getElementById('space-bg-color').value = '#ffffff';
+        document.getElementById('space-text-color').value = '#212121';
+        document.getElementById('space-line-color').value = '#000000';
+    } else if (e.target.value === 'bw') {
+        document.getElementById('space-bg-color').value = '#ffffff';
+        document.getElementById('space-text-color').value = '#000000';
+        document.getElementById('space-line-color').value = '#000000';
+    }
+    renderSpaceChart();
+});
+
 ['space-bg-color', 'space-text-color', 'space-line-color'].forEach(id => {
-    document.getElementById(id).addEventListener('input', renderSpaceChart);
+    document.getElementById(id).addEventListener('input', () => {
+        document.getElementById('space-theme').value = 'custom';
+        renderSpaceChart();
+    });
 });
 
 /* ================= STRATEGY MAP LOGIC ================= */
@@ -453,8 +495,19 @@ document.getElementById('sm-tbody').addEventListener('click', e => {
         document.querySelector(`#sm-${field}-display span`).innerText = e.target.value;
     });
 });
+
+document.getElementById('sm-theme').addEventListener('change', e => {
+    if (e.target.value === 'default') {
+        smData.colors = { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" };
+    } else if (e.target.value === 'bw') {
+        smData.colors = { mvBg: "#ffffff", mvColor: "#000000", finBg: "#333333", finColor: "#ffffff", cusBg: "#555555", cusColor: "#ffffff", intBg: "#777777", intColor: "#ffffff", lrnBg: "#999999", lrnColor: "#ffffff" };
+    }
+    updateSMUI();
+});
+
 ['sm-mv-bg', 'sm-mv-color', 'sm-fin-bg', 'sm-fin-color', 'sm-cus-bg', 'sm-cus-color', 'sm-int-bg', 'sm-int-color', 'sm-lrn-bg', 'sm-lrn-color'].forEach(id => {
     document.getElementById(id).addEventListener('input', e => {
+        document.getElementById('sm-theme').value = 'custom';
         const key = id.replace('sm-', '').replace('-bg', 'Bg').replace('-color', 'Color');
         smData.colors[key] = e.target.value;
         updateSMUI();
