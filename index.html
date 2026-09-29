@@ -157,9 +157,14 @@
         .space-tick-label-y { position: absolute; left: calc(50% - 12px); transform: translate(-100%, -50%); font-size: 1.6cqi; font-weight: bold; color: var(--space-text-color);}
         .space-quadrants-container { position: absolute; left: 5%; right: 5%; top: 5%; bottom: 5%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; z-index: 1; pointer-events: none;}
         .space-quadrant { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .space-quad-title { font-size: 3.5cqi; font-weight: bold; opacity: 0.15; color: var(--space-text-color); }
+        .space-quad-title { font-size: 3.5cqi; font-weight: bold; opacity: 0.15; color: var(--space-text-color); transition: all 0.3s ease; }
+        .space-strat-list { font-size: 1.8cqi; line-height: 1.4; text-align: left; display: none; color: var(--space-text-color); pointer-events: auto; }
         .space-svg-overlay { position: absolute; left: 5%; right: 5%; top: 5%; bottom: 5%; width: 90%; height: 90%; pointer-events: none; z-index: 4; overflow: visible; }
         .space-plot-area { left: 5%; right: 5%; top: 5%; bottom: 5%; }
+        
+        .show-reference .space-strat-list { display: block; }
+        .show-reference .space-svg-overlay, .show-reference .space-plot-area, .show-reference .space-ticks-container { display: none; }
+        .show-reference .space-quad-title { opacity: 1; font-size: 2.5cqi; margin-bottom: 2cqi; font-style: italic; font-weight: normal; }
 
         /* Strategy Map Specific */
         .sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 800px; background: #fff; padding: 20px; box-sizing: border-box;}
@@ -287,7 +292,7 @@
     <div class="flex-1 overflow-y-auto relative bg-gray-100">
         
         <!-- VIEW: GE MCKINSEY MATRIX -->
-        <div class="view-container active h-full" id="view-ge">
+        <div class="view-container h-full" id="view-ge">
             <div class="main-wrapper h-full">
                 <div class="sidebar">
                     <div class="form-panel">
@@ -385,7 +390,7 @@
         </div>
 
         <!-- VIEW: SPACE MATRIX -->
-        <div class="view-container h-full" id="view-space">
+        <div class="view-container active h-full" id="view-space">
             <div class="main-wrapper h-full">
                 <div class="sidebar">
                     <div class="form-panel">
@@ -398,6 +403,7 @@
                     </div>
                     <div class="form-panel flex-1">
                         <h3>Entities / Directional Vectors</h3>
+                        <button type="button" class="btn-toggle" id="space-toggle">Toggle Reference / Plot View</button>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
                                 <thead><tr><th>Name</th><th>X (CA/IS)</th><th>Y (ES/FS)</th><th>Size</th><th>Bubble Color</th><th>Label Pos</th><th></th></tr></thead>
@@ -423,10 +429,22 @@
                         <div class="space-ticks-container" id="space-ticks"></div>
                         
                         <div class="space-quadrants-container">
-                            <div class="space-quadrant"><div class="space-quad-title">Conservative</div></div>
-                            <div class="space-quadrant"><div class="space-quad-title">Aggressive</div></div>
-                            <div class="space-quadrant"><div class="space-quad-title">Defensive</div></div>
-                            <div class="space-quadrant"><div class="space-quad-title">Competitive</div></div>
+                            <div class="space-quadrant">
+                                <div class="space-quad-title">Conservative</div>
+                                <div class="space-strat-list">1. Market penetration<br>2. Market development<br>3. Product development<br>4. Related diversification</div>
+                            </div>
+                            <div class="space-quadrant">
+                                <div class="space-quad-title">Aggressive</div>
+                                <div class="space-strat-list">1. Backward, forward, horizontal integration<br>2. Market penetration<br>3. Market development<br>4. Product development<br>5. Diversification</div>
+                            </div>
+                            <div class="space-quadrant">
+                                <div class="space-quad-title">Defensive</div>
+                                <div class="space-strat-list">1. Retrenchment<br>2. Divestiture<br>3. Liquidation</div>
+                            </div>
+                            <div class="space-quadrant">
+                                <div class="space-quad-title">Competitive</div>
+                                <div class="space-strat-list">1. Backward, forward, horizontal integration<br>2. Market penetration<br>3. Market development<br>4. Product development<br>5. Joint ventures</div>
+                            </div>
                         </div>
                         
                         <svg class="space-svg-overlay" id="space-svg-overlay"></svg>
