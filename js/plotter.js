@@ -1,8 +1,7 @@
 import { request } from './api.js';
 import { currentProjectId } from './projects.js';
 
-let geData = [];
-let gsData = [];
+let entitiesData = [];
 let spaceData = [];
 let smData = {
     mission: "", vision: "", objectives: [],
@@ -18,17 +17,22 @@ const defaultPorters = [
 ];
 let portersData = JSON.parse(JSON.stringify(defaultPorters));
 
-function hexToRgba(hex, alphaPercent) {
-    if (!hex) return `rgba(255, 255, 255, ${alphaPercent / 100})`;
-    hex = hex.replace(/^#/, '');
-    if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
-    const r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r},${g}, ${b},${Math.max(0, Math.min(1, alphaPercent / 100)).toFixed(2)})`;
-}
-
 export function loadProjectIntoEditor(project) {
-    geData = project.ge_data ? JSON.parse(project.ge_data) : [];
-    gsData = project.gs_data ? JSON.parse(project.gs_data) : [];
+    let rawGE = project.ge_data ? JSON.parse(project.ge_data) : [];
+    let rawGS = project.gs_data ? JSON.parse(project.gs_data) : [];
+    
+    // Legacy mapping support ensuring Master Entities alignment
+    entitiesData = rawGE.map((item, i) => {
+        return {
+            id: item.id || crypto.randomUUID(),
+            name: item.name || "SBU",
+            color: item.color || "#1976d2",
+            labelColor: item.labelColor || "#ffffff",
+            ge: item.ge || { attr: item.attr || 3.0, comp: item.comp || 3.0, size: item.size || 30, pos: item.pos || 'top' },
+            gs: item.gs || (rawGS[i] ? { xVal: rawGS[i].xVal || 4.5, yVal: rawGS[i].yVal || 4.5, size: rawGS[i].size || 30, pos: rawGS[i].pos || 'top' } : { xVal: 4.5, yVal: 4.5, size: 30, pos: 'top' })
+        };
+    });
+
     spaceData = project.space_data ? JSON.parse(project.space_data) : [];
     smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" }};
     portersData = project.porters_data ? JSON.parse(project.porters_data) : JSON.parse(JSON.stringify(defaultPorters));
@@ -40,13 +44,19 @@ export async function saveCurrentProject() {
     try {
         const title = document.getElementById('editor-project-title').innerText;
         await request(`/projects/${currentProjectId}`, 'PUT', {
-            name: title, ge_data: geData, gs_data: gsData, space_data: spaceData, sm_data: smData, porters_data: portersData
+            name: title, 
+            ge_data: entitiesData, 
+            gs_data: [], 
+            space_data: spaceData,
+            sm_data: smData, 
+            porters_data: portersData
         });
         alert('Project saved successfully');
     } catch (e) { alert(e.message); }
 }
 
 function renderAll() {
+    buildEntitiesTable();
     buildGETable(); renderGEChart();
     buildGSTable(); renderGSChart();
     buildSpaceTable(); renderSpaceChart();
@@ -54,67 +64,88 @@ function renderAll() {
     buildPortersTable(); renderPortersChart();
 }
 
+/* ================= MASTER ENTITIES LOGIC ================= */
+function buildEntitiesTable() {
+    const tbody = document.getElementById('entities-tbody'); tbody.innerHTML = '';
+    if (!entitiesData.length) { tbody.innerHTML = '<tr><td colspan="4">No Entities added.</td></tr>'; return; }
+    entitiesData.forEach((sbu, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${sbu.name}" data-idx="${i}" data-field="name" class="entities-input"></td>
+            <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="entities-input"></td>
+            <td><input type="color" value="${sbu.labelColor}" data-idx="${i}" data-field="labelColor" class="entities-input"></td>
+            <td><button class="btn-delete" data-idx="${i}">X</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+document.getElementById('entities-add').onclick = () => { 
+    entitiesData.push({ 
+        id: crypto.randomUUID(), name: "New Entity", color: "#1976d2", labelColor: "#ffffff", 
+        ge: { attr: 3.0, comp: 3.0, size: 30, pos: "top" }, 
+        gs: { xVal: 4.5, yVal: 4.5, size: 30, pos: "top" } 
+    }); 
+    buildEntitiesTable(); buildGETable(); buildGSTable(); renderGEChart(); renderGSChart(); 
+};
+document.getElementById('entities-clear').onclick = () => { 
+    entitiesData = []; 
+    buildEntitiesTable(); buildGETable(); buildGSTable(); renderGEChart(); renderGSChart(); 
+};
+document.getElementById('entities-tbody').addEventListener('input', e => { 
+    if(e.target.classList.contains('entities-input')) { 
+        entitiesData[e.target.dataset.idx][e.target.dataset.field] = e.target.value; 
+        buildGETable(); buildGSTable(); renderGEChart(); renderGSChart(); 
+    } 
+});
+document.getElementById('entities-tbody').addEventListener('click', e => { 
+    if(e.target.classList.contains('btn-delete')) { 
+        entitiesData.splice(e.target.dataset.idx, 1); 
+        buildEntitiesTable(); buildGETable(); buildGSTable(); renderGEChart(); renderGSChart(); 
+    } 
+});
+
+
 /* ================= GE MCKINSEY LOGIC ================= */
 function buildGETable() {
     const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
-    if (!geData.length) { tbody.innerHTML = '<tr><td colspan="9">No SBUs added.</td></tr>'; return; }
-    geData.forEach((sbu, i) => {
-        const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
-        const lblCol = sbu.labelColor || '#ffffff';
-        const sTop = sbu.pos === 'top' ? 'selected' : '';
-        const sBot = sbu.pos === 'bottom' ? 'selected' : '';
-        const sLft = sbu.pos === 'left' ? 'selected' : '';
-        const sRgt = sbu.pos === 'right' ? 'selected' : '';
-        
+    if (!entitiesData.length) { tbody.innerHTML = '<tr><td colspan="5">No Entities defined in Master List.</td></tr>'; return; }
+    entitiesData.forEach((sbu, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${sbu.name}" data-idx="${i}" data-field="name" class="ge-input"></td>
-            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.attr}" data-idx="${i}" data-field="attr" class="ge-input"></td>
-            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
-            <td><input type="number" min="10" max="100" value="${sbu.size}" data-idx="${i}" data-field="size" class="ge-input"></td>
-            <td><input type="color" value="${sbu.color}" data-idx="${i}" data-field="color" class="ge-input"></td>
-            <td><input type="color" value="${lblCol}" data-idx="${i}" data-field="labelColor" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="ge-input"></td>
+            <td class="font-bold p-2">${sbu.name}</td>
+            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.ge.attr}" data-idx="${i}" data-field="attr" class="ge-input"></td>
+            <td><input type="number" min="1.0" max="5.0" step="0.01" value="${sbu.ge.comp}" data-idx="${i}" data-field="comp" class="ge-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.ge.size}" data-idx="${i}" data-field="size" class="ge-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="ge-input">
-                <option value="top" ${sTop}>Top</option>
-                <option value="bottom" ${sBot}>Bot</option>
-                <option value="left" ${sLft}>Left</option>
-                <option value="right" ${sRgt}>Right</option>
+                <option value="top" ${sbu.ge.pos === 'top' ? 'selected' : ''}>Top</option>
+                <option value="bottom" ${sbu.ge.pos === 'bottom' ? 'selected' : ''}>Bot</option>
+                <option value="left" ${sbu.ge.pos === 'left' ? 'selected' : ''}>Left</option>
+                <option value="right" ${sbu.ge.pos === 'right' ? 'selected' : ''}>Right</option>
             </select></td>
-            <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 function renderGEChart() {
     const plotArea = document.getElementById('ge-plot-area'); plotArea.innerHTML = '';
-    geData.forEach((sbu) => {
-        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
-        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
-        const compVal = Math.max(1.0, Math.min(5.0, sbu.comp)); const attrVal = Math.max(1.0, Math.min(5.0, sbu.attr));
+    entitiesData.forEach((sbu) => {
+        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.ge.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
+        el.style.backgroundColor = sbu.color;
+        const compVal = Math.max(1.0, Math.min(5.0, sbu.ge.comp)); const attrVal = Math.max(1.0, Math.min(5.0, sbu.ge.attr));
         el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%'; el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
-        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
+        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.ge.pos || 'top'); label.textContent = sbu.name;
         
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
+        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
         
         el.appendChild(label); plotArea.appendChild(el);
     });
 }
 
-document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", labelColor: "#ffffff", bubbleOpacity: 100, pos: "top" }); buildGETable(); renderGEChart(); };
-document.getElementById('ge-clear').onclick = () => { geData = []; buildGETable(); renderGEChart(); };
 document.getElementById('ge-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('ge-input')) { 
-        geData[e.target.dataset.idx][e.target.dataset.field] = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value; 
-        renderGEChart(); 
-    } 
-});
-document.getElementById('ge-tbody').addEventListener('click', e => { 
-    if(e.target.classList.contains('btn-delete')) { 
-        geData.splice(e.target.dataset.idx, 1); 
-        buildGETable(); 
+        entitiesData[e.target.dataset.idx].ge[e.target.dataset.field] = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value; 
         renderGEChart(); 
     } 
 });
@@ -155,54 +186,38 @@ function updateGECustomColors() {
 /* ================= GRAND STRATEGY LOGIC ================= */
 function buildGSTable() {
     const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
-    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="9">No Entities added.</td></tr>'; return; }
-    gsData.forEach((sbu, i) => {
-        const nm = sbu.name || '';
-        const xV = sbu.xVal !== undefined ? sbu.xVal : 4.5;
-        const yV = sbu.yVal !== undefined ? sbu.yVal : 4.5;
-        const sz = sbu.size || 30;
-        const col = sbu.color || '#1976d2';
-        const lblCol = sbu.labelColor || '#ffffff';
-        const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
-        const sTop = sbu.pos === 'top' ? 'selected' : '';
-        const sBot = sbu.pos === 'bottom' ? 'selected' : '';
-        const sLft = sbu.pos === 'left' ? 'selected' : '';
-        const sRgt = sbu.pos === 'right' ? 'selected' : '';
-
+    if (!entitiesData.length) { tbody.innerHTML = '<tr><td colspan="5">No Entities defined in Master List.</td></tr>'; return; }
+    entitiesData.forEach((sbu, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${nm}" data-idx="${i}" data-field="name" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.01" value="${xV}" data-idx="${i}" data-field="xVal" class="gs-input"></td>
-            <td><input type="number" min="0" max="9" step="0.01" value="${yV}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
-            <td><input type="number" min="10" max="100" value="${sz}" data-idx="${i}" data-field="size" class="gs-input"></td>
-            <td><input type="color" value="${col}" data-idx="${i}" data-field="color" class="gs-input"></td>
-            <td><input type="color" value="${lblCol}" data-idx="${i}" data-field="labelColor" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${bOpac}" data-idx="${i}" data-field="bubbleOpacity" class="gs-input"></td>
+            <td class="font-bold p-2">${sbu.name}</td>
+            <td><input type="number" min="0" max="9" step="0.01" value="${sbu.gs.xVal}" data-idx="${i}" data-field="xVal" class="gs-input"></td>
+            <td><input type="number" min="0" max="9" step="0.01" value="${sbu.gs.yVal}" data-idx="${i}" data-field="yVal" class="gs-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.gs.size}" data-idx="${i}" data-field="size" class="gs-input"></td>
             <td><select data-idx="${i}" data-field="pos" class="gs-input">
-                <option value="top" ${sTop}>Top</option>
-                <option value="bottom" ${sBot}>Bot</option>
-                <option value="left" ${sLft}>Left</option>
-                <option value="right" ${sRgt}>Right</option>
+                <option value="top" ${sbu.gs.pos === 'top' ? 'selected' : ''}>Top</option>
+                <option value="bottom" ${sbu.gs.pos === 'bottom' ? 'selected' : ''}>Bot</option>
+                <option value="left" ${sbu.gs.pos === 'left' ? 'selected' : ''}>Left</option>
+                <option value="right" ${sbu.gs.pos === 'right' ? 'selected' : ''}>Right</option>
             </select></td>
-            <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 function renderGSChart() {
     const plotArea = document.getElementById('gs-plot-area'); plotArea.innerHTML = '';
-    gsData.forEach((sbu) => {
-        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
-        el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
-        const xVal = Math.max(0, Math.min(9, sbu.xVal !== undefined ? sbu.xVal : 4.5)); 
-        const yVal = Math.max(0, Math.min(9, sbu.yVal !== undefined ? sbu.yVal : 4.5));
+    entitiesData.forEach((sbu) => {
+        const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.gs.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
+        el.style.backgroundColor = sbu.color;
+        const xVal = Math.max(0, Math.min(9, sbu.gs.xVal !== undefined ? sbu.gs.xVal : 4.5)); 
+        const yVal = Math.max(0, Math.min(9, sbu.gs.yVal !== undefined ? sbu.gs.yVal : 4.5));
         el.style.left = ((xVal / 9) * 100) + '%'; 
         el.style.top = (100 - ((yVal / 9) * 100)) + '%';
-        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
+        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.gs.pos || 'top'); label.textContent = sbu.name;
         
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
+        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
         
         el.appendChild(label); plotArea.appendChild(el);
     });
@@ -212,19 +227,10 @@ function renderGSChart() {
     document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
 }
 
-document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", labelColor: "#ffffff", bubbleOpacity: 100, pos: "top" }); buildGSTable(); renderGSChart(); };
-document.getElementById('gs-clear').onclick = () => { gsData = []; buildGSTable(); renderGSChart(); };
 document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
 document.getElementById('gs-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('gs-input')) { 
-        gsData[e.target.dataset.idx][e.target.dataset.field] = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value; 
-        renderGSChart(); 
-    } 
-});
-document.getElementById('gs-tbody').addEventListener('click', e => { 
-    if(e.target.classList.contains('btn-delete')) { 
-        gsData.splice(e.target.dataset.idx, 1); 
-        buildGSTable(); 
+        entitiesData[e.target.dataset.idx].gs[e.target.dataset.field] = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value; 
         renderGSChart(); 
     } 
 });
@@ -314,11 +320,10 @@ function renderSpaceChart() {
 
     let svgHtml = ``;
     spaceData.forEach((sbu, i) => {
-        const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
         svgHtml += `
         <defs>
             <marker id="arrowhead-space-${i}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                <polygon points="0 0, 8 4, 0 8" fill="${arrowColor}" />
+                <polygon points="0 0, 8 4, 0 8" fill="${sbu.color || '#9c27b0'}" />
             </marker>
         </defs>`;
     });
@@ -341,8 +346,7 @@ function renderSpaceChart() {
         const leftPct = 50 + (xVal / 14) * 100; 
         const topPct = 50 - (yVal / 14) * 100; 
         
-        const arrowColor = hexToRgba(sbu.color || '#9c27b0', 80);
-        svgHtml += `<line x1="50%" y1="50%" x2="${endXPct}%" y2="${endYPct}%" stroke="${arrowColor}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
+        svgHtml += `<line x1="50%" y1="50%" x2="${endXPct}%" y2="${endYPct}%" stroke="${sbu.color || '#9c27b0'}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
 
         const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
         el.style.backgroundColor = sbu.color || '#9c27b0';
@@ -352,7 +356,7 @@ function renderSpaceChart() {
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
         label.style.color = sbu.labelColor || '#ffffff'; 
         label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
-        label.style.backgroundColor = hexToRgba(sbu.color || "#9c27b0", 70);
+        label.style.backgroundColor = 'rgba(0,0,0,0.6)';
         
         el.appendChild(label); plotArea.appendChild(el);
     });
@@ -462,10 +466,16 @@ function updateSMUI() {
     root.style.setProperty('--sm-int-bg', smData.colors.intBg); root.style.setProperty('--sm-int-color', smData.colors.intColor);
     root.style.setProperty('--sm-lrn-bg', smData.colors.lrnBg); root.style.setProperty('--sm-lrn-color', smData.colors.lrnColor);
     
-    root.style.setProperty('--sm-fin-light', hexToRgba(smData.colors.finBg, 12));
-    root.style.setProperty('--sm-cus-light', hexToRgba(smData.colors.cusBg, 12));
-    root.style.setProperty('--sm-int-light', hexToRgba(smData.colors.intBg, 12));
-    root.style.setProperty('--sm-lrn-light', hexToRgba(smData.colors.lrnBg, 12));
+    // Quick hex alpha for subtle backgrounds without relying on custom functions
+    function hexToRgbaLocal(hex, a) {
+        hex = hex.replace(/^#/, ''); if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+        return `rgba(${parseInt(hex.substring(0, 2), 16)},${parseInt(hex.substring(2, 4), 16)},${parseInt(hex.substring(4, 6), 16)},${a})`;
+    }
+    
+    root.style.setProperty('--sm-fin-light', hexToRgbaLocal(smData.colors.finBg, 0.12));
+    root.style.setProperty('--sm-cus-light', hexToRgbaLocal(smData.colors.cusBg, 0.12));
+    root.style.setProperty('--sm-int-light', hexToRgbaLocal(smData.colors.intBg, 0.12));
+    root.style.setProperty('--sm-lrn-light', hexToRgbaLocal(smData.colors.lrnBg, 0.12));
 }
 
 document.getElementById('sm-add').onclick = () => { 
