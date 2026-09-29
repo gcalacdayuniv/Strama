@@ -63,13 +63,13 @@
         table.sbu-table th, table.sbu-table td { border: 1px solid #ddd; padding: 4px 2px; text-align: center; vertical-align: middle; }
         table.sbu-table th { background-color: #f5f5f5; font-weight: bold; padding: 8px 4px; }
         table.sbu-table input[type="text"], table.sbu-table input[type="number"], table.sbu-table select { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid transparent; border-radius: 4px; background-color: #fafafa; }
-        table.sbu-table input:focus, table.sbu-table select:focus { border: 1px solid #d84315; outline: none; background-color: #fff; }
+        table.sbu-table input:focus, table.sbu-table select:focus { border: 1px solid #1976d2; outline: none; background-color: #fff; }
         
         button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
-        .btn-add { background: #f57c00; color: white; width: 100%; font-size: 14px; padding: 10px; } .btn-add:hover { background: #e65100; }
+        .btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; } .btn-add:hover { background: #115293; }
         .btn-clear { background: #e0e0e0; color: #333; } .btn-clear:hover { background: #bdbdbd; }
         .btn-download { background: #2e7d32; color: white; width: 100%; padding: 10px 15px; font-size: 14px; } .btn-download:hover { background: #1b5e20; }
-        .btn-toggle { background: #1976d2; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;} .btn-toggle:hover { background: #115293; }
+        .btn-toggle { background: #f57c00; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;} .btn-toggle:hover { background: #e65100; }
         .btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; } .btn-delete:hover { background-color: #000; color: #fff; }
         .main-controls { display: flex; gap: 10px; margin-top: 15px; }
 
@@ -179,35 +179,35 @@
 <!-- SCREEN 1: Authentication -->
 <div id="auth-screen" class="min-h-screen flex items-center justify-center bg-gray-200">
     <div class="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-orange-600">Login</h2>
+        <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login</h2>
         <form id="auth-form" class="space-y-4">
             <div id="login-fields">
-                <input type="text" id="auth-identifier" autocomplete="username" placeholder="Username, Email, or Phone" required class="w-full p-2 border rounded border-orange-300">
+                <input type="text" id="auth-identifier" autocomplete="username" placeholder="Username, Email, or Phone" required class="w-full p-2 border rounded">
             </div>
             <div id="register-fields" class="hidden space-y-4">
-                <input type="text" id="auth-reg-username" autocomplete="username" placeholder="Username" class="w-full p-2 border rounded border-orange-300">
-                <input type="email" id="auth-reg-email" autocomplete="email" placeholder="Email Address" class="w-full p-2 border rounded border-orange-300">
-                <input type="tel" id="auth-reg-phone" autocomplete="tel" placeholder="Phone Number" class="w-full p-2 border rounded border-orange-300">
+                <input type="text" id="auth-reg-username" autocomplete="username" placeholder="Username" class="w-full p-2 border rounded">
+                <input type="email" id="auth-reg-email" autocomplete="email" placeholder="Email Address" class="w-full p-2 border rounded">
+                <input type="tel" id="auth-reg-phone" autocomplete="tel" placeholder="Phone Number" class="w-full p-2 border rounded">
             </div>
-            <input type="password" id="auth-password" autocomplete="current-password" placeholder="Password" required class="w-full p-2 border rounded border-orange-300">
-            <button type="submit" class="w-full bg-orange-600 text-white p-2 rounded hover:bg-orange-700 transition font-bold">Submit</button>
+            <input type="password" id="auth-password" autocomplete="current-password" placeholder="Password" required class="w-full p-2 border rounded">
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition font-bold">Submit</button>
         </form>
         <p class="mt-4 text-center text-sm">
-            <a href="#" id="auth-toggle" class="text-orange-600 hover:underline">Switch to Register</a>
+            <a href="#" id="auth-toggle" class="text-blue-600 hover:underline">Switch to Register</a>
         </p>
     </div>
 </div>
 
 <!-- SCREEN 2: Dashboard -->
 <div id="dashboard-screen" class="hidden min-h-screen">
-    <header class="bg-orange-600 text-white p-4 flex justify-between items-center shadow">
+    <header class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
         <h1 class="text-xl font-bold">My Projects</h1>
-        <button id="btn-logout" class="bg-gray-800 px-4 py-2 rounded hover:bg-gray-900 font-bold">Logout</button>
+        <button id="btn-logout" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 font-bold">Logout</button>
     </header>
     <main class="p-8 max-w-4xl mx-auto">
         <div class="flex gap-4 mb-6">
-            <input type="text" id="new-project-name" placeholder="New Project Name" class="flex-1 p-2 border rounded border-orange-300">
-            <button id="btn-create-project" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 font-bold">Create</button>
+            <input type="text" id="new-project-name" placeholder="New Project Name" class="flex-1 p-2 border rounded">
+            <button id="btn-create-project" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-bold">Create</button>
         </div>
         <div id="project-list" class="space-y-4"></div>
     </main>
@@ -215,19 +215,19 @@
 
 <!-- SCREEN 3: Plotter Editor -->
 <div id="editor-screen" class="hidden h-screen flex flex-col">
-    <div class="bg-orange-600 text-white p-3 px-5 flex items-center justify-between shadow z-50">
+    <div class="bg-blue-600 text-white p-3 px-5 flex items-center justify-between shadow z-50">
         <div class="flex items-center gap-4">
-            <button id="btn-back-dashboard" class="bg-orange-800 px-3 py-1 rounded hover:bg-orange-900">&larr; Back</button>
+            <button id="btn-back-dashboard" class="bg-blue-800 px-3 py-1 rounded hover:bg-blue-900">&larr; Back</button>
             <h2 id="editor-project-title" class="text-lg font-bold">Project Name</h2>
         </div>
         <div class="flex gap-2">
-            <button id="nav-entities" class="px-3 py-1 bg-white text-orange-600 rounded font-bold">Master Entities</button>
-            <button id="nav-ge" class="px-3 py-1 hover:bg-orange-700 rounded font-bold">GE Matrix</button>
-            <button id="nav-gs" class="px-3 py-1 hover:bg-orange-700 rounded font-bold">GS Matrix</button>
-            <button id="nav-space" class="px-3 py-1 hover:bg-orange-700 rounded font-bold">SPACE Matrix</button>
-            <button id="nav-sm" class="px-3 py-1 hover:bg-orange-700 rounded font-bold">Strategy Map</button>
-            <button id="nav-porters" class="px-3 py-1 hover:bg-orange-700 rounded font-bold">Porter's 5</button>
-            <button id="btn-save-project" class="ml-4 bg-gray-800 px-4 py-1 rounded hover:bg-gray-900 font-bold text-white">Save Project</button>
+            <button id="nav-entities" class="px-3 py-1 bg-white text-blue-600 rounded font-bold">Master Entities</button>
+            <button id="nav-ge" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GE Matrix</button>
+            <button id="nav-gs" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GS Matrix</button>
+            <button id="nav-space" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">SPACE Matrix</button>
+            <button id="nav-sm" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Strategy Map</button>
+            <button id="nav-porters" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Porter's 5</button>
+            <button id="btn-save-project" class="ml-4 bg-green-500 px-4 py-1 rounded hover:bg-green-600 font-bold text-white">Save Project</button>
         </div>
     </div>
 
