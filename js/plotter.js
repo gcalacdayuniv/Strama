@@ -5,15 +5,15 @@ let entitiesData = [];
 let spaceData = [];
 let smData = {
     mission: "", vision: "", objectives: [],
-    colors: { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" }
+    colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }
 };
 
 const defaultPorters = [
-    { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#4bc89e', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' },
-    { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#2CC6D2', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' },
-    { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#fbb321', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>' },
-    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#0caae9', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>' },
-    { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#fa7902', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' }
+    { id: 'substitutes', title: 'Potential Development of<br>Substitute Products', rating: 'Moderate', bg: '#ff9800', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' },
+    { id: 'entrants', title: 'Potential Entry of<br>New Competitors', rating: 'Moderate', bg: '#ffb74d', color: '#212121', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' },
+    { id: 'suppliers', title: 'Bargaining Power<br>of Suppliers', rating: 'Moderate', bg: '#f57c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>' },
+    { id: 'consumers', title: 'Bargaining Power<br>of Consumers', rating: 'Moderate', bg: '#fb8c00', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>' },
+    { id: 'rivalry', title: 'Rivalry Among<br>Competing Firms', rating: 'Moderate', bg: '#e65100', color: '#ffffff', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' }
 ];
 let portersData = JSON.parse(JSON.stringify(defaultPorters));
 
@@ -21,12 +21,11 @@ export function loadProjectIntoEditor(project) {
     let rawGE = project.ge_data ? JSON.parse(project.ge_data) : [];
     let rawGS = project.gs_data ? JSON.parse(project.gs_data) : [];
     
-    // Legacy mapping support ensuring Master Entities alignment
     entitiesData = rawGE.map((item, i) => {
         return {
             id: item.id || crypto.randomUUID(),
             name: item.name || "SBU",
-            color: item.color || "#1976d2",
+            color: item.color || "#f57c00",
             labelColor: item.labelColor || "#ffffff",
             ge: item.ge || { attr: item.attr || 3.0, comp: item.comp || 3.0, size: item.size || 30, pos: item.pos || 'top' },
             gs: item.gs || (rawGS[i] ? { xVal: rawGS[i].xVal || 4.5, yVal: rawGS[i].yVal || 4.5, size: rawGS[i].size || 30, pos: rawGS[i].pos || 'top' } : { xVal: 4.5, yVal: 4.5, size: 30, pos: 'top' })
@@ -34,7 +33,7 @@ export function loadProjectIntoEditor(project) {
     });
 
     spaceData = project.space_data ? JSON.parse(project.space_data) : [];
-    smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" }};
+    smData = project.sm_data ? JSON.parse(project.sm_data) : { mission: "", vision: "", objectives: [], colors: { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" }};
     portersData = project.porters_data ? JSON.parse(project.porters_data) : JSON.parse(JSON.stringify(defaultPorters));
     
     renderAll();
@@ -81,7 +80,7 @@ function buildEntitiesTable() {
 }
 document.getElementById('entities-add').onclick = () => { 
     entitiesData.push({ 
-        id: crypto.randomUUID(), name: "New Entity", color: "#1976d2", labelColor: "#ffffff", 
+        id: crypto.randomUUID(), name: "New Entity", color: "#f57c00", labelColor: "#ffffff", 
         ge: { attr: 3.0, comp: 3.0, size: 30, pos: "top" }, 
         gs: { xVal: 4.5, yVal: 4.5, size: 30, pos: "top" } 
     }); 
@@ -236,10 +235,10 @@ document.getElementById('gs-tbody').addEventListener('input', e => {
 });
 
 document.getElementById('gs-theme').addEventListener('change', e => {
-    if (e.target.value === 'default') {
-        document.getElementById('gs-bg-color').value = '#e2ecc9';
+    if (e.target.value === 'orange') {
+        document.getElementById('gs-bg-color').value = '#fff3e0';
         document.getElementById('gs-text-color').value = '#212121';
-        document.getElementById('gs-line-color').value = '#212121';
+        document.getElementById('gs-line-color').value = '#d84315';
     } else if (e.target.value === 'bw') {
         document.getElementById('gs-bg-color').value = '#ffffff';
         document.getElementById('gs-text-color').value = '#000000';
@@ -271,7 +270,7 @@ function buildSpaceTable() {
         const xV = sbu.xVal !== undefined ? sbu.xVal : 3.0;
         const yV = sbu.yVal !== undefined ? sbu.yVal : 3.0;
         const sz = sbu.size || 30;
-        const col = sbu.color || '#9c27b0';
+        const col = sbu.color || '#f57c00';
         const lblCol = sbu.labelColor || '#ffffff';
         const sTop = sbu.pos === 'top' ? 'selected' : '';
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
@@ -323,7 +322,7 @@ function renderSpaceChart() {
         svgHtml += `
         <defs>
             <marker id="arrowhead-space-${i}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                <polygon points="0 0, 8 4, 0 8" fill="${sbu.color || '#9c27b0'}" />
+                <polygon points="0 0, 8 4, 0 8" fill="${sbu.color || '#f57c00'}" />
             </marker>
         </defs>`;
     });
@@ -346,10 +345,10 @@ function renderSpaceChart() {
         const leftPct = 50 + (xVal / 14) * 100; 
         const topPct = 50 - (yVal / 14) * 100; 
         
-        svgHtml += `<line x1="50%" y1="50%" x2="${endXPct}%" y2="${endYPct}%" stroke="${sbu.color || '#9c27b0'}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
+        svgHtml += `<line x1="50%" y1="50%" x2="${endXPct}%" y2="${endYPct}%" stroke="${sbu.color || '#f57c00'}" stroke-width="2.5" marker-end="url(#arrowhead-space-${i})" />`;
 
         const el = document.createElement('div'); el.className = 'bubble'; el.style.width = (sbu.size / 700 * 100) + '%'; el.style.aspectRatio = '1 / 1';
-        el.style.backgroundColor = sbu.color || '#9c27b0';
+        el.style.backgroundColor = sbu.color || '#f57c00';
         el.style.left = leftPct + '%'; 
         el.style.top = topPct + '%';
         
@@ -368,7 +367,7 @@ function renderSpaceChart() {
     document.documentElement.style.setProperty('--space-line-color', document.getElementById('space-line-color').value);
 }
 
-document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#9c27b0", labelColor: "#ffffff", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
+document.getElementById('space-add').onclick = () => { spaceData.push({ name: "New Entity", xVal: 3.0, yVal: 3.0, size: 30, color: "#f57c00", labelColor: "#ffffff", pos: "top" }); buildSpaceTable(); renderSpaceChart(); };
 document.getElementById('space-clear').onclick = () => { spaceData = []; buildSpaceTable(); renderSpaceChart(); };
 document.getElementById('space-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('space-input')) { 
@@ -385,10 +384,10 @@ document.getElementById('space-tbody').addEventListener('click', e => {
 });
 
 document.getElementById('space-theme').addEventListener('change', e => {
-    if (e.target.value === 'default') {
-        document.getElementById('space-bg-color').value = '#ffffff';
+    if (e.target.value === 'orange') {
+        document.getElementById('space-bg-color').value = '#fff3e0';
         document.getElementById('space-text-color').value = '#212121';
-        document.getElementById('space-line-color').value = '#000000';
+        document.getElementById('space-line-color').value = '#d84315';
     } else if (e.target.value === 'bw') {
         document.getElementById('space-bg-color').value = '#ffffff';
         document.getElementById('space-text-color').value = '#000000';
@@ -446,7 +445,7 @@ function renderSMChart() {
     }
 }
 function updateSMUI() {
-    if(!smData.colors) smData.colors = { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" };
+    if(!smData.colors) smData.colors = { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" };
     
     document.getElementById('sm-mission-input').value = smData.mission || '';
     document.getElementById('sm-vision-input').value = smData.vision || '';
@@ -466,7 +465,6 @@ function updateSMUI() {
     root.style.setProperty('--sm-int-bg', smData.colors.intBg); root.style.setProperty('--sm-int-color', smData.colors.intColor);
     root.style.setProperty('--sm-lrn-bg', smData.colors.lrnBg); root.style.setProperty('--sm-lrn-color', smData.colors.lrnColor);
     
-    // Quick hex alpha for subtle backgrounds without relying on custom functions
     function hexToRgbaLocal(hex, a) {
         hex = hex.replace(/^#/, ''); if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
         return `rgba(${parseInt(hex.substring(0, 2), 16)},${parseInt(hex.substring(2, 4), 16)},${parseInt(hex.substring(4, 6), 16)},${a})`;
@@ -507,8 +505,8 @@ document.getElementById('sm-tbody').addEventListener('click', e => {
 });
 
 document.getElementById('sm-theme').addEventListener('change', e => {
-    if (e.target.value === 'default') {
-        smData.colors = { mvBg: "#ffffff", mvColor: "#334155", finBg: "#1e293b", finColor: "#ffffff", cusBg: "#0d9488", cusColor: "#ffffff", intBg: "#7c3aed", intColor: "#ffffff", lrnBg: "#e11d48", lrnColor: "#ffffff" };
+    if (e.target.value === 'orange') {
+        smData.colors = { mvBg: "#fff3e0", mvColor: "#212121", finBg: "#ffb74d", finColor: "#212121", cusBg: "#f57c00", cusColor: "#ffffff", intBg: "#e65100", intColor: "#ffffff", lrnBg: "#bf360c", lrnColor: "#ffffff" };
     } else if (e.target.value === 'bw') {
         smData.colors = { mvBg: "#ffffff", mvColor: "#000000", finBg: "#333333", finColor: "#ffffff", cusBg: "#555555", cusColor: "#ffffff", intBg: "#777777", intColor: "#ffffff", lrnBg: "#999999", lrnColor: "#ffffff" };
     }
@@ -623,7 +621,9 @@ function renderPortersRadarChart() {
         svg += `</text>`;
     });
     
-    svg += `<polygon points="${dataPoints.trim()}" fill="rgba(250, 121, 2, 0.15)" stroke="#fa7902" stroke-width="2.5" />`;
+    // Use the primary Rivalry color for the radar fill and stroke
+    const primaryRadarColor = portersData.find(f => f.id === 'rivalry').bg || '#f57c00';
+    svg += `<polygon points="${dataPoints.trim()}" fill="${primaryRadarColor}25" stroke="${primaryRadarColor}" stroke-width="2.5" />`;
     
     forceOrder.forEach((forceId, i) => {
         const force = portersData.find(f => f.id === forceId);
@@ -632,16 +632,30 @@ function renderPortersRadarChart() {
         const angle = (Math.PI * 2 * i / 5);
         const x = center + r * Math.sin(angle);
         const y = center - r * Math.cos(angle);
-        svg += `<circle cx="${x}" cy="${y}" r="6" fill="#fa7902" />`;
+        svg += `<circle cx="${x}" cy="${y}" r="6" fill="${primaryRadarColor}" />`;
     });
     
     svg += `</svg>`;
     radarContainer.innerHTML = svg;
 }
 
+document.getElementById('porters-theme').addEventListener('change', e => {
+    if (e.target.value === 'orange') {
+        const palettes = ['#ff9800', '#ffb74d', '#f57c00', '#fb8c00', '#e65100'];
+        const textColors = ['#ffffff', '#212121', '#ffffff', '#ffffff', '#ffffff'];
+        portersData.forEach((p, i) => { p.bg = palettes[i]; p.color = textColors[i]; });
+    } else if (e.target.value === 'bw') {
+        const palettes = ['#666666', '#999999', '#444444', '#777777', '#222222'];
+        portersData.forEach((p, i) => { p.bg = palettes[i]; p.color = '#ffffff'; });
+    }
+    buildPortersTable();
+    renderPortersChart();
+});
+
 document.getElementById('porters-reset').onclick = () => { portersData = JSON.parse(JSON.stringify(defaultPorters)); buildPortersTable(); renderPortersChart(); };
 document.getElementById('porters-tbody').addEventListener('input', e => {
     if(e.target.classList.contains('porters-input')){
+        document.getElementById('porters-theme').value = 'custom';
         portersData[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
         renderPortersChart();
     }
