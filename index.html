@@ -146,10 +146,10 @@
         .space-axis-vert { position: absolute; left: 50%; top: 5%; bottom: 5%; width: 2px; background: var(--space-line-color); transform: translateX(-50%); z-index: 2;}
         .space-axis-horiz { position: absolute; left: 5%; right: 5%; top: 50%; height: 2px; background: var(--space-line-color); transform: translateY(-50%); z-index: 2;}
         .space-axis-label { position: absolute; font-size: 2.2cqi; font-weight: bold; z-index: 3; color: var(--space-text-color); }
-        .space-axis-fs { top: 1%; left: 50%; transform: translate(-50%, 0); }
-        .space-axis-es { bottom: 1%; left: 50%; transform: translate(-50%, 0); }
-        .space-axis-ca { left: 1%; top: 50%; transform: translate(0, -50%); }
-        .space-axis-is { right: 1%; top: 50%; transform: translate(0, -50%); }
+        .space-axis-fp { top: 1%; left: 50%; transform: translate(-50%, 0); }
+        .space-axis-sp { bottom: 1%; left: 50%; transform: translate(-50%, 0); }
+        .space-axis-cp { left: 1%; top: 50%; transform: translate(0, -50%); }
+        .space-axis-ip { right: 1%; top: 50%; transform: translate(0, -50%); }
         .space-ticks-container { position: absolute; left: 5%; right: 5%; top: 5%; bottom: 5%; pointer-events: none; z-index: 2; }
         .space-tick-x { position: absolute; width: 2px; height: 10px; background: var(--space-line-color); top: 50%; transform: translate(-50%, -50%); }
         .space-tick-label-x { position: absolute; top: calc(50% + 10px); transform: translateX(-50%); font-size: 1.6cqi; font-weight: bold; color: var(--space-text-color);}
@@ -162,9 +162,9 @@
         .space-svg-overlay { position: absolute; left: 5%; right: 5%; top: 5%; bottom: 5%; width: 90%; height: 90%; pointer-events: none; z-index: 4; overflow: visible; }
         .space-plot-area { left: 5%; right: 5%; top: 5%; bottom: 5%; }
         
-        .show-reference .space-strat-list { display: block; }
-        .show-reference .space-svg-overlay, .show-reference .space-plot-area, .show-reference .space-ticks-container { display: none; }
-        .show-reference .space-quad-title { opacity: 1; font-size: 2.5cqi; margin-bottom: 2cqi; font-style: italic; font-weight: normal; }
+        .show-reference .space-strat-list { display: block; color: #000000; }
+        .show-reference .space-svg-overlay, .show-reference .space-plot-area { display: none; }
+        .show-reference .space-quad-title { opacity: 1; font-size: 3.5cqi; margin-bottom: 1cqi; font-style: normal; font-weight: bold; color: #000000; }
 
         /* Strategy Map Specific */
         .sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 800px; background: #fff; padding: 20px; box-sizing: border-box;}
@@ -309,7 +309,7 @@
                         <h3>Strategic Business Units (SBUs)</h3>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th>Name</th><th>Industry</th><th>Strength</th><th>Size</th><th>Bubble Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
+                                <thead><tr><th>Name</th><th>Industry</th><th>Strength</th><th>Size</th><th>Bubble Color</th><th>Text Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
                                 <tbody id="ge-tbody"></tbody>
                             </table>
                         </div>
@@ -348,6 +348,7 @@
                     <div class="form-panel">
                         <h3>Matrix Theme Settings</h3>
                         <table class="theme-table">
+                            <tr><td>Theme Preset</td><td colspan="2"><select id="gs-theme"><option value="default" selected>Default (Green)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
                             <tr><td>Background Color</td><td colspan="2"><input type="color" id="gs-bg-color" value="#e2ecc9"></td></tr>
                             <tr><td>Text Color</td><td colspan="2"><input type="color" id="gs-text-color" value="#212121"></td></tr>
                             <tr><td>Line Color</td><td colspan="2"><input type="color" id="gs-line-color" value="#212121"></td></tr>
@@ -358,7 +359,7 @@
                         <button type="button" class="btn-toggle" id="gs-toggle">Toggle Reference / Plot View</button>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th>Name</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Bubble Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
+                                <thead><tr><th>Name</th><th>X-Axis (0-9)</th><th>Y-Axis (0-9)</th><th>Size</th><th>Bubble Color</th><th>Text Color</th><th>Opacity</th><th>Label Pos</th><th></th></tr></thead>
                                 <tbody id="gs-tbody"></tbody>
                             </table>
                         </div>
@@ -396,6 +397,7 @@
                     <div class="form-panel">
                         <h3>Matrix Theme Settings</h3>
                         <table class="theme-table">
+                            <tr><td>Theme Preset</td><td colspan="2"><select id="space-theme"><option value="default" selected>Default (White)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
                             <tr><td>Background Color</td><td colspan="2"><input type="color" id="space-bg-color" value="#ffffff"></td></tr>
                             <tr><td>Text Color</td><td colspan="2"><input type="color" id="space-text-color" value="#212121"></td></tr>
                             <tr><td>Line Color</td><td colspan="2"><input type="color" id="space-line-color" value="#000000"></td></tr>
@@ -406,7 +408,7 @@
                         <button type="button" class="btn-toggle" id="space-toggle">Toggle Reference / Plot View</button>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
-                                <thead><tr><th>Name</th><th>X (CA/IS)</th><th>Y (ES/FS)</th><th>Size</th><th>Bubble Color</th><th>Label Pos</th><th></th></tr></thead>
+                                <thead><tr><th>Name</th><th>X (CP/IP)</th><th>Y (SP/FP)</th><th>Size</th><th>Bubble Color</th><th>Text Color</th><th>Label Pos</th><th></th></tr></thead>
                                 <tbody id="space-tbody"></tbody>
                             </table>
                         </div>
@@ -419,10 +421,10 @@
                 </div>
                 <div class="chart-panel" id="space-chart">
                     <div class="space-container" id="space-container">
-                        <div class="space-axis-label space-axis-fs">FS</div>
-                        <div class="space-axis-label space-axis-es">ES</div>
-                        <div class="space-axis-label space-axis-ca">CA</div>
-                        <div class="space-axis-label space-axis-is">IS</div>
+                        <div class="space-axis-label space-axis-fp">FP</div>
+                        <div class="space-axis-label space-axis-sp">SP</div>
+                        <div class="space-axis-label space-axis-cp">CP</div>
+                        <div class="space-axis-label space-axis-ip">IP</div>
                         
                         <div class="space-axis-vert"></div>
                         <div class="space-axis-horiz"></div>
@@ -461,6 +463,7 @@
                     <div class="form-panel">
                         <h3>Theme Settings</h3>
                         <table class="theme-table">
+                            <tr><td style="text-align:left;">Theme Preset</td><td colspan="2"><select id="sm-theme"><option value="default" selected>Default (Colorful)</option><option value="bw">Minimalist (Grayscale)</option><option value="custom">Custom Colors</option></select></td></tr>
                             <tr><td style="text-align:left;">Perspective Area</td><td>Background</td><td>Text</td></tr>
                             <tr><td>Mission / Vision Area</td><td><input type="color" id="sm-mv-bg" value="#ffffff"></td><td><input type="color" id="sm-mv-color" value="#334155"></td></tr>
                             <tr><td>Financial</td><td><input type="color" id="sm-fin-bg" value="#1e293b"></td><td><input type="color" id="sm-fin-color" value="#ffffff"></td></tr>
