@@ -57,11 +57,9 @@ function renderAll() {
 /* ================= GE MCKINSEY LOGIC ================= */
 function buildGETable() {
     const tbody = document.getElementById('ge-tbody'); tbody.innerHTML = '';
-    if (!geData.length) { tbody.innerHTML = '<tr><td colspan="10">No SBUs added.</td></tr>'; return; }
+    if (!geData.length) { tbody.innerHTML = '<tr><td colspan="8">No SBUs added.</td></tr>'; return; }
     geData.forEach((sbu, i) => {
         const bOpac = sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100;
-        const lBgCol = sbu.labelBgColor || '#ffffff';
-        const lOpac = sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90;
         const sTop = sbu.pos === 'top' ? 'selected' : '';
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
         const sLft = sbu.pos === 'left' ? 'selected' : '';
@@ -81,8 +79,6 @@ function buildGETable() {
                 <option value="left" ${sLft}>Left</option>
                 <option value="right" ${sRgt}>Right</option>
             </select></td>
-            <td><input type="color" value="${lBgCol}" data-idx="${i}" data-field="labelBgColor" class="ge-input"></td>
-            <td><input type="number" min="0" max="100" value="${lOpac}" data-idx="${i}" data-field="labelBgOpacity" class="ge-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -95,13 +91,17 @@ function renderGEChart() {
         el.style.backgroundColor = hexToRgba(sbu.color, sbu.bubbleOpacity !== undefined ? sbu.bubbleOpacity : 100);
         const compVal = Math.max(1.0, Math.min(5.0, sbu.comp)); const attrVal = Math.max(1.0, Math.min(5.0, sbu.attr));
         el.style.left = (100 - (((compVal - 1) / 4) * 100)) + '%'; el.style.top = (100 - (((attrVal - 1) / 4) * 100)) + '%';
-        const label = document.createElement('div'); label.className = 'bubble-label label-' + sbu.pos; label.textContent = sbu.name;
-        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+        const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
+        
+        label.style.color = '#ffffff'; 
+        label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
+        label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
+        
         el.appendChild(label); plotArea.appendChild(el);
     });
 }
 
-document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGETable(); renderGEChart(); };
+document.getElementById('ge-add').onclick = () => { geData.push({ name: "New SBU", attr: 3.0, comp: 3.0, size: 30, color: "#1976d2", bubbleOpacity: 100, pos: "top" }); buildGETable(); renderGEChart(); };
 document.getElementById('ge-clear').onclick = () => { geData = []; buildGETable(); renderGEChart(); };
 document.getElementById('ge-tbody').addEventListener('input', e => { 
     if(e.target.classList.contains('ge-input')) { 
@@ -153,7 +153,7 @@ function updateGECustomColors() {
 /* ================= GRAND STRATEGY LOGIC ================= */
 function buildGSTable() {
     const tbody = document.getElementById('gs-tbody'); tbody.innerHTML = '';
-    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="10">No Entities added.</td></tr>'; return; }
+    if (!gsData.length) { tbody.innerHTML = '<tr><td colspan="8">No Entities added.</td></tr>'; return; }
     gsData.forEach((sbu, i) => {
         const nm = sbu.name || '';
         const xV = sbu.xVal !== undefined ? sbu.xVal : 4.5;
@@ -165,8 +165,6 @@ function buildGSTable() {
         const sBot = sbu.pos === 'bottom' ? 'selected' : '';
         const sLft = sbu.pos === 'left' ? 'selected' : '';
         const sRgt = sbu.pos === 'right' ? 'selected' : '';
-        const lBgCol = sbu.labelBgColor || '#ffffff';
-        const lOpac = sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -182,8 +180,6 @@ function buildGSTable() {
                 <option value="left" ${sLft}>Left</option>
                 <option value="right" ${sRgt}>Right</option>
             </select></td>
-            <td><input type="color" value="${lBgCol}" data-idx="${i}" data-field="labelBgColor" class="gs-input"></td>
-            <td><input type="number" min="0" max="100" value="${lOpac}" data-idx="${i}" data-field="labelBgOpacity" class="gs-input"></td>
             <td><button class="btn-delete" data-idx="${i}">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -199,7 +195,11 @@ function renderGSChart() {
         el.style.left = ((xVal / 9) * 100) + '%'; 
         el.style.top = (100 - ((yVal / 9) * 100)) + '%';
         const label = document.createElement('div'); label.className = 'bubble-label label-' + (sbu.pos || 'top'); label.textContent = sbu.name;
-        label.style.backgroundColor = hexToRgba(sbu.labelBgColor || "#ffffff", sbu.labelBgOpacity !== undefined ? sbu.labelBgOpacity : 90);
+        
+        label.style.color = '#ffffff'; 
+        label.style.textShadow = '0px 0px 2px rgba(0,0,0,0.5)';
+        label.style.backgroundColor = hexToRgba(sbu.color || "#1976d2", 70);
+        
         el.appendChild(label); plotArea.appendChild(el);
     });
     
@@ -207,7 +207,7 @@ function renderGSChart() {
     document.documentElement.style.setProperty('--gs-text-color', document.getElementById('gs-text-color').value);
     document.documentElement.style.setProperty('--gs-line-color', document.getElementById('gs-line-color').value);
 }
-document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", bubbleOpacity: 100, pos: "top", labelBgColor: "#ffffff", labelBgOpacity: 90 }); buildGSTable(); renderGSChart(); };
+document.getElementById('gs-add').onclick = () => { gsData.push({ name: "New Entity", xVal: 5.0, yVal: 5.0, size: 30, color: "#43a047", bubbleOpacity: 100, pos: "top" }); buildGSTable(); renderGSChart(); };
 document.getElementById('gs-clear').onclick = () => { gsData = []; buildGSTable(); renderGSChart(); };
 document.getElementById('gs-toggle').onclick = () => { document.getElementById('gs-container').classList.toggle('show-reference'); };
 document.getElementById('gs-tbody').addEventListener('input', e => { 
