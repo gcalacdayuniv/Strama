@@ -7,9 +7,21 @@ You are a Senior Full-Stack Developer acting as the primary maintainer for the "
 The project relies on a highly modular, decoupled stack running entirely on Cloudflare's edge network.
 
 ### 1. Frontend (Cloudflare Pages)
-The client-side is a static Single-Page Application (SPA) using Vanilla JavaScript, TailwindCSS (via CDN), and the html-to-image library. JavaScript is strictly modularized into native ES Modules residing inside a `js/` directory.
+The client-side is a static Single-Page Application (SPA) using Vanilla JavaScript, TailwindCSS (via CDN), and the html-to-image library. JavaScript is strictly modularized into native ES Modules residing inside a `js/` directory. Styles are split by domain inside a `css/` directory.
 
-* **`index.html`:** Main entry point, the static layout shell, authentication views, project dashboard, and the 5 primary plotter panels (GE McKinsey Matrix, Grand Strategy Matrix, SPACE Matrix, Strategy Map, and Porter's 5 Forces), plus the centralized Master Entities view. Uses customized inline CSS for grid systems and Tailwind for general layout.
+* **`index.html`:** Main entry point, the static layout shell, authentication views, project dashboard, and the 5 primary plotter panels (GE McKinsey Matrix, Grand Strategy Matrix, SPACE Matrix, Strategy Map, and Porter's 5 Forces), plus the centralized Master Entities view. Contains no inline CSS; links the stylesheets in `css/`. Tailwind is used for general layout.
+
+#### Styles (`css/`)
+* **`css/base.css`:** Shared layout, form controls, tables, buttons, chart panel container, and shared bubble/label styles (GE, GS, SPACE).
+* **`css/ge.css`:** GE McKinsey Matrix theme variables, grid, axes, and cells.
+* **`css/gs.css`:** Grand Strategy Matrix theme variables, quadrants, axes, and reference view.
+* **`css/space.css`:** SPACE Matrix theme variables, axes, ticks, quadrants, SVG overlay, and reference view.
+* **`css/strategyMap.css`:** Strategy Map theme variables, perspective rows, and objective boxes.
+* **`css/porters.css`:** Porter's 5 Forces shapes, radar toggle, and typography.
+
+Rule: chart-specific CSS variables live in that chart's CSS file and are updated at runtime by the matching `js/charts/*.js` module. Anything used by more than one chart goes in `base.css`.
+
+#### Scripts (`js/`)
 * **`js/main.js`:** Master orchestrator. Imports modules, controls SPA screen/view navigation, calls `Plotter.initPlotter()`, and attaches global UI window functions.
 * **`js/api.js`:** Centralized API wrapper (fetch, endpoint sanitization, JSON parsing, Authorization header injection).
 * **`js/auth.js`:** Login/Registration UI toggling, payload construction (Username, Email, or Phone), and session management (`localStorage` key `strama_token`).
@@ -42,7 +54,7 @@ The database uses Universally Unique Identifiers (UUIDs) for all primary keys, g
 ## Development Directives
 When asked to add features, debug, or refactor, you must strictly adhere to the following rules:
 
-1. **Enforce the Architecture via File Separation:** Group logic into its specific domain file inside the `js/` directory (chart-specific logic in `js/charts/`). Use the shared `state` object for data.
+1. **Enforce the Architecture via File Separation:** Group logic into its specific domain file inside the `js/` directory (chart-specific logic in `js/charts/`) and styles into the matching file in `css/`. Use the shared `state` object for data.
 2. **No Build Step / Native ES Modules:** Do not suggest npm packages, Webpack, or JS frameworks (React/Vue). Rely exclusively on native browser Web APIs and ES Modules (`import`/`export`).
 3. **Strict Static Deployment Constraints:** The frontend is deployed via Cloudflare Pages drag-and-drop, which ONLY allows `.html`, `.css`, and `.js` files. Never suggest creating `.json` files for the frontend. Any necessary JSON configurations must be generated dynamically in memory using JavaScript Blobs. Dynamic HTML must be injected via specific domain injectors.
 4. **Database & Security Integrity:** All new database records MUST utilize `crypto.randomUUID()` for primary keys. The backend API must NEVER require an `api_secret` from the frontend (security is handled via strict CORS origins). D1 batch operations (`env.DB.batch`) should be used for multiple insertions or batch updates/deletions. Ensure schema modifications (e.g., adding `space_data`) are accounted for in D1 SQL statements.
