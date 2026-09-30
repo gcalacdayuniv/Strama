@@ -9,6 +9,10 @@ export const GS_PRESETS = {
     orange: { bg: '#fff3e0', text: '#212121', line: '#d84315' },
     bw: { bg: '#ffffff', text: '#000000', line: '#000000' }
 };
+export const BCG_PRESETS = {
+    orange: { bg: '#ffe0b2', text: '#212121', line: '#d84315' },
+    bw: { bg: '#ffffff', text: '#000000', line: '#000000' }
+};
 export const SPACE_PRESETS = {
     orange: { bg: '#fff3e0', text: '#212121', line: '#d84315' },
     bw: { bg: '#ffffff', text: '#000000', line: '#000000' }
@@ -33,6 +37,7 @@ export function createDefaultThemes() {
     return {
         ge: { preset: 'orange', ...GE_PRESETS.orange, custom: {} },
         gs: { preset: 'orange', ...GS_PRESETS.orange, custom: {} },
+        bcg: { preset: 'orange', ...BCG_PRESETS.orange, custom: {} },
         space: { preset: 'orange', ...SPACE_PRESETS.orange, custom: {} },
         sm: { preset: 'orange' },
         porters: { preset: 'orange', custom: [] }
