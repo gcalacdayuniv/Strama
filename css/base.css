@@ -1,0 +1,52 @@
+:root {
+    /* Common */
+    --grid-gap-color: #fff; --axis-color: #d84315; --grid-border: none;
+}
+
+body { font-family: Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
+.view-container { display: none; padding: 20px; }
+.view-container.active { display: block; }
+.main-wrapper { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+
+.sidebar { flex: 1 1 500px; min-width: 300px; max-width: 100%; display: flex; flex-direction: column; gap: 20px; }
+.form-panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.form-panel h3 { margin-top: 0; color: #333; margin-bottom: 15px; font-weight: bold; }
+
+select, input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="password"], textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: inherit; }
+
+input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; padding: 0; display: block; margin: 0 auto; }
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
+input[type="color"]::-moz-color-swatch { border: 1px solid #ccc; border-radius: 50%; }
+
+table.theme-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px;}
+table.theme-table td { padding: 8px 4px; vertical-align: middle; }
+table.theme-table td:first-child { font-weight: bold; width: 50%; }
+table.theme-table td:nth-child(2), table.theme-table td:nth-child(3) { text-align: center; width: 25%; }
+
+.sbu-table-container { width: 100%; overflow-x: auto; margin-bottom: 15px; -webkit-overflow-scrolling: touch; }
+table.sbu-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
+table.sbu-table th, table.sbu-table td { border: 1px solid #ddd; padding: 4px 2px; text-align: center; vertical-align: middle; }
+table.sbu-table th { background-color: #f5f5f5; font-weight: bold; padding: 8px 4px; }
+table.sbu-table input[type="text"], table.sbu-table input[type="number"], table.sbu-table select { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid transparent; border-radius: 4px; background-color: #fafafa; }
+table.sbu-table input:focus, table.sbu-table select:focus { border: 1px solid #1976d2; outline: none; background-color: #fff; }
+
+button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
+.btn-add { background: #1976d2; color: white; width: 100%; font-size: 14px; padding: 10px; } .btn-add:hover { background: #115293; }
+.btn-clear { background: #e0e0e0; color: #333; } .btn-clear:hover { background: #bdbdbd; }
+.btn-download { background: #2e7d32; color: white; width: 100%; padding: 10px 15px; font-size: 14px; } .btn-download:hover { background: #1b5e20; }
+.btn-toggle { background: #f57c00; color: white; width: 100%; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;} .btn-toggle:hover { background: #e65100; }
+.btn-delete { background-color: #fff; color: #000; border: 1px solid #000; width: 80%; padding: 6px 0; display: inline-block; } .btn-delete:hover { background-color: #000; color: #fff; }
+.main-controls { display: flex; gap: 10px; margin-top: 15px; }
+
+.chart-panel { flex: 1 1 700px; max-width: 100%; position: relative; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); container-type: inline-size; overflow-x: auto; padding: 20px; box-sizing: border-box; }
+#ge-chart, #gs-chart, #porters-chart, #space-chart { aspect-ratio: 700 / 680; padding: 0; overflow: hidden; }
+
+/* Shared plot layers and bubbles (GE, GS, SPACE) */
+.plot-area, .gs-plot-area, .space-plot-area { position: absolute; pointer-events: none; z-index: 5; }
+.bubble { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); pointer-events: auto; display: flex; align-items: center; justify-content: center; }
+.bubble-label { position: absolute; font-weight: bold; font-size: 1.7cqi; white-space: nowrap; padding: 0.4cqi 0.8cqi; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none; }
+.label-top { bottom: 100%; left: 50%; transform: translate(-50%, -8px); }
+.label-bottom { top: 100%; left: 50%; transform: translate(-50%, 8px); }
+.label-left { right: 100%; top: 50%; transform: translate(-8px, -50%); }
+.label-right { left: 100%; top: 50%; transform: translate(8px, -50%); }
