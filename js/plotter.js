@@ -1,6 +1,10 @@
 import { request } from './api.js';
 import { state } from './state.js';
-import { createDefaultThemes, createDefaultSMData, createDefaultPorters, DEFAULT_PORTERS } from './defaults.js';
+import {
+    createDefaultThemes, createDefaultSMData, createDefaultPorters, DEFAULT_PORTERS,
+    GE_PRESETS, GS_PRESETS, SPACE_PRESETS, SM_PRESETS, PORTERS_PRESETS
+} from './defaults.js';
+import { clone, resolveThemeColors } from './utils.js';
 import { initDownloads } from './download.js';
 import { buildEntitiesTable, initEntities } from './charts/entities.js';
 import { buildGETable, renderGEChart, applyGETheme, initGE } from './charts/ge.js';
@@ -8,6 +12,10 @@ import { buildGSTable, renderGSChart, applyGSTheme, initGS } from './charts/gs.j
 import { buildSpaceTable, renderSpaceChart, applySpaceTheme, initSpace } from './charts/space.js';
 import { buildSMTable, renderSMChart, updateSMUI, applySMTheme, initSM } from './charts/strategyMap.js';
 import { buildPortersTable, renderPortersChart, applyPortersTheme, initPorters } from './charts/porters.js';
+
+const GE_KEYS = ['axis', 'invest', 'maintain', 'divest'];
+const GS_KEYS = ['bg', 'text', 'line'];
+const SPACE_KEYS = ['bg', 'text', 'line'];
 
 export function initPlotter() {
     initEntities();
@@ -17,6 +25,49 @@ export function initPlotter() {
     initSM();
     initPorters();
     initDownloads();
+}
+
+// Legacy projects saved as 'custom' with no stored custom set: keep their saved colors as the custom set
+function seedCustomIfEmpty(theme, keys) {
+    if (theme.preset === 'custom' && Object.keys(theme.custom).length === 0) {
+        keys.forEach(k => { theme.custom[k] = theme[k]; });
+    }
+}
+
+// Rebuild active colors from the saved preset. Presets are temporary; 'custom' reads the saved custom data.
+function applySavedThemes() {
+    const t = state.appThemes;
+
+    seedCustomIfEmpty(t.ge, GE_KEYS);
+    seedCustomIfEmpty(t.gs, GS_KEYS);
+    seedCustomIfEmpty(t.space, SPACE_KEYS);
+    resolveThemeColors(t.ge, GE_PRESETS, GE_KEYS);
+    resolveThemeColors(t.gs, GS_PRESETS, GS_KEYS);
+    resolveThemeColors(t.space, SPACE_PRESETS, SPACE_KEYS);
+
+    // Strategy Map
+    const sm = state.smData;
+    if (t.sm.preset === 'custom') {
+        if (Object.keys(sm.customColors).length === 0) sm.customColors = clone(sm.colors);
+        sm.colors = { ...SM_PRESETS.orange, ...sm.customColors };
+    } else if (SM_PRESETS[t.sm.preset]) {
+        sm.colors = clone(SM_PRESETS[t.sm.preset]);
+    }
+
+    // Porter's 5 Forces
+    const pt = t.porters;
+    if (pt.preset === 'custom') {
+        if (pt.custom.length !== 5) pt.custom = state.portersData.map(p => ({ bg: p.bg, color: p.color }));
+        state.portersData.forEach((p, i) => {
+            p.bg = pt.custom[i].bg;
+            p.color = pt.custom[i].color;
+        });
+    } else if (PORTERS_PRESETS[pt.preset]) {
+        state.portersData.forEach((p, i) => {
+            p.bg = PORTERS_PRESETS[pt.preset].bg[i];
+            p.color = PORTERS_PRESETS[pt.preset].color[i];
+        });
+    }
 }
 
 export function loadProjectIntoEditor(project) {
@@ -34,6 +85,7 @@ export function loadProjectIntoEditor(project) {
     if (!t.ge.custom) t.ge.custom = {};
     if (!t.gs.custom) t.gs.custom = {};
     if (!t.space.custom) t.space.custom = {};
+    if (!t.sm) t.sm = { preset: 'orange' };
     if (!t.porters) t.porters = { preset: 'orange', custom: [] };
     if (!t.porters.custom) t.porters.custom = [];
 
@@ -59,7 +111,9 @@ export function loadProjectIntoEditor(project) {
     });
 
     if (!state.smData.customColors) state.smData.customColors = {};
+    if (!state.smData.colors) state.smData.colors = clone(SM_PRESETS.orange);
 
+    applySavedThemes();
     applyThemesToUI();
     renderAll();
 }
