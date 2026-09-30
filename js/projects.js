@@ -1,7 +1,6 @@
 import { request } from './api.js';
+import { state } from './state.js';
 import { loadProjectIntoEditor } from './plotter.js';
-
-export let currentProjectId = null;
 
 export async function loadProjects() {
     try {
@@ -28,7 +27,7 @@ export async function loadProjects() {
 export async function createProject(name) {
     if (!name) return alert('Project name required');
     try {
-        const res = await request('/projects', 'POST', { name });
+        await request('/projects', 'POST', { name });
         await loadProjects();
         document.getElementById('new-project-name').value = '';
     } catch (e) {
@@ -39,10 +38,10 @@ export async function createProject(name) {
 export async function openProject(id) {
     try {
         const project = await request(`/projects/${id}`, 'GET');
-        currentProjectId = project.id;
+        state.currentProjectId = project.id;
         document.getElementById('editor-project-title').innerText = project.name;
         loadProjectIntoEditor(project);
-        
+
         document.getElementById('dashboard-screen').classList.add('hidden');
         document.getElementById('editor-screen').classList.remove('hidden');
     } catch (e) {
@@ -51,7 +50,7 @@ export async function openProject(id) {
 }
 
 export async function deleteProject(id) {
-    if(!confirm("Are you sure?")) return;
+    if (!confirm("Are you sure?")) return;
     try {
         await request(`/projects/${id}`, 'DELETE');
         await loadProjects();
