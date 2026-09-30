@@ -110,23 +110,27 @@ export function initSM() {
         const preset = e.target.value;
         state.appThemes.sm.preset = preset;
         if (SM_PRESETS[preset]) {
+            // Temporary preset: customColors is left untouched
             state.smData.colors = clone(SM_PRESETS[preset]);
         } else if (preset === 'custom') {
-            if (state.smData.customColors && Object.keys(state.smData.customColors).length > 0) {
-                state.smData.colors = clone(state.smData.customColors);
-            }
+            // Always load the saved custom colors (Orange as fallback if none were ever saved)
+            state.smData.colors = { ...SM_PRESETS.orange, ...(state.smData.customColors || {}) };
         }
         updateSMUI();
     });
 
     SM_COLOR_IDS.forEach(id => {
         document.getElementById(id).addEventListener('input', e => {
+            if (!state.smData.customColors) state.smData.customColors = {};
+            // First custom edit: store the full current color set, not only the edited key
+            if (Object.keys(state.smData.customColors).length === 0) {
+                state.smData.customColors = clone(state.smData.colors);
+            }
+
             document.getElementById('sm-theme').value = 'custom';
             state.appThemes.sm.preset = 'custom';
             const key = id.replace('sm-', '').replace('-bg', 'Bg').replace('-color', 'Color');
             state.smData.colors[key] = e.target.value;
-
-            if (!state.smData.customColors) state.smData.customColors = {};
             state.smData.customColors[key] = e.target.value;
 
             updateSMUI();
