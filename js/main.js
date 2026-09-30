@@ -18,12 +18,9 @@ window.switchEditorView = (viewId) => {
     navBtn.classList.add('text-blue-600');
 };
 
-document.getElementById('nav-entities').onclick = () => switchEditorView('entities');
-document.getElementById('nav-ge').onclick = () => switchEditorView('ge');
-document.getElementById('nav-gs').onclick = () => switchEditorView('gs');
-document.getElementById('nav-space').onclick = () => switchEditorView('space');
-document.getElementById('nav-sm').onclick = () => switchEditorView('sm');
-document.getElementById('nav-porters').onclick = () => switchEditorView('porters');
+['entities', 'ge', 'gs', 'space', 'sm', 'porters'].forEach(view => {
+    document.getElementById(`nav-${view}`).onclick = () => switchEditorView(view);
+});
 
 document.getElementById('btn-back-dashboard').onclick = () => {
     Projects.loadProjects();
@@ -33,6 +30,7 @@ document.getElementById('btn-back-dashboard').onclick = () => {
 document.getElementById('btn-save-project').onclick = Plotter.saveCurrentProject;
 document.getElementById('btn-create-project').onclick = () => Projects.createProject(document.getElementById('new-project-name').value);
 
+Plotter.initPlotter();
 Auth.initAuth(showScreen, Projects.loadProjects);
 
 window.openProject = Projects.openProject;
