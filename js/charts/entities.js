@@ -2,10 +2,11 @@ import { state } from '../state.js';
 import { buildGETable, renderGEChart } from './ge.js';
 import { buildGSTable, renderGSChart } from './gs.js';
 import { buildBCGTable, renderBCGChart } from './bcg.js';
+import { buildIETable, renderIEChart } from './ie.js';
 
 function refreshLinkedViews() {
-    buildGETable(); buildGSTable(); buildBCGTable();
-    renderGEChart(); renderGSChart(); renderBCGChart();
+    buildGETable(); buildGSTable(); buildBCGTable(); buildIETable();
+    renderGEChart(); renderGSChart(); renderBCGChart(); renderIEChart();
 }
 
 export function buildEntitiesTable() {
@@ -29,7 +30,8 @@ export function initEntities() {
             id: crypto.randomUUID(), name: "New Entity", color: "#f57c00", labelColor: "#ffffff",
             ge: { attr: 3.0, comp: 3.0, size: 30, pos: "top" },
             gs: { xVal: 4.5, yVal: 4.5, size: 30, pos: "top" },
-            bcg: { xVal: 0.5, yVal: 0, size: 30, pos: "top" }
+            bcg: { xVal: 0.5, yVal: 0, size: 30, pos: "top" },
+            ie: { ife: 2.5, efe: 2.5, size: 30, pos: "top" }
         });
         buildEntitiesTable(); refreshLinkedViews();
     };
