@@ -17,15 +17,22 @@
 .bcg-y-marks { position: absolute; left: 8.5%; top: 18%; width: 11%; height: 74%; display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 1.9cqi; font-style: italic; line-height: 1.3; padding: 1cqi 0; box-sizing: border-box; }
 
 .bcg-matrix { position: absolute; left: 20%; top: 18%; width: 68%; height: 74%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: var(--bcg-line-color); border: 3px solid var(--bcg-line-color); border-radius: 18px; overflow: hidden; box-sizing: border-box; }
-.bcg-quadrant { background: var(--bcg-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5cqi; box-sizing: border-box; }
+.bcg-quadrant { position: relative; background: var(--bcg-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5cqi; box-sizing: border-box; }
 .bcg-quad-title { text-align: center; font-weight: bold; font-size: 3cqi; line-height: 1.2; opacity: 0.2; transition: all 0.3s ease; }
 .bcg-quad-title small { display: block; font-size: 2.6cqi; }
 .bcg-strat-list { display: none; font-size: 1.7cqi; line-height: 1.4; text-align: left; }
+
+/* Quadrant drawings (Reference view only) */
+.bcg-quad-icon { display: none; position: absolute; bottom: 1.5cqi; width: 9cqi; height: 9cqi; color: var(--bcg-text-color); pointer-events: none; }
+.bcg-quad-icon.icon-right { right: 1.5cqi; }
+.bcg-quad-icon.icon-left { left: 1.5cqi; }
+.bcg-quad-icon svg { width: 100%; height: 100%; }
 
 .bcg-plot-area { position: absolute; left: 20%; top: 18%; width: 68%; height: 74%; z-index: 5; pointer-events: none; }
 
 /* Reference view */
 .show-reference .bcg-strat-list { display: block; }
-.show-reference .bcg-quad-title { opacity: 1; }
+.show-reference .bcg-quad-title { opacity: 1; padding: 0 9cqi; }
 .show-reference .bcg-quadrant { justify-content: space-between; padding: 2cqi; }
+.show-reference .bcg-quad-icon { display: block; }
 .show-reference .bcg-plot-area { display: none; }
