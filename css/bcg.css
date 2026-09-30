@@ -7,8 +7,8 @@
 
 .bcg-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; color: var(--bcg-text-color); }
 
-.bcg-x-title { position: absolute; top: 3%; left: 20%; width: 76%; text-align: center; font-weight: bold; font-size: 2.3cqi; }
-.bcg-x-marks { position: absolute; top: 8%; left: 20%; width: 76%; display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 1.9cqi; font-style: italic; line-height: 1.3; }
+.bcg-x-title { position: absolute; top: 3%; left: 20%; width: 68%; text-align: center; font-weight: bold; font-size: 2.3cqi; }
+.bcg-x-marks { position: absolute; top: 8%; left: 20%; width: 68%; display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 1.9cqi; font-style: italic; line-height: 1.3; }
 .bcg-x-marks span:nth-child(1) { text-align: left; }
 .bcg-x-marks span:nth-child(2) { text-align: center; }
 .bcg-x-marks span:nth-child(3) { text-align: right; }
@@ -16,13 +16,13 @@
 .bcg-y-title { position: absolute; left: 3%; top: 55%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; font-weight: bold; font-size: 2.1cqi; }
 .bcg-y-marks { position: absolute; left: 8.5%; top: 18%; width: 11%; height: 74%; display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 1.9cqi; font-style: italic; line-height: 1.3; padding: 1cqi 0; box-sizing: border-box; }
 
-.bcg-matrix { position: absolute; left: 20%; top: 18%; width: 76%; height: 74%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: var(--bcg-line-color); border: 3px solid var(--bcg-line-color); border-radius: 18px; overflow: hidden; box-sizing: border-box; }
+.bcg-matrix { position: absolute; left: 20%; top: 18%; width: 68%; height: 74%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: var(--bcg-line-color); border: 3px solid var(--bcg-line-color); border-radius: 18px; overflow: hidden; box-sizing: border-box; }
 .bcg-quadrant { background: var(--bcg-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5cqi; box-sizing: border-box; }
 .bcg-quad-title { text-align: center; font-weight: bold; font-size: 3cqi; line-height: 1.2; opacity: 0.2; transition: all 0.3s ease; }
 .bcg-quad-title small { display: block; font-size: 2.6cqi; }
 .bcg-strat-list { display: none; font-size: 1.7cqi; line-height: 1.4; text-align: left; }
 
-.bcg-plot-area { position: absolute; left: 20%; top: 18%; width: 76%; height: 74%; z-index: 5; pointer-events: none; }
+.bcg-plot-area { position: absolute; left: 20%; top: 18%; width: 68%; height: 74%; z-index: 5; pointer-events: none; }
 
 /* Reference view */
 .show-reference .bcg-strat-list { display: block; }
