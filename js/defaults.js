@@ -13,6 +13,10 @@ export const BCG_PRESETS = {
     orange: { bg: '#ffe0b2', text: '#212121', line: '#d84315' },
     bw: { bg: '#ffffff', text: '#000000', line: '#000000' }
 };
+export const IE_PRESETS = {
+    orange: { grow: '#c8e6c9', hold: '#ffe0b2', harvest: '#ffccbc', text: '#212121', line: '#000000' },
+    bw: { grow: '#ffffff', hold: '#e0e0e0', harvest: '#9e9e9e', text: '#000000', line: '#000000' }
+};
 export const SPACE_PRESETS = {
     orange: { bg: '#fff3e0', text: '#212121', line: '#d84315' },
     bw: { bg: '#ffffff', text: '#000000', line: '#000000' }
@@ -38,6 +42,7 @@ export function createDefaultThemes() {
         ge: { preset: 'orange', ...GE_PRESETS.orange, custom: {} },
         gs: { preset: 'orange', ...GS_PRESETS.orange, custom: {} },
         bcg: { preset: 'orange', ...BCG_PRESETS.orange, custom: {} },
+        ie: { preset: 'orange', ...IE_PRESETS.orange, custom: {} },
         space: { preset: 'orange', ...SPACE_PRESETS.orange, custom: {} },
         sm: { preset: 'orange' },
         porters: { preset: 'orange', custom: [] }
