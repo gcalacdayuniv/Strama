@@ -37,6 +37,19 @@ export function createBubble({ name, size, color, labelColor, pos, left, top }) 
 }
 
 /* ---------- Generic theme helpers (GE, GS, SPACE) ---------- */
+
+// Sets the active colors from the theme's preset.
+// Presets (orange/bw) are temporary. 'custom' always reads from theme.custom (the saved data).
+export function resolveThemeColors(theme, presets, keys) {
+    if (presets[theme.preset]) {
+        Object.assign(theme, presets[theme.preset]);
+    } else if (theme.preset === 'custom') {
+        keys.forEach(k => {
+            theme[k] = (theme.custom && theme.custom[k]) || presets.orange[k];
+        });
+    }
+}
+
 // inputMap: { inputElementId: themeKey }
 export function syncThemeInputs(themeSelectId, theme, inputMap) {
     document.getElementById(themeSelectId).value = theme.preset;
@@ -46,16 +59,12 @@ export function syncThemeInputs(themeSelectId, theme, inputMap) {
 }
 
 export function bindThemeControls({ themeSelectId, getTheme, presets, inputMap, onChange }) {
+    const keys = Object.values(inputMap);
+
     document.getElementById(themeSelectId).addEventListener('change', e => {
         const theme = getTheme();
-        const preset = e.target.value;
-        theme.preset = preset;
-
-        if (presets[preset]) {
-            Object.assign(theme, presets[preset]);
-        } else if (preset === 'custom' && theme.custom && Object.keys(theme.custom).length > 0) {
-            Object.values(inputMap).forEach(key => { theme[key] = theme.custom[key] || theme[key]; });
-        }
+        theme.preset = e.target.value;
+        resolveThemeColors(theme, presets, keys);
 
         Object.entries(inputMap).forEach(([id, key]) => {
             document.getElementById(id).value = theme[key];
@@ -66,9 +75,13 @@ export function bindThemeControls({ themeSelectId, getTheme, presets, inputMap, 
     Object.entries(inputMap).forEach(([id, key]) => {
         document.getElementById(id).addEventListener('input', e => {
             const theme = getTheme();
+            if (!theme.custom) theme.custom = {};
+            // First custom edit: store the full current color set, not only the edited key
+            if (Object.keys(theme.custom).length === 0) {
+                keys.forEach(k => { theme.custom[k] = theme[k]; });
+            }
             document.getElementById(themeSelectId).value = 'custom';
             theme.preset = 'custom';
-            if (!theme.custom) theme.custom = {};
             theme[key] = e.target.value;
             theme.custom[key] = e.target.value;
             onChange();
