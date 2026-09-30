@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/ge.css">
     <link rel="stylesheet" href="css/gs.css">
+    <link rel="stylesheet" href="css/bcg.css">
     <link rel="stylesheet" href="css/space.css">
     <link rel="stylesheet" href="css/strategyMap.css">
     <link rel="stylesheet" href="css/porters.css">
@@ -72,6 +73,7 @@
             <button id="nav-entities" class="px-3 py-1 bg-white text-blue-600 rounded font-bold">Master Entities</button>
             <button id="nav-ge" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GE Matrix</button>
             <button id="nav-gs" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GS Matrix</button>
+            <button id="nav-bcg" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">BCG Matrix</button>
             <button id="nav-space" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">SPACE Matrix</button>
             <button id="nav-sm" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Strategy Map</button>
             <button id="nav-porters" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Porter's 5</button>
@@ -86,8 +88,8 @@
             <div class="main-wrapper h-full">
                 <div class="sidebar" style="flex: 1 1 100%; max-width: 800px; margin: 0 auto;">
                     <div class="form-panel">
-                        <h3>Master Entities List (Applies to GE & GS Matrix)</h3>
-                        <p class="text-sm text-gray-600 mb-4">Define your divisions and SBUs here. The X, Y values and bubble sizes are plotted individually in the GE and GS matrix tabs.</p>
+                        <h3>Master Entities List (Applies to GE, GS & BCG Matrix)</h3>
+                        <p class="text-sm text-gray-600 mb-4">Define your divisions and SBUs here. The X, Y values and bubble sizes are plotted individually in the GE, GS and BCG matrix tabs.</p>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
                                 <thead><tr><th style="width: 40%">Entity Name</th><th style="width: 25%">Bubble Color</th><th style="width: 25%">Text Color</th><th style="width: 10%"></th></tr></thead>
@@ -193,6 +195,63 @@
                             <div class="gs-quadrant"><div class="gs-quad-title">Quadrant IV</div><div class="gs-strat-list">1. Related diversification<br>2. Unrelated diversification<br>3. Joint ventures</div></div>
                         </div>
                         <div class="gs-plot-area" id="gs-plot-area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: BCG MATRIX -->
+        <div class="view-container h-full" id="view-bcg">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel">
+                        <h3>Matrix Theme Settings</h3>
+                        <table class="theme-table">
+                            <tr><td>Theme Preset</td><td colspan="2"><select id="bcg-theme"><option value="orange" selected>Orange (Default)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
+                            <tr><td>Background Color</td><td colspan="2"><input type="color" id="bcg-bg-color" value="#ffe0b2"></td></tr>
+                            <tr><td>Text Color</td><td colspan="2"><input type="color" id="bcg-text-color" value="#212121"></td></tr>
+                            <tr><td>Line Color</td><td colspan="2"><input type="color" id="bcg-line-color" value="#d84315"></td></tr>
+                        </table>
+                    </div>
+                    <div class="form-panel flex-1">
+                        <h3>BCG Matrix Adjustments</h3>
+                        <button type="button" class="btn-toggle" id="bcg-toggle">Toggle Reference / Plot View</button>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th>Entity</th><th>Relative Market Share (X: 0-1)</th><th>Industry Growth Rate (Y: -20 to +20)</th></tr></thead>
+                                <tbody id="bcg-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="main-controls">
+                            <button type="button" class="btn-download" id="bcg-dl" style="flex:1;">Download Image</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-panel" id="bcg-chart">
+                    <div class="bcg-container" id="bcg-container">
+                        <div class="bcg-x-title">RELATIVE MARKET SHARE POSITION</div>
+                        <div class="bcg-x-marks"><span>High<br>1.0</span><span>Medium<br>.50</span><span>Low<br>0.0</span></div>
+                        <div class="bcg-y-title">INDUSTRY SALES GROWTH RATE (Percentage)</div>
+                        <div class="bcg-y-marks"><span>High<br>+20</span><span>Medium<br>0</span><span>Low<br>-20</span></div>
+                        <div class="bcg-matrix">
+                            <div class="bcg-quadrant">
+                                <div class="bcg-strat-list">1. Backward, Forward, or Horizontal Integration<br>2. Market Penetration<br>3. Market Development<br>4. Product Development</div>
+                                <div class="bcg-quad-title">Stars<small>II</small></div>
+                            </div>
+                            <div class="bcg-quadrant">
+                                <div class="bcg-strat-list">1. Market Penetration<br>2. Market Development<br>3. Product Development<br>4. Divestiture</div>
+                                <div class="bcg-quad-title">Question Marks<small>I</small></div>
+                            </div>
+                            <div class="bcg-quadrant">
+                                <div class="bcg-strat-list">1. Product Development<br>2. Diversification<br>3. Retrenchment<br>4. Divestiture</div>
+                                <div class="bcg-quad-title">Cash Cows<small>III</small></div>
+                            </div>
+                            <div class="bcg-quadrant">
+                                <div class="bcg-strat-list">1. Retrenchment<br>2. Divestiture<br>3. Liquidation</div>
+                                <div class="bcg-quad-title">Dogs<small>IV</small></div>
+                            </div>
+                        </div>
+                        <div class="bcg-plot-area" id="bcg-plot-area"></div>
                     </div>
                 </div>
             </div>
