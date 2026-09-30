@@ -19,7 +19,7 @@ window.switchEditorView = (viewId) => {
     navBtn.classList.add('text-blue-600');
 };
 
-['entities', 'ge', 'gs', 'bcg', 'space', 'sm', 'porters'].forEach(view => {
+['entities', 'ge', 'gs', 'bcg', 'ie', 'space', 'sm', 'porters'].forEach(view => {
     document.getElementById(`nav-${view}`).onclick = () => switchEditorView(view);
 });
 
