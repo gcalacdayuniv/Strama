@@ -1,6 +1,7 @@
 import * as Auth from './auth.js';
 import * as Projects from './projects.js';
 import * as Plotter from './plotter.js';
+import { initNav } from './nav.js';
 
 const showScreen = (id) => {
     ['auth-screen', 'dashboard-screen', 'editor-screen'].forEach(s => document.getElementById(s).classList.add('hidden'));
@@ -30,6 +31,7 @@ document.getElementById('btn-back-dashboard').onclick = () => {
 document.getElementById('btn-save-project').onclick = Plotter.saveCurrentProject;
 document.getElementById('btn-create-project').onclick = () => Projects.createProject(document.getElementById('new-project-name').value);
 
+initNav();
 Plotter.initPlotter();
 Auth.initAuth(showScreen, Projects.loadProjects);
 
