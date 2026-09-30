@@ -1,0 +1,16 @@
+#porters-chart { display: flex; align-items: center; justify-content: center; }
+
+.porters-chart-container { position: relative; width: 96%; aspect-ratio: 1 / 1; background: #ffffff; border-radius: 12px; margin: 0 auto; overflow: hidden; }
+.porters-radar-container { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; }
+.show-radar .porters-chart-container { display: none; }
+.show-radar .porters-radar-container { display: flex; }
+.porters-force { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; padding: 1cqi; transition: all 0.3s ease; }
+.porters-force.rivalry { top: 34%; left: 34%; width: 32%; height: 32%; border-radius: 50%; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 4px solid #fff; }
+.porters-force.substitutes { top: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); padding-bottom: 10%; z-index: 5; }
+.porters-force.entrants { bottom: 0; left: 34%; width: 32%; height: 41%; clip-path: polygon(50% 0, 100% 25%, 100% 100%, 0 100%, 0 25%); padding-top: 10%; z-index: 5; }
+.porters-force.suppliers { top: 34%; left: 0; width: 41%; height: 32%; clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%); padding-right: 10%; z-index: 5; }
+.porters-force.consumers { top: 34%; right: 0; width: 41%; height: 32%; clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%); padding-left: 10%; z-index: 5; }
+.porters-icon { width: 15%; height: 15%; margin-bottom: 1cqi; }
+.porters-force.rivalry .porters-icon { width: 22%; height: 22%; margin-bottom: 1.5cqi; }
+.porters-title { font-size: 2.1cqi; font-weight: bold; line-height: 1.25; margin-bottom: 1cqi; max-width: 90%; }
+.porters-rating { font-size: 1.6cqi; font-weight: bold; padding: 0.4cqi 1cqi; border-radius: 2cqi; background: rgba(255, 255, 255, 0.25); text-transform: uppercase; letter-spacing: 0.5px; }
