@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/ge.css">
     <link rel="stylesheet" href="css/gs.css">
     <link rel="stylesheet" href="css/bcg.css">
+    <link rel="stylesheet" href="css/ie.css">
     <link rel="stylesheet" href="css/space.css">
     <link rel="stylesheet" href="css/strategyMap.css">
     <link rel="stylesheet" href="css/porters.css">
@@ -74,6 +75,7 @@
             <button id="nav-ge" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GE Matrix</button>
             <button id="nav-gs" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">GS Matrix</button>
             <button id="nav-bcg" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">BCG Matrix</button>
+            <button id="nav-ie" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">IE Matrix</button>
             <button id="nav-space" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">SPACE Matrix</button>
             <button id="nav-sm" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Strategy Map</button>
             <button id="nav-porters" class="px-3 py-1 hover:bg-blue-700 rounded font-bold">Porter's 5</button>
@@ -88,8 +90,8 @@
             <div class="main-wrapper h-full">
                 <div class="sidebar" style="flex: 1 1 100%; max-width: 800px; margin: 0 auto;">
                     <div class="form-panel">
-                        <h3>Master Entities List (Applies to GE, GS & BCG Matrix)</h3>
-                        <p class="text-sm text-gray-600 mb-4">Define your divisions and SBUs here. The X, Y values and bubble sizes are plotted individually in the GE, GS and BCG matrix tabs.</p>
+                        <h3>Master Entities List (Applies to GE, GS, BCG & IE Matrix)</h3>
+                        <p class="text-sm text-gray-600 mb-4">Define your divisions and SBUs here. The values and bubble sizes are plotted individually in their specific matrix tabs.</p>
                         <div class="sbu-table-container">
                             <table class="sbu-table">
                                 <thead><tr><th style="width: 40%">Entity Name</th><th style="width: 25%">Bubble Color</th><th style="width: 25%">Text Color</th><th style="width: 10%"></th></tr></thead>
@@ -252,6 +254,104 @@
                             </div>
                         </div>
                         <div class="bcg-plot-area" id="bcg-plot-area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: IE MATRIX -->
+        <div class="view-container h-full" id="view-ie">
+            <div class="main-wrapper h-full">
+                <div class="sidebar">
+                    <div class="form-panel">
+                        <h3>Matrix Theme Settings</h3>
+                        <table class="theme-table">
+                            <tr><td>Theme Preset</td><td colspan="2"><select id="ie-theme"><option value="orange" selected>Orange (Default)</option><option value="bw">Minimalist (Black/White)</option><option value="custom">Custom Colors</option></select></td></tr>
+                            <tr><td>Grow Background</td><td colspan="2"><input type="color" id="ie-grow-bg" value="#c8e6c9"></td></tr>
+                            <tr><td>Hold Background</td><td colspan="2"><input type="color" id="ie-hold-bg" value="#ffe0b2"></td></tr>
+                            <tr><td>Harvest Background</td><td colspan="2"><input type="color" id="ie-harv-bg" value="#ffccbc"></td></tr>
+                            <tr><td>Line Color</td><td colspan="2"><input type="color" id="ie-line-color" value="#000000"></td></tr>
+                            <tr><td>Text Color</td><td colspan="2"><input type="color" id="ie-text-color" value="#212121"></td></tr>
+                        </table>
+                    </div>
+                    <div class="form-panel flex-1">
+                        <h3>IE Matrix Adjustments</h3>
+                        <div class="sbu-table-container">
+                            <table class="sbu-table">
+                                <thead><tr><th>Entity</th><th>IFE Score (X: 1-4)</th><th>EFE Score (Y: 1-4)</th><th>Size</th><th>Label Pos</th></tr></thead>
+                                <tbody id="ie-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="main-controls">
+                            <button type="button" class="btn-download" id="ie-dl" style="flex:1;">Download Image</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-panel" id="ie-chart">
+                    <div class="ie-container" id="ie-container">
+                        
+                        <div class="ie-x-title">THE IFE TOTAL WEIGHTED SCORES</div>
+                        <div class="ie-y-title">THE EFE TOTAL WEIGHTED SCORES</div>
+                        
+                        <div class="ie-x-marks">
+                            <span>Strong<br>3.0 to 4.0</span>
+                            <span>Average<br>2.0 to 2.99</span>
+                            <span>Weak<br>1.0 to 1.99</span>
+                        </div>
+                        <div class="ie-y-marks">
+                            <span>High<br>3.0 to 4.0</span>
+                            <span>Medium<br>2.0 to 2.99</span>
+                            <span>Low<br>1.0 to 1.99</span>
+                        </div>
+                        <div class="ie-x-numbers"><span>4.0</span><span>3.0</span><span>2.0</span><span>1.0</span></div>
+                        <div class="ie-y-numbers"><span>4.0</span><span>3.0</span><span>2.0</span><span>1.0</span></div>
+                        
+                        <div class="ie-matrix">
+                            <div class="ie-cell ie-grow">I</div>
+                            <div class="ie-cell ie-grow">II</div>
+                            <div class="ie-cell ie-hold">III</div>
+                            <div class="ie-cell ie-grow">IV</div>
+                            <div class="ie-cell ie-hold">V</div>
+                            <div class="ie-cell ie-harv">VI</div>
+                            <div class="ie-cell ie-hold">VII</div>
+                            <div class="ie-cell ie-harv">VIII</div>
+                            <div class="ie-cell ie-harv">IX</div>
+                        </div>
+                        
+                        <div class="ie-plot-area" id="ie-plot-area"></div>
+
+                        <div class="ie-legend">
+                            <div class="ie-leg-item">
+                                <div class="ie-leg-header"><div class="ie-leg-color ie-grow"></div>Grow and Build (I, II, IV)</div>
+                                <div class="ie-leg-text">
+                                    <ul>
+                                        <li>Backward, Forward, or Horizontal Integration</li>
+                                        <li>Market Penetration</li>
+                                        <li>Market Development</li>
+                                        <li>Product Development</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="ie-leg-item">
+                                <div class="ie-leg-header"><div class="ie-leg-color ie-hold"></div>Hold and Maintain (III, V, VII)</div>
+                                <div class="ie-leg-text">
+                                    <ul>
+                                        <li>Market Penetration</li>
+                                        <li>Product Development</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="ie-leg-item">
+                                <div class="ie-leg-header"><div class="ie-leg-color ie-harv"></div>Harvest or Divest (VI, VIII, IX)</div>
+                                <div class="ie-leg-text">
+                                    <ul>
+                                        <li>Retrenchment</li>
+                                        <li>Divestiture</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
