@@ -29,10 +29,10 @@
 .ie-plot-area { position: absolute; left: 15%; top: 15%; width: 75%; height: 50%; z-index: 5; pointer-events: none; }
 
 /* Bottom Legend */
-.ie-legend { position: absolute; top: 68%; left: 5%; width: 90%; height: 28%; display: flex; gap: 2%; justify-content: space-between; border-top: 2px solid #ccc; padding-top: 2%; }
-.ie-leg-item { flex: 1; border: 1px solid var(--ie-line-color); border-radius: 6px; padding: 1.5cqi; display: flex; flex-direction: column; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.ie-leg-header { display: flex; align-items: center; gap: 1cqi; font-size: 1.8cqi; font-weight: bold; margin-bottom: 1cqi; border-bottom: 1px solid #eee; padding-bottom: 0.5cqi; }
-.ie-leg-color { width: 3cqi; height: 3cqi; border: 1px solid var(--ie-line-color); border-radius: 3px; flex-shrink: 0; }
-.ie-leg-text { font-size: 1.6cqi; line-height: 1.4; padding-left: 1.5cqi; }
-.ie-leg-text ul { margin: 0; padding-left: 2cqi; }
+.ie-legend { position: absolute; top: 68%; left: 5%; width: 90%; height: auto; display: flex; gap: 2%; justify-content: space-between; border-top: 2px solid #ccc; padding-top: 2%; }
+.ie-leg-item { flex: 1; border: 1px solid var(--ie-line-color); border-radius: 6px; padding: 1cqi; display: flex; flex-direction: column; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.ie-leg-header { display: flex; align-items: center; gap: 0.8cqi; font-size: 1.4cqi; font-weight: bold; margin-bottom: 0.8cqi; border-bottom: 1px solid #eee; padding-bottom: 0.5cqi; }
+.ie-leg-color { width: 2cqi; height: 2cqi; border: 1px solid var(--ie-line-color); border-radius: 3px; flex-shrink: 0; }
+.ie-leg-text { font-size: 1.2cqi; line-height: 1.4; padding-left: 1cqi; }
+.ie-leg-text ul { margin: 0; padding-left: 1.5cqi; }
 .ie-leg-text li { margin-bottom: 0.5cqi; }
