@@ -2,7 +2,7 @@ import { request } from './api.js';
 import { state } from './state.js';
 import {
     createDefaultThemes, createDefaultSMData, createDefaultPorters, DEFAULT_PORTERS,
-    GE_PRESETS, GS_PRESETS, BCG_PRESETS, SPACE_PRESETS, SM_PRESETS, PORTERS_PRESETS
+    GE_PRESETS, GS_PRESETS, BCG_PRESETS, IE_PRESETS, SPACE_PRESETS, SM_PRESETS, PORTERS_PRESETS
 } from './defaults.js';
 import { clone, resolveThemeColors } from './utils.js';
 import { initDownloads } from './download.js';
@@ -10,6 +10,7 @@ import { buildEntitiesTable, initEntities } from './charts/entities.js';
 import { buildGETable, renderGEChart, applyGETheme, initGE } from './charts/ge.js';
 import { buildGSTable, renderGSChart, applyGSTheme, initGS } from './charts/gs.js';
 import { buildBCGTable, renderBCGChart, applyBCGTheme, initBCG } from './charts/bcg.js';
+import { buildIETable, renderIEChart, applyIETheme, initIE } from './charts/ie.js';
 import { buildSpaceTable, renderSpaceChart, applySpaceTheme, initSpace } from './charts/space.js';
 import { buildSMTable, renderSMChart, updateSMUI, applySMTheme, initSM } from './charts/strategyMap.js';
 import { buildPortersTable, renderPortersChart, applyPortersTheme, initPorters } from './charts/porters.js';
@@ -17,6 +18,7 @@ import { buildPortersTable, renderPortersChart, applyPortersTheme, initPorters }
 const GE_KEYS = ['axis', 'invest', 'maintain', 'divest'];
 const GS_KEYS = ['bg', 'text', 'line'];
 const BCG_KEYS = ['bg', 'text', 'line'];
+const IE_KEYS = ['grow', 'hold', 'harvest', 'text', 'line'];
 const SPACE_KEYS = ['bg', 'text', 'line'];
 
 export function initPlotter() {
@@ -24,6 +26,7 @@ export function initPlotter() {
     initGE();
     initGS();
     initBCG();
+    initIE();
     initSpace();
     initSM();
     initPorters();
@@ -44,10 +47,12 @@ function applySavedThemes() {
     seedCustomIfEmpty(t.ge, GE_KEYS);
     seedCustomIfEmpty(t.gs, GS_KEYS);
     seedCustomIfEmpty(t.bcg, BCG_KEYS);
+    seedCustomIfEmpty(t.ie, IE_KEYS);
     seedCustomIfEmpty(t.space, SPACE_KEYS);
     resolveThemeColors(t.ge, GE_PRESETS, GE_KEYS);
     resolveThemeColors(t.gs, GS_PRESETS, GS_KEYS);
     resolveThemeColors(t.bcg, BCG_PRESETS, BCG_KEYS);
+    resolveThemeColors(t.ie, IE_PRESETS, IE_KEYS);
     resolveThemeColors(t.space, SPACE_PRESETS, SPACE_KEYS);
 
     // Strategy Map
@@ -91,6 +96,8 @@ export function loadProjectIntoEditor(project) {
     if (!t.gs.custom) t.gs.custom = {};
     if (!t.bcg) t.bcg = { preset: 'orange', ...BCG_PRESETS.orange, custom: {} };
     if (!t.bcg.custom) t.bcg.custom = {};
+    if (!t.ie) t.ie = { preset: 'orange', ...IE_PRESETS.orange, custom: {} };
+    if (!t.ie.custom) t.ie.custom = {};
     if (!t.space.custom) t.space.custom = {};
     if (!t.sm) t.sm = { preset: 'orange' };
     if (!t.porters) t.porters = { preset: 'orange', custom: [] };
@@ -105,7 +112,8 @@ export function loadProjectIntoEditor(project) {
         gs: item.gs || (rawGS[i]
             ? { xVal: rawGS[i].xVal || 4.5, yVal: rawGS[i].yVal || 4.5, size: rawGS[i].size || 30, pos: rawGS[i].pos || 'top' }
             : { xVal: 4.5, yVal: 4.5, size: 30, pos: 'top' }),
-        bcg: item.bcg || { xVal: 0.5, yVal: 0, size: 30, pos: 'top' }
+        bcg: item.bcg || { xVal: 0.5, yVal: 0, size: 30, pos: 'top' },
+        ie: item.ie || { ife: 2.5, efe: 2.5, size: item.size || 30, pos: item.pos || 'top' }
     }));
 
     state.spaceData = project.space_data ? JSON.parse(project.space_data) : [];
@@ -130,6 +138,7 @@ function applyThemesToUI() {
     applyGETheme();
     applyGSTheme();
     applyBCGTheme();
+    applyIETheme();
     applySpaceTheme();
     applySMTheme();
     applyPortersTheme();
@@ -140,6 +149,7 @@ export function renderAll() {
     buildGETable(); renderGEChart();
     buildGSTable(); renderGSChart();
     buildBCGTable(); renderBCGChart();
+    buildIETable(); renderIEChart();
     buildSpaceTable(); renderSpaceChart();
     buildSMTable(); renderSMChart(); updateSMUI();
     buildPortersTable(); renderPortersChart();
