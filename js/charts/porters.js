@@ -113,23 +113,25 @@ export function initPorters() {
         themes.preset = preset;
 
         if (PORTERS_PRESETS[preset]) {
+            // Temporary preset: themes.custom is left untouched
             state.portersData.forEach((p, i) => {
                 p.bg = PORTERS_PRESETS[preset].bg[i];
                 p.color = PORTERS_PRESETS[preset].color[i];
             });
         } else if (preset === 'custom') {
-            if (themes.custom && themes.custom.length === 5) {
-                state.portersData.forEach((p, i) => {
-                    p.bg = themes.custom[i].bg;
-                    p.color = themes.custom[i].color;
-                });
-            }
+            // Always load the saved custom colors (Orange as fallback if none were ever saved)
+            state.portersData.forEach((p, i) => {
+                const saved = themes.custom && themes.custom.length === 5 ? themes.custom[i] : null;
+                p.bg = saved ? saved.bg : PORTERS_PRESETS.orange.bg[i];
+                p.color = saved ? saved.color : PORTERS_PRESETS.orange.color[i];
+            });
         }
         buildPortersTable();
         renderPortersChart();
     });
 
     document.getElementById('porters-reset').onclick = () => {
+        // Reset only restores the Orange preset; saved custom colors are kept
         state.portersData = createDefaultPorters();
         state.appThemes.porters.preset = 'orange';
         document.getElementById('porters-theme').value = 'orange';
@@ -140,14 +142,25 @@ export function initPorters() {
     document.getElementById('porters-tbody').addEventListener('input', e => {
         if (e.target.classList.contains('porters-input')) {
             const themes = state.appThemes.porters;
+            const idx = e.target.dataset.idx;
+            const field = e.target.dataset.field;
+
+            state.portersData[idx][field] = e.target.value;
+
+            // Ratings are not theme colors
+            if (field !== 'bg' && field !== 'color') {
+                renderPortersChart();
+                return;
+            }
+
             document.getElementById('porters-theme').value = 'custom';
             themes.preset = 'custom';
-            state.portersData[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
 
             if (!themes.custom || themes.custom.length < 5) {
+                // First custom edit: store the full current color set
                 themes.custom = state.portersData.map(p => ({ bg: p.bg, color: p.color }));
             } else {
-                themes.custom[e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+                themes.custom[idx][field] = e.target.value;
             }
             renderPortersChart();
         }
