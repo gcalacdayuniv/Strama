@@ -1,6 +1,6 @@
 import { state } from '../state.js';
 import { BCG_PRESETS } from '../defaults.js';
-import { createBubble, syncThemeInputs, bindThemeControls } from '../utils.js';
+import { createBubble, posOptions, syncThemeInputs, bindThemeControls } from '../utils.js';
 
 const BCG_INPUT_MAP = {
     'bcg-bg-color': 'bg',
@@ -10,13 +10,15 @@ const BCG_INPUT_MAP = {
 
 export function buildBCGTable() {
     const tbody = document.getElementById('bcg-tbody'); tbody.innerHTML = '';
-    if (!state.entitiesData.length) { tbody.innerHTML = '<tr><td colspan="3">No Entities defined in Master List.</td></tr>'; return; }
+    if (!state.entitiesData.length) { tbody.innerHTML = '<tr><td colspan="5">No Entities defined in Master List.</td></tr>'; return; }
     state.entitiesData.forEach((sbu, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="font-bold p-2">${sbu.name}</td>
             <td><input type="number" min="0" max="1" step="0.01" value="${sbu.bcg.xVal}" data-idx="${i}" data-field="xVal" class="bcg-input"></td>
             <td><input type="number" min="-20" max="20" step="0.1" value="${sbu.bcg.yVal}" data-idx="${i}" data-field="yVal" class="bcg-input"></td>
+            <td><input type="number" min="10" max="100" value="${sbu.bcg.size || 30}" data-idx="${i}" data-field="size" class="bcg-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="bcg-input">${posOptions(sbu.bcg.pos || 'top')}</select></td>
         `;
         tbody.appendChild(tr);
     });
@@ -25,11 +27,10 @@ export function buildBCGTable() {
 export function renderBCGChart() {
     const plotArea = document.getElementById('bcg-plot-area'); plotArea.innerHTML = '';
     state.entitiesData.forEach(sbu => {
-        // X: 1.0 (High) is on the left, 0.0 (Low) on the right. Y: +20 at the top, -20 at the bottom.
         const xVal = Math.max(0, Math.min(1, sbu.bcg.xVal !== undefined ? sbu.bcg.xVal : 0.5));
         const yVal = Math.max(-20, Math.min(20, sbu.bcg.yVal !== undefined ? sbu.bcg.yVal : 0));
         plotArea.appendChild(createBubble({
-            name: sbu.name, size: sbu.bcg.size, color: sbu.color, labelColor: sbu.labelColor, pos: sbu.bcg.pos,
+            name: sbu.name, size: sbu.bcg.size || 30, color: sbu.color, labelColor: sbu.labelColor, pos: sbu.bcg.pos || 'top',
             left: (1 - xVal) * 100,
             top: ((20 - yVal) / 40) * 100
         }));
@@ -52,7 +53,8 @@ export function initBCG() {
 
     document.getElementById('bcg-tbody').addEventListener('input', e => {
         if (e.target.classList.contains('bcg-input')) {
-            state.entitiesData[e.target.dataset.idx].bcg[e.target.dataset.field] = parseFloat(e.target.value) || 0;
+            state.entitiesData[e.target.dataset.idx].bcg[e.target.dataset.field] =
+                e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
             renderBCGChart();
         }
     });
