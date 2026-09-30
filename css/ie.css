@@ -1,0 +1,38 @@
+:root {
+    /* IE Theme (Orange Default) */
+    --ie-grow-bg: #c8e6c9; 
+    --ie-hold-bg: #ffe0b2; 
+    --ie-harv-bg: #ffccbc;
+    --ie-text-color: #212121;
+    --ie-line-color: #000000;
+}
+
+#ie-chart { aspect-ratio: 700 / 750; padding: 0; overflow: hidden; }
+
+.ie-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; color: var(--ie-text-color); }
+
+.ie-x-title { position: absolute; top: 3%; left: 15%; width: 75%; text-align: center; font-weight: bold; font-size: 2.3cqi; }
+.ie-x-marks { position: absolute; top: 7.5%; left: 15%; width: 75%; display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 1.8cqi; text-align: center; line-height: 1.2; }
+.ie-x-numbers { position: absolute; top: 12.5%; left: 15%; width: 75%; display: flex; justify-content: space-between; font-size: 1.8cqi; font-weight: bold; transform: translateX(-0.5cqi); }
+
+.ie-y-title { position: absolute; left: 3%; top: 38%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; font-weight: bold; font-size: 2.3cqi; }
+.ie-y-marks { position: absolute; left: 6%; top: 15%; height: 50%; width: 6%; display: flex; flex-direction: column; justify-content: space-around; text-align: right; font-size: 1.8cqi; line-height: 1.2; }
+.ie-y-numbers { position: absolute; left: 12.5%; top: 15%; height: 50%; display: flex; flex-direction: column; justify-content: space-between; font-size: 1.8cqi; font-weight: bold; transform: translateY(-0.8cqi); }
+
+.ie-matrix { position: absolute; left: 15%; top: 15%; width: 75%; height: 50%; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; border: 2px solid var(--ie-line-color); box-sizing: border-box; }
+.ie-cell { border: 1px solid var(--ie-line-color); display: flex; align-items: center; justify-content: center; font-size: 3.5cqi; font-weight: bold; }
+
+.ie-grow { background-color: var(--ie-grow-bg); }
+.ie-hold { background-color: var(--ie-hold-bg); }
+.ie-harv { background-color: var(--ie-harv-bg); }
+
+.ie-plot-area { position: absolute; left: 15%; top: 15%; width: 75%; height: 50%; z-index: 5; pointer-events: none; }
+
+/* Bottom Legend */
+.ie-legend { position: absolute; top: 68%; left: 5%; width: 90%; height: 28%; display: flex; gap: 2%; justify-content: space-between; border-top: 2px solid #ccc; padding-top: 2%; }
+.ie-leg-item { flex: 1; border: 1px solid var(--ie-line-color); border-radius: 6px; padding: 1.5cqi; display: flex; flex-direction: column; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.ie-leg-header { display: flex; align-items: center; gap: 1cqi; font-size: 1.8cqi; font-weight: bold; margin-bottom: 1cqi; border-bottom: 1px solid #eee; padding-bottom: 0.5cqi; }
+.ie-leg-color { width: 3cqi; height: 3cqi; border: 1px solid var(--ie-line-color); border-radius: 3px; flex-shrink: 0; }
+.ie-leg-text { font-size: 1.6cqi; line-height: 1.4; padding-left: 1.5cqi; }
+.ie-leg-text ul { margin: 0; padding-left: 2cqi; }
+.ie-leg-text li { margin-bottom: 0.5cqi; }
