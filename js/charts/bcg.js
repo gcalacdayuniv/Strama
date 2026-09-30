@@ -17,8 +17,8 @@ export function buildBCGTable() {
             <td class="font-bold p-2">${sbu.name}</td>
             <td><input type="number" min="0" max="1" step="0.01" value="${sbu.bcg.xVal}" data-idx="${i}" data-field="xVal" class="bcg-input"></td>
             <td><input type="number" min="-20" max="20" step="0.1" value="${sbu.bcg.yVal}" data-idx="${i}" data-field="yVal" class="bcg-input"></td>
-            <td><input type="number" min="10" max="100" value="${sbu.bcg.size || 30}" data-idx="${i}" data-field="size" class="bcg-input"></td>
-            <td><select data-idx="${i}" data-field="pos" class="bcg-input">${posOptions(sbu.bcg.pos || 'top')}</select></td>
+            <td><input type="number" min="10" max="100" value="${sbu.bcg.size}" data-idx="${i}" data-field="size" class="bcg-input"></td>
+            <td><select data-idx="${i}" data-field="pos" class="bcg-input">${posOptions(sbu.bcg.pos)}</select></td>
         `;
         tbody.appendChild(tr);
     });
@@ -27,10 +27,11 @@ export function buildBCGTable() {
 export function renderBCGChart() {
     const plotArea = document.getElementById('bcg-plot-area'); plotArea.innerHTML = '';
     state.entitiesData.forEach(sbu => {
+        // X: 1.0 (High) is on the left, 0.0 (Low) on the right. Y: +20 at the top, -20 at the bottom.
         const xVal = Math.max(0, Math.min(1, sbu.bcg.xVal !== undefined ? sbu.bcg.xVal : 0.5));
         const yVal = Math.max(-20, Math.min(20, sbu.bcg.yVal !== undefined ? sbu.bcg.yVal : 0));
         plotArea.appendChild(createBubble({
-            name: sbu.name, size: sbu.bcg.size || 30, color: sbu.color, labelColor: sbu.labelColor, pos: sbu.bcg.pos || 'top',
+            name: sbu.name, size: sbu.bcg.size || 30, color: sbu.color, labelColor: sbu.labelColor, pos: sbu.bcg.pos,
             left: (1 - xVal) * 100,
             top: ((20 - yVal) / 40) * 100
         }));
@@ -47,6 +48,10 @@ export function applyBCGTheme() {
 }
 
 export function initBCG() {
+    // Table header (includes the Size and Label Pos columns)
+    const thead = document.getElementById('bcg-tbody').parentElement.querySelector('thead');
+    thead.innerHTML = '<tr><th>Entity</th><th>Relative Market Share (X: 0-1)</th><th>Industry Growth Rate (Y: -20 to +20)</th><th>Size</th><th>Label Pos</th></tr>';
+
     document.getElementById('bcg-toggle').onclick = () => {
         document.getElementById('bcg-container').classList.toggle('show-reference');
     };
