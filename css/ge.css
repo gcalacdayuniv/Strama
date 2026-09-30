@@ -1,0 +1,20 @@
+:root {
+    /* GE Theme */
+    --ge-inv-bg: #ffe0b2; --ge-main-bg: #ffb74d; --ge-div-bg: #f57c00;
+    --ge-inv-color: #212121; --ge-main-color: #212121; --ge-div-color: #fff;
+}
+
+.axis-title { position: absolute; color: var(--axis-color); font-weight: bold; font-size: 2.57cqi; }
+.axis-title.y-axis { left: 5.714%; top: 45.588%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; }
+.axis-title.x-axis { left: 25.714%; top: 91.176%; width: 65.428%; text-align: center; }
+.y-marks { position: absolute; left: 14.285%; top: 11.764%; width: 10%; height: 67.352%; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; padding-right: 2%; font-size: 2cqi; font-weight: 500; }
+.x-marks { position: absolute; left: 25.714%; top: 80.882%; width: 65.428%; height: 4.411%; display: flex; justify-content: space-between; align-items: center; font-size: 2cqi; font-weight: 500; }
+.grid-container { position: absolute; gap: 2px; background: var(--grid-gap-color); border: var(--grid-border); }
+.ge-grid { left: 25.714%; top: 11.764%; width: 65.428%; height: 67.352%; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+.cell { display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2.28cqi; position: relative; }
+.cell span { z-index: 1; pointer-events: none; }
+.invest { background-color: var(--ge-inv-bg); color: var(--ge-inv-color); }
+.maintain { background-color: var(--ge-main-bg); color: var(--ge-main-color); }
+.divest { background-color: var(--ge-div-bg); color: var(--ge-div-color); }
+.plot-area { left: 25.714%; top: 11.764%; width: 65.428%; height: 67.352%; }
+.ge-axes { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;}
