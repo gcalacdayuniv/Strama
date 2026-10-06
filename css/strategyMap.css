@@ -7,18 +7,33 @@
     --sm-lrn-bg: #bf360c; --sm-lrn-color: #ffffff; --sm-lrn-light: rgba(191, 54, 12, 0.12);
 }
 
-.sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 800px; background: #fff; padding: 20px; box-sizing: border-box;}
-.sm-top-section { text-align: center; background: var(--sm-mv-bg); color: var(--sm-mv-color); padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0; position: relative; z-index: 2;}
-.sm-top-section p { margin: 0; font-size: 0.95rem; }
-.sm-perspectives-wrapper { display: flex; flex-direction: column; position: relative; width: 100%; flex-grow: 1;}
-.sm-level-arrow { display: flex; justify-content: center; align-items: center; height: 35px; width: 100%; z-index: 1;}
-.sm-level-arrow svg { height: 28px; width: 28px; fill: #94a3b8; }
-.sm-row { display: flex; width: 100%; min-height: 100px; position: relative; z-index: 2; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.sm-header { width: 150px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; position: relative; clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%); }
-.sm-header svg { width: 36px; height: 36px; margin-bottom: 8px; }
-.sm-header span { font-weight: bold; font-size: 0.9rem; text-align: center; width: 80%; }
-.sm-content { flex-grow: 1; padding: 15px; padding-left: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; border-radius: 0 6px 6px 0; }
-.sm-box { background: #fff; border: 1px solid rgba(0,0,0,0.1); padding: 12px 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.85rem; color: #1e293b; font-weight: 500; text-align: center; max-width: 200px; flex: 0 1 auto; }
+#sm-chart { padding: 0; }
+
+/* Outer canvas with gold border */
+.sm-canvas { display: flex; flex-direction: column; width: 100%; height: 100%; background: #fff; padding: 1.8cqi; box-sizing: border-box; border: 2px solid #e8b04b; }
+
+/* Mission / Vision box */
+.sm-top-section { text-align: center; background: var(--sm-mv-bg); color: var(--sm-mv-color); padding: 2.4cqi 2.2cqi 2.6cqi; border-radius: 1cqi; border: 3px solid #eceff3; box-shadow: 0 2px 6px rgba(0,0,0,0.15); position: relative; z-index: 2; }
+.sm-top-section p { margin: 0; font-size: 1.65cqi; line-height: 1.25; }
+.sm-top-section p + p { margin-top: 2.6cqi !important; }
+.sm-top-section p strong { display: block; font-size: 1.75cqi; font-weight: bold; margin-bottom: 0.2cqi; }
+
+.sm-perspectives-wrapper { display: flex; flex-direction: column; position: relative; width: 100%; flex-grow: 1; }
+
+/* Arrows between rows */
+.sm-level-arrow { display: flex; justify-content: center; align-items: center; height: 4.3cqi; width: 100%; z-index: 1; }
+.sm-level-arrow svg { height: 3.2cqi; width: 3.2cqi; fill: #8e9ab8; }
+
+/* Perspective rows */
+.sm-row { display: flex; width: 100%; min-height: 12cqi; position: relative; z-index: 2; border-radius: 0.9cqi; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.sm-header { width: 18%; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1cqi; box-sizing: border-box; }
+.sm-header svg { width: 3.6cqi; height: 3.6cqi; margin-bottom: 1cqi; }
+.sm-header span { font-weight: bold; font-size: 1.65cqi; line-height: 1.2; text-align: center; width: 55%; }
+
+/* Objective boxes: 3 equal columns */
+.sm-content { flex-grow: 1; padding: 2.7cqi 2.8cqi 2.7cqi 3.2cqi; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2cqi; align-items: center; box-sizing: border-box; }
+.sm-box { background: #fff; border: 1px solid rgba(0,0,0,0.08); padding: 1.5cqi 1cqi; border-radius: 0.6cqi; box-shadow: 0 1px 4px rgba(0,0,0,0.08); font-size: 1.5cqi; line-height: 1.25; color: #222; font-weight: 400; text-align: center; width: 100%; box-sizing: border-box; }
+
 .sm-fin-header { background: var(--sm-fin-bg); color: var(--sm-fin-color); } .sm-fin-header svg { fill: var(--sm-fin-color); } .sm-fin-content { background: var(--sm-fin-light); }
 .sm-cus-header { background: var(--sm-cus-bg); color: var(--sm-cus-color); } .sm-cus-header svg { fill: var(--sm-cus-color); } .sm-cus-content { background: var(--sm-cus-light); }
 .sm-int-header { background: var(--sm-int-bg); color: var(--sm-int-color); } .sm-int-header svg { fill: var(--sm-int-color); } .sm-int-content { background: var(--sm-int-light); }
